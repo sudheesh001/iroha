@@ -25,7 +25,13 @@ limitations under the License.
 
 
 int main(int argc,char* argv[]) {
+
+  logger::setGlobalLogLevel(logger::level::debug);
   auto log = logger::Logger("main");
+  log.debug("  print debug level log!");
+  log.info("   print info level log!");
+  log.warning("print waring level log!");
+  log.error("  print error level log!");
 
   log.info(R"( dP  888888ba   .88888.  dP     dP   .d888888 )");
   log.info(R"( 88  88    `8b d8'   `8b 88     88  d8'    88 )");
