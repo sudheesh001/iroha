@@ -17,4 +17,5 @@ add_library(command_service
 )
 target_link_libraries(command_service
     endpoint
+    logger
 )

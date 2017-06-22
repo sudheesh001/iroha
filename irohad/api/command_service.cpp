@@ -23,7 +23,10 @@ namespace connection {
 
     using namespace iroha::protocol;
 
-    std::function<void(const Transaction&)> dispatchToOrdering;
+    static auto log = logger::Logger("commandService");
+
+
+      std::function<void(const Transaction&)> dispatchToOrdering;
 
     void receive(
         std::function<void(const iroha::protocol::Transaction&)> const& func) {
@@ -35,12 +38,15 @@ namespace connection {
                                        ToriiResponse* response) {
       // TODO: Use this to get client's ip and port.
       (void)context;
+      log.debug("Torii: receive Transaction");
 
       if (validator::stateless::validate(request)) {
+        log.debug("Torii: transaction is valid");
         dispatchToOrdering(request);
         // TODO: Return tracking log number (hash)
         *response = ToriiResponse();
       } else {
+        log.warning("Torii: transaction is invalid");
         // TODO: Return validation failed message
         *response = ToriiResponse();
       }

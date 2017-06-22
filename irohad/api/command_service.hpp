@@ -20,6 +20,8 @@ limitations under the License.
 #include <endpoint.grpc.pb.h>
 #include <endpoint.pb.h>
 
+#include <logger/logger.hpp>
+
 namespace connection {
   namespace api {
 
