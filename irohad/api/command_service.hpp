@@ -30,9 +30,10 @@ namespace connection {
     class CommandService final
         : public iroha::protocol::CommandService::Service {
      public:
-      grpc::Status Torii(grpc::ClientContext* context,
-                         const iroha::protocol::Transaction& request,
-                         iroha::protocol::ToriiResponse* response);
+      grpc::Status Torii(grpc::ServerContext* context,
+                         const ::iroha::protocol::Transaction* request,
+                         ::iroha::protocol::ToriiResponse* response);
+      ~CommandService(){}
     };
 
   }  // namespace api

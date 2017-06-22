@@ -26,23 +26,23 @@ namespace connection {
     static auto log = logger::Logger("commandService");
 
 
-      std::function<void(const Transaction&)> dispatchToOrdering;
+    std::function<void(const Transaction&)> dispatchToOrdering;
 
     void receive(
         std::function<void(const iroha::protocol::Transaction&)> const& func) {
       dispatchToOrdering = func;
     }
 
-    grpc::Status CommandService::Torii(grpc::ClientContext* context,
-                                       const Transaction& request,
-                                       ToriiResponse* response) {
+    grpc::Status CommandService::Torii(grpc::ServerContext* context,
+                                       const ::iroha::protocol::Transaction* request,
+                                       ::iroha::protocol::ToriiResponse* response){
       // TODO: Use this to get client's ip and port.
       (void)context;
       log.debug("Torii: receive Transaction");
 
-      if (validator::stateless::validate(request)) {
+      if (validator::stateless::validate(*request)) {
         log.debug("Torii: transaction is valid");
-        dispatchToOrdering(request);
+        dispatchToOrdering(*request);
         // TODO: Return tracking log number (hash)
         *response = ToriiResponse();
       } else {
