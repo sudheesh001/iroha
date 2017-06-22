@@ -18,7 +18,6 @@ limitations under the License.
 #include <api/query_service.hpp>
 #include <consensus/connection/service.hpp>
 #include <ordering/connection/service.hpp>
-
 #include <logger/logger.hpp>
 
 #include "server_runner.hpp"

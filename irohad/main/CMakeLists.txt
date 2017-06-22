@@ -22,6 +22,7 @@ target_link_libraries(connection
 
 add_executable(iroha-main iroha-main.cpp)
 target_link_libraries(iroha-main
+    command_service
     connection
     logger
     pthread

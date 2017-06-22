@@ -32,12 +32,13 @@ namespace connection {
     ServerRunner::ServerRunner(const std::vector<grpc::Service*>& services,
         const std::string& address,int port = 50051) {
         grpc::ServerBuilder builder;
-        log.info("Start server [{}:{}]", address, port);
-        builder.AddListeningPort(address + std::to_string(port), grpc::InsecureServerCredentials());
+
+        builder.AddListeningPort(address +":"+ std::to_string(port), grpc::InsecureServerCredentials());
         for (auto s: services) {
             builder.RegisterService(s);
         }
         std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+        log.info("Start server [{}:{}]", address, port);
         server->Wait();
     }
 
