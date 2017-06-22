@@ -33,7 +33,7 @@ namespace connection {
         const std::string& address,int port = 50051) {
         grpc::ServerBuilder builder;
         log.info("Start server [{}:{}]", address, port);
-        builder.AddListeningPort(address + std::to_string(port), grpc::InsecureServerCredentials());
+        builder.AddListeningPort(address +":"+ std::to_string(port), grpc::InsecureServerCredentials());
         for (auto s: services) {
             builder.RegisterService(s);
         }
