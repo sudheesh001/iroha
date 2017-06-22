@@ -23,7 +23,7 @@ namespace connection {
     public:
         ServerRunner(
                 const std::vector<grpc::Service*>& services,
-                const std::string& ip,int port);
+                const std::string& address,int port);
     };
 
 }  // namespace connection

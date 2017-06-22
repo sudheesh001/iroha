@@ -27,11 +27,13 @@ limitations under the License.
 
 namespace connection {
 
-    ServerRunner::ServerRunner(const std::string& ip,
-                               const std::vector<grpc::Service*>& services) {
-        grpc::ServerBuilder builder;
+    auto log = logger::Logger("ServerRunner");
 
-        builder.AddListeningPort(ip, grpc::InsecureServerCredentials());
+    ServerRunner::ServerRunner(const std::vector<grpc::Service*>& services,
+        const std::string& address,int port = 50051) {
+        grpc::ServerBuilder builder;
+        log.info("Start server [{}:{}]", address, port);
+        builder.AddListeningPort(address + std::to_string(port), grpc::InsecureServerCredentials());
         for (auto s: services) {
             builder.RegisterService(s);
         }

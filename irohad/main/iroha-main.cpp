@@ -37,7 +37,6 @@ int main(int argc,char* argv[]) {
   log.info(R"(         = 分散台帳Application いろは =         )");
   log.info(R"( ---------o=========================o---------)");
 
-
   connection::api::CommandService commandService;
   connection::api::QueryService queryService;
   connection::consensus::SumeragiService sumeragiService;
