@@ -17,6 +17,7 @@ limitations under the License.
 #define IROHA_VALIDATION_STATELESS_VALIDATOR_HPP
 
 #include <block.pb.h>
+#include <logger/logger.hpp>
 
 namespace validator {
     namespace stateless {

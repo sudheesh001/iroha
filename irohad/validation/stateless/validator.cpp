@@ -19,13 +19,18 @@ limitations under the License.
 namespace validator {
   namespace stateless {
     using Transaction = iroha::protocol::Transaction;
+    auto log = logger::Logger("stateless validator");
+
     bool validate(const Transaction& tx) {
+      log.debug("Is transaction not future?:{}", tx.header().created_time() <= iroha::time::now64());
+      log.debug("Does transaction have a signature?:{}", tx.header().signature_size() != 0);
+      log.debug("Is creator publicKey correct?:{} (length:{})", tx.body().creator_pubkey().size() == 32, tx.body().creator_pubkey().size());
       return
         tx.header().created_time() <= iroha::time::now64() && // 過去に作られたTxか // TODO: consider when to ignore transactions for being too old
-        tx.header().signature_size() != 0                          && // 電子署名は含まれているか
+        tx.header().signature_size() != 0                  && // 電子署名は含まれているか
         // TODO: calculate hash
         // TODO: verify the signature for each signature in the header
-        tx.body().creator_pubkey().size() == 32;                     // 公開鍵は32byteか ToDo configurable
+        tx.body().creator_pubkey().size() == 44;          // 公開鍵は32byteか ToDo configurable
     }
   };
 };
