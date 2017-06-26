@@ -22,6 +22,7 @@ limitations under the License.
 #include <memory>
 #include <string>
 #include <vector>
+#include <logger/logger.hpp>
 
 namespace peer_service {
 

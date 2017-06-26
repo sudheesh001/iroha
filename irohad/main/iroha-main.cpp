@@ -14,11 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include <thread>
+
 #include <api/command_service.hpp>
 #include <api/query_service.hpp>
 #include <consensus/connection/service.hpp>
 #include <ordering/connection/service.hpp>
+
 #include <logger/logger.hpp>
+
+#include <ordering/observer.hpp>
+
+#include <peer_service/self_state.hpp>
+#include <peer_service/change_state.hpp>
 
 #include "server_runner.hpp"
 
@@ -41,18 +49,36 @@ int main(int argc,char* argv[]) {
   log.info(R"( ---------o=========================o---------)");
   log.info(R"(         = 分散台帳Application いろは =         )");
   log.info(R"( ---------o=========================o---------)");
+  /*
+   *  +------------------+
+   * 1|   peer service   |
+   *  +------------------+
+   *  +------------------+
+   * 2| ordering service |
+   *  +------------------+
+   *  +------------------+
+   * 3|  grpc  endpoint  |
+   *  +------------------+
+   */
+//  peer_service::self_state::initializeMyIp();
+  peer_service::self_state::initializeMyKey();
+  peer_service::change_state::initialize();
+
+
+  ordering::observer::initialize();
+  std::thread observe(ordering::observer::observe);
+
 
   connection::api::CommandService commandService;
   connection::api::QueryService queryService;
   connection::consensus::SumeragiService sumeragiService;
-  connection::ordering::OrderingService orderingService;
-
+  ordering::connection::OrderingService orderingService;
   connection::ServerRunner serverRunner({
-      &commandService,
-      &queryService,
-      &sumeragiService,
-      &orderingService
-  },"0.0.0.0",50051);
+    &commandService,
+    &queryService,
+    &sumeragiService,
+    &orderingService
+  }, "0.0.0.0", 50051);
 
   return 0;
 }

@@ -31,6 +31,7 @@ namespace connection {
 
     ServerRunner::ServerRunner(const std::vector<grpc::Service*>& services,
         const std::string& address,int port = 50051) {
+        log.info("\n +-------------------+ \n |  grpc  endpoin    | \n +-------------------+ ");
         grpc::ServerBuilder builder;
 
         builder.AddListeningPort(address +":"+ std::to_string(port), grpc::InsecureServerCredentials());

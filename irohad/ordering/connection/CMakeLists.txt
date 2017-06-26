@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_library(connection
+add_library(ordering_service
     client.cpp
     service.cpp
 )
-target_link_libraries(connection
+target_link_libraries(ordering_service
     endpoint
     schema
 )

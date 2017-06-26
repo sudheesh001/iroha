@@ -22,14 +22,13 @@ namespace connection {
   namespace api {
 
     using namespace iroha::protocol;
-
     static auto log = logger::Logger("commandService");
 
 
     std::function<void(const Transaction&)> dispatchToOrdering;
 
     void receive(
-        std::function<void(const iroha::protocol::Transaction&)> const& func) {
+        std::function<void(const iroha::protocol::Transaction&)> const func) {
       dispatchToOrdering = func;
     }
 

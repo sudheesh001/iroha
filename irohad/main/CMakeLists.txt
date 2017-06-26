@@ -16,7 +16,7 @@ add_library(connection server_runner.cpp)
 target_link_libraries(connection
     endpoint
     schema
-
+    ordering
     logger
 )
 

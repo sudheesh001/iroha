@@ -19,8 +19,8 @@ limitations under the License.
 
 #include <block.pb.h>
 
-namespace connection {
-    namespace ordering {
+namespace ordering {
+    namespace connection {
 
         bool send(std::string ip, const iroha::protocol::Transaction& tx);
         class OrderingClient {

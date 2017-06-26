@@ -28,6 +28,8 @@ limitations under the License.
 namespace peer_service {
   namespace self_state {
 
+    auto log = logger::Logger("peer service:self state");
+
     std::string ip_;
     std::string public_key_;
     std::string private_key_;
@@ -38,14 +40,19 @@ namespace peer_service {
     State state_;
 
     void initializeMyKey() {
+      log.info(R"(= initialize my ip)");
       if (public_key_.empty() || private_key_.empty()) {
         iroha::Keypair keypair = iroha::Keypair::generate_keypair();
         public_key_ = keypair.pub_base64();
         private_key_ = *keypair.priv_base64();
       }
+      log.info(R"(= my publicKey is {})", public_key_);
+      log.info(R"(= my privateKey is {}***...)", private_key_.substr(0, 5));
     }
 
     void initializeMyIp() {
+      log.info("\n +-------------------+ \n |   peer service    | \n +-------------------+ ");
+      log.info(R"(= initialize my ip)");
       if (ip_.empty()) {
         std::string interface = "eth0";  // TODO : temporary "eth0"
 
@@ -59,6 +66,7 @@ namespace peer_service {
         close(sockfd);
         ip_ = inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
       }
+      log.info(R"(= my ip is {})",ip_);
     }
 
     std::string getPublicKey() {

@@ -22,23 +22,30 @@ limitations under the License.
 #include <api/command_service.hpp>
 #include <ordering/connection/client.hpp>
 #include <ordering/connection/service.hpp>
+#include <logger/logger.hpp>
 
 namespace ordering {
 
   namespace observer {
 
     using Transaction = iroha::protocol::Transaction;
+    auto log = logger::Logger("ordering");
 
     void initialize() {
-      connection::api::receive([](const Transaction &tx) {
+      log.info("\n +-------------------+ \n | ordering service  | \n +-------------------+ ");
+      log.info("= Initialize ordering service's observer");
+
+      ::connection::api::receive([](const Transaction &tx) {
+        log.debug("Send tx to active peer");
         // Verified State-less validate Tx
         // TODO : [WIP] temp implement Send to Leader-group
-        for (std::string ip : ::peer_service::monitor::getActiveIpList()) {
-          connection::ordering::send(ip, tx);
+        for (const std::string& ip : ::peer_service::monitor::getActiveIpList()) {
+          log.debug("  Send tx to peer {}", ip);
+          ordering::connection::send(ip, tx);
         }
       });
 
-      connection::ordering::receive([](const Transaction &tx) {
+      ordering::connection::receive([](const Transaction &tx) {
         // Verified State-less validate Tx
         queue::append(tx);
       });
@@ -46,24 +53,26 @@ namespace ordering {
 
     // This is invoked in thread.
     void observe() {
+      log.info("= Start ordering service's observer");
       while (1) {
         timer::setAwkTimer(5000, []() {
+          log.debug("Create block");
+          /*
           if (queue::isCreateBlock()) {
             if (peer_service::self_state::isLeader()) {
               auto block = queue::getBlock();
               //   ToDo send leader node
               // connection::consensus::send(::peer_service::self_state::getIp(),block);
             } else {
-              /* TODO send ping Dais Peers -> (if all timeout, this peer is
+              TODO send ping Dais Peers -> (if all timeout, this peer is
               altanative leader peer)
               auto state = sendPingDaisPeers();
               if( state == ALLTIMEOUT ) {
                auto block = queue::getBlock();
                connection::consensus::send(::peer_service::self_state::getIp(),block);
               }
-               */
             }
-          }
+          */
         });
       }
     }

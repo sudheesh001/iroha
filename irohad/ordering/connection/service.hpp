@@ -21,8 +21,8 @@ limitations under the License.
 #include <endpoint.grpc.pb.h>
 #include <endpoint.pb.h>
 
-namespace connection {
-    namespace ordering {
+namespace ordering {
+    namespace connection {
 
         void receive(const std::function<void(const iroha::protocol::Transaction&)>&);
 

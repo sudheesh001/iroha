@@ -16,8 +16,8 @@ limitations under the License.
 
 #include "service.hpp"
 
-namespace connection {
-    namespace ordering {
+namespace ordering {
+    namespace connection{
 
         using iroha::protocol::QueueTransactionResponse;
         using iroha::protocol::Transaction;
@@ -27,8 +27,6 @@ namespace connection {
         void receive(std::function<void(const Transaction&)> const& func) {
           dispatchToOrdering = func;
         }
-
-
 
       grpc::Status OrderingService::QueueTransaction(
             grpc::ClientContext* context,
