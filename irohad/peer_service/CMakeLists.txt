@@ -16,7 +16,6 @@ ADD_LIBRARY(peer_service STATIC
     monitor.cpp
     change_state.cpp
     self_state.cpp
-    synchronizer/synchronizer.cpp
 )
 
 target_link_libraries(peer_service
