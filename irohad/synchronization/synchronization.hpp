@@ -25,6 +25,8 @@ limitations under the License.
 #include <queue>
 #include <vector>
 #include <functional>
+#include <network/sync_client.hpp>
+#include <network/sync_gate.hpp>
 
 #include <model/model.hpp>
 
@@ -61,8 +63,9 @@ namespace iroha {
 
       void clearCache();
 
-      // SyncClient
-      // SyncGate
+      iroha::network::SyncClient client_;
+      iroha::network::SyncGate gate_;
+
       std::priority_queue<Block,std::vector<Block>, BlockCompare> temp_block_;
 
       uint64_t current_;

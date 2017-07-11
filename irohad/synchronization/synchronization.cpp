@@ -70,9 +70,11 @@ namespace iroha {
 
     void Synchronizer::fetchBlock(std::string ip,uint64_t offset) {
       // Invoke SyncClient
-      // Call receive (
-      [&](Block &&block) { this->temp_block_.emplace(std::move(block)); };
-      //);
+      /*
+      client_.fetchBlocks(ip,offset)subscribe(
+        [&](Block &block) { this->temp_block_.emplace(std::move(block)); };
+      );
+       */
     }
 
     void Synchronizer::syncObserve(uint64_t offset) {

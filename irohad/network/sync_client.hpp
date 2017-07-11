@@ -27,7 +27,7 @@ namespace iroha {
     /**
      * Interface for downloading blocks from a network
      */
-    class BlockLoader {
+    class SyncClient {
      public:
       /**
        * Method requests missed blocks from external peer starting from it's top
@@ -35,12 +35,12 @@ namespace iroha {
        * Note, that blocks will be in order: from the newest
        * to your actual top block.
        * This order is required for verify blocks before storing in a ledger.
-       * @param target_peer - peer for requesting blocks
-       * @param topBlock - your last actual block
+       * @param target_ip - peer's ip for requesting blocks
+       * @param offset - your last actual block's height
        * @return observable with blocks
        */
-      virtual rxcpp::observable <model::Block> requestBlocks(
-          model::Peer &target_peer, model::Block &topBlock) = 0;
+      virtual rxcpp::observable <model::Block> fetchBlocks(
+          std::string target_ip, uint64_t offset) = 0;
     };
   } // namespace network
 } // namespace iroha
