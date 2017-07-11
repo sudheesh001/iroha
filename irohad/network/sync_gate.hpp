@@ -17,7 +17,7 @@ namespace iroha {
        * @param return_ip - peer's ip to return for responseblocks
        * @param offset - your return blocks after offset-th.
        */
-      virtual void responseBlocks( std::string return_ip, uint64_t offset ) = 0;
+      void responseBlocks( std::string return_ip, uint64_t offset );
     };
   } // namespace network
 } // namespace iroha
