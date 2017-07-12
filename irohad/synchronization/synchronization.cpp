@@ -29,32 +29,23 @@ namespace iroha {
     // When commit block after consensus, invoke this function
     void Synchronizer::trigger(const Block &commited_block) {
       /* TODO
-      synced の場合 / in the case synced
-        自分の持つblock列の末尾にcommited blockを追加できた / You could add
-      commited block at the end of my block-chain.
-          なにもせず継続 / Continue without doing anything
+      if in the case synced
+        if You could add commited block at the end of my block-chain.
+          Continue without doing anything
         else
-          自身のpeerの状態をunsyncedに変更する。 / Change state of my peer to
-      unsynced
-          自身のpeerの状態をunsyncedにするtxを発行する。/ To issue transaction
-      that changes state of my peer to unsynced
-      unsynced の場合
-        自分の持つblock列の末尾にcommited blockを追加できた / You could add
-      commited block at the end of my block-chain.
-          自身のpeerの状態をsyncedに変更する。 / Change state of my peer to
-      synced
-          自身のpeerの状態をsyncedにするtxを発行する。 / To issue transaction
-      that changes state of my peer to synced
-          StreamingSyncSystemのexit()を呼ぶ。 / Call exit() of
-      StreamingSyncSystem
+          Change state of my peer to unsynced
+          To issue transaction that changes state of my peer to unsynced
+      if in the case unsynced
+        if You could add commited block at the end of my block-chain.
+          Change state of my peer to synced
+          To issue transaction that changes state of my peer to synced
+          Call exit() of StreamingSyncSystem
         else
-          streamingSyncSystemが動作している / StreamingSyncSystem is running
-            なにもせず継続 / Continue without doing anything
+          if StreamingSyncSystem is running
+            Continue without doing anything
           else
-            StreamingSyncSystemのstartSync()を呼ぶ。/ Call startSync() of
-      StreamingSyncSystem
-            この際、commited blockが持つsignsからsynced peerを特定する。 / At
-      this time, synced peer is specified fromsigns of commited block.
+            Call startSync() of StreamingSyncSystem
+            At this time, synced peer is specified fromsigns of commited block.
        */
     }
 
