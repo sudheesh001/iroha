@@ -39,9 +39,9 @@ namespace iroha {
        * @param offset - your last actual block's height
        * @return observable with blocks
        */
-      rxcpp::observable <model::Block> fetchBlocks(
-          std::string target_ip, uint64_t offset);
+      rxcpp::observable<model::Block> fetchBlocks(std::string target_ip,
+                                                  uint64_t offset);
     };
-  } // namespace network
-} // namespace iroha
-#endif //IROHA_BLOCK_LOADER_HPP
+  }  // namespace network
+}  // namespace iroha
+#endif  // IROHA_BLOCK_LOADER_HPP

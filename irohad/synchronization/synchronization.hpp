@@ -21,12 +21,12 @@ limitations under the License.
 #ifndef IROHA_SYNCHRONIZATION_SYNCHRONIZATION_H
 #define IROHA_SYNCHRONIZATION_SYNCHRONIZATION_H
 
-#include <string>
-#include <queue>
-#include <vector>
 #include <functional>
 #include <network/sync_client.hpp>
 #include <network/sync_gate.hpp>
+#include <queue>
+#include <string>
+#include <vector>
 
 #include <model/model.hpp>
 
@@ -35,22 +35,20 @@ namespace iroha {
 
     using Block = iroha::model::Block;
 
-
-    class BlockCompare : public std::binary_function<Block,Block,bool> {
-    public:
-      bool operator()(const Block &a, const Block &b) {
+    class BlockCompare : public std::binary_function<Block, Block, bool> {
+     public:
+      bool operator()(const Block& a, const Block& b) {
         return a.height < b.height;
       }
     };
 
-    //TODO
+    // TODO
     class Synchronizer {
-    public:
-
+     public:
       // When commit block after consensus, invoke this function
       void trigger(const Block& commited_block);
 
-    private:
+     private:
       // trigger call this.
       void startSync(const Block& commited_block);
 
@@ -66,7 +64,7 @@ namespace iroha {
       iroha::network::SyncClient client_;
       iroha::network::SyncGate gate_;
 
-      std::priority_queue<Block,std::vector<Block>, BlockCompare> temp_block_;
+      std::priority_queue<Block, std::vector<Block>, BlockCompare> temp_block_;
 
       uint64_t current_;
       uint64_t upd_time_;

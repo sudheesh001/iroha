@@ -59,7 +59,7 @@ namespace iroha {
       */
     }
 
-    void Synchronizer::fetchBlock(std::string ip,uint64_t offset) {
+    void Synchronizer::fetchBlock(std::string ip, uint64_t offset) {
       // Invoke SyncClient
       /*
       client_.fetchBlocks(ip,offset)subscribe(
@@ -71,7 +71,7 @@ namespace iroha {
     void Synchronizer::syncObserve(uint64_t offset) {
       clearCache();
       current_ = offset;
-      while (true/*iroha::demon::self::getStatus()==UnSynced*/) {
+      while (true /*iroha::demon::self::getStatus()==UnSynced*/) {
         if (temp_block_.empty()) {
           if (iroha::time::now64() - upd_time_ > 2) break;
           continue;

@@ -11,14 +11,14 @@ namespace iroha {
      * Interface for downloading blocks from a network
      */
     class SyncGate {
-    public:
+     public:
       /**
        * This method is return response Blocks;
        * @param return_ip - peer's ip to return for responseblocks
        * @param offset - your return blocks after offset-th.
        */
-      void responseBlocks( std::string return_ip, uint64_t offset );
+      void responseBlocks(std::string return_ip, uint64_t offset);
     };
-  } // namespace network
-} // namespace iroha
-#endif //IROHA_SYNCGATE_HPP
+  }  // namespace network
+}  // namespace iroha
+#endif  // IROHA_SYNCGATE_HPP
