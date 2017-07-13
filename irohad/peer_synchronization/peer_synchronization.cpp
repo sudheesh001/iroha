@@ -19,12 +19,12 @@ limitations under the License.
 //
 
 #include <datetime/time.hpp>
-#include <synchronization/synchronization.hpp>
+#include <peer_synchronization/peer_synchronization.hpp>
 
 //#include <ametsuchi/ametsuchi.hpp>
 
 namespace iroha {
-  namespace synchronization {
+  namespace peer_synchronization {
 
     // When commit block after consensus, invoke this function
     void Synchronizer::on_commit(const Block &commited_block) {
@@ -61,8 +61,9 @@ namespace iroha {
 
     void Synchronizer::fetchBlock(std::string ip, uint64_t offset) {
       // Invoke SyncClient
+      network::PeerBlockDownloader downloeader_;
       /*
-      client_.fetchBlocks(ip,offset)subscribe(
+      loader_.fetchBlocks(ip,offset)subscribe(
         [&](Block &block) { this->temp_block_.emplace(std::move(block)); };
       );
        */

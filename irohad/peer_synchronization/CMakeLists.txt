@@ -1,5 +1,5 @@
 add_library(synchronization
-    synchronization.cpp
+        peer_synchronization.cpp
 )
 
 target_link_libraries(synchronization PUBLIC

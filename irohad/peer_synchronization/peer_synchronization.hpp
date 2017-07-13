@@ -26,15 +26,12 @@ limitations under the License.
 #include <string>
 #include <vector>
 
-#include <model/model.hpp>
-
-#include <network/sync_client.hpp>
-#include <network/sync_gate.hpp>
+#include <network/peer_block_downloader.hpp>
 
 #include <common/comparator.hpp>
 
 namespace iroha {
-  namespace synchronization {
+  namespace peer_synchronization {
 
     using Block = iroha::protocol::Block;
 
@@ -56,9 +53,6 @@ namespace iroha {
       void finishSync();
 
       void clearCache();
-
-      iroha::network::SyncClient client_;
-      iroha::network::SyncGate gate_;
 
       std::priority_queue<Block, std::vector<Block>, comparator::BlockComparator> temp_block_;
 
