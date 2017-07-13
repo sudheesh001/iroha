@@ -27,7 +27,7 @@ namespace iroha {
   namespace synchronization {
 
     // When commit block after consensus, invoke this function
-    void Synchronizer::trigger(const Block &commited_block) {
+    void Synchronizer::on_commit(const Block &commited_block) {
       /* TODO
       if in the case synced
         if You could add commited block at the end of my block-chain.
@@ -79,13 +79,13 @@ namespace iroha {
         auto &ap_tx = temp_block_.top();
         // ametsuchi::append(ap_tx);
         // ametsuchi::commit();
-        current_++;
+        ++current_;
         upd_time_ = iroha::time::now64();
       }
       clearCache();
     }
 
-    void Synchronizer::exit() {
+    void Synchronizer::finishSync() {
       // kill thread syncObserve
       // kill thread fetchBlock
     }

@@ -22,31 +22,27 @@ limitations under the License.
 #define IROHA_SYNCHRONIZATION_SYNCHRONIZATION_H
 
 #include <functional>
-#include <network/sync_client.hpp>
-#include <network/sync_gate.hpp>
 #include <queue>
 #include <string>
 #include <vector>
 
 #include <model/model.hpp>
 
+#include <network/sync_client.hpp>
+#include <network/sync_gate.hpp>
+
+#include <common/comparator.hpp>
+
 namespace iroha {
   namespace synchronization {
 
-    using Block = iroha::model::Block;
-
-    class BlockCompare : public std::binary_function<Block, Block, bool> {
-     public:
-      bool operator()(const Block& a, const Block& b) {
-        return a.height < b.height;
-      }
-    };
+    using Block = iroha::protocol::Block;
 
     // TODO
     class Synchronizer {
      public:
       // When commit block after consensus, invoke this function
-      void trigger(const Block& commited_block);
+      void on_commit(const Block& commited_block);
 
      private:
       // trigger call this.
@@ -57,14 +53,14 @@ namespace iroha {
       void syncObserve(uint64_t offset);
 
       // trigger call this.
-      void exit();
+      void finishSync();
 
       void clearCache();
 
       iroha::network::SyncClient client_;
       iroha::network::SyncGate gate_;
 
-      std::priority_queue<Block, std::vector<Block>, BlockCompare> temp_block_;
+      std::priority_queue<Block, std::vector<Block>, comparator::BlockComparator> temp_block_;
 
       uint64_t current_;
       uint64_t upd_time_;
