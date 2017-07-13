@@ -91,7 +91,9 @@ namespace iroha {
     }
 
     void Synchronizer::clearCache() {
-      while (temp_block_.empty()) temp_block_.pop();
+      while (temp_block_.empty()) {
+        temp_block_.pop();
+      }
       upd_time_ = iroha::time::now64();
       current_ = 0;
     }
