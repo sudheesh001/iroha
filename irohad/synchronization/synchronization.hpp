@@ -38,6 +38,10 @@ namespace iroha {
     class BlockCompare : public std::binary_function<Block, Block, bool> {
      public:
       bool operator()(const Block& a, const Block& b) {
+        // NOTE: This comparison assumes we use Byzantine fault tolerance obtained through a
+        // supermajority of validating peers finalizing the block. For Nakamoto Consensus, the
+        // concept of a block score (probably based on time and difficulty or some similar metric)
+        // is needed.
         return a.height < b.height;
       }
     };
