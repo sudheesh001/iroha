@@ -21,12 +21,17 @@ Irohad::Irohad():
 {}
 
 void Irohad::run(){
-//  iroha::Irohad irohad;
-//  iroha::ametsuchi::StorageImpl ametsuchi;
+  auto log = logger::Logger("Irohad");
+  log.info("running");
 
+  log.info("create server's keypair");
   // TODO replace with actual public private keys
   auto seed = iroha::create_seed("some passphrase");
   auto keypair = iroha::create_keypair(seed);
+  log.info("publicKey: {}****, privateKey: {}****",
+     keypair.pubkey.to_base64().substr(0,10),
+     keypair.privkey.to_base64().substr(0,10)
+  );
   iroha::model::ModelCryptoProviderImpl crypto_provider(keypair.privkey, keypair.pubkey);
 
   iroha::validation::StatelessValidatorImpl stateless_validator(crypto_provider);
@@ -36,13 +41,10 @@ void Irohad::run(){
   iroha::consensus::ConsensusServiceStub consensus_service;
   iroha::network::PeerCommunicationServiceStub peer_communication_service(
     ordering_service,
-    consensus_service);
+    consensus_service
+  );
   iroha::torii::TransactionProcessorStub tp(
     stateless_validator,
     crypto_provider
   );
-//  iroha::torii::QueryProcessorStub qp(ametsuchi, ametsuchi);
-
-//  iroha::torii::ToriiStub torii(tp, qp);
-
 }

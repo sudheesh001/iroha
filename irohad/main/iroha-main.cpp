@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
   log.warning("print waring level log!");
   log.error("  print error level log!");
 
+  log.info(R"()");
   log.info(R"( dP  888888ba   .88888.  dP     dP   .d888888 )");
   log.info(R"( 88  88    `8b d8'   `8b 88     88  d8'    88 )");
   log.info(R"( 88 a88aaaa8P' 88     88 88aaaaa88a 88aaaaa88a)");
