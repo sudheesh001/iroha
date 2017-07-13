@@ -1,6 +1,12 @@
-ADD_LIBRARY(stateless_validator STATIC validator.cpp)
+add_library(stateless_validator
+    validator_impl.cpp
+    )
 
 target_link_libraries(stateless_validator
     schema
     logger
-)
+    optional
+    ed25519
+    rxcpp
+    model
+    )

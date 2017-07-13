@@ -14,35 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef CONNECTION_SERVER_RUNNER_HPP
-#define CONNECTION_SERVER_RUNNER_HPP
-
-
 #include <grpc++/server.h>
 #include <grpc++/server_builder.h>
 #include <grpc++/server_context.h>
-#include <memory>
+#include <logger/logger.hpp>
 
 #include "server_runner.hpp"
 
-namespace connection {
+logger::Logger console("ServerRunner");
 
-    auto log = logger::Logger("ServerRunner");
+ServerRunner::ServerRunner(const std::string &ip, int port,
+                           const std::vector<grpc::Service *> &srvs)
+    : serverAddress_(ip + ":" + std::to_string(port)), services_(srvs) {}
 
-    ServerRunner::ServerRunner(const std::vector<grpc::Service*>& services,
-        const std::string& address,int port = 50051) {
-        log.info("\n +-------------------+ \n |  grpc  endpoin    | \n +-------------------+ ");
-        grpc::ServerBuilder builder;
+void ServerRunner::run() {
+  grpc::ServerBuilder builder;
 
-        builder.AddListeningPort(address +":"+ std::to_string(port), grpc::InsecureServerCredentials());
-        for (auto s: services) {
-            builder.RegisterService(s);
-        }
-        std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-        log.info("Start server [{}:{}]", address, port);
-        server->Wait();
-    }
+  // TODO(motxx): Is it ok to open same port for all services?
+  builder.AddListeningPort(serverAddress_, grpc::InsecureServerCredentials());
+  for (auto srv : services_) {
+    builder.RegisterService(srv);
+  }
 
-}  // namespace connection
+  waitForServer_.lock();
+  serverInstance_ = builder.BuildAndStart();
+  waitForServer_.unlock();
+  serverInstanceCV_.notify_one();
 
-#endif
+  console.info("Server listening on {}", serverAddress_);
+
+  serverInstance_->Wait();
+}
+
+void ServerRunner::shutdown() { serverInstance_->Shutdown(); }
+
+bool ServerRunner::waitForServersReady() {
+  std::unique_lock<std::mutex> lock(waitForServer_);
+  while (!serverInstance_) serverInstanceCV_.wait(lock);
+}

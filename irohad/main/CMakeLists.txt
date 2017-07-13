@@ -12,18 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_library(connection server_runner.cpp)
-target_link_libraries(connection
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
+add_library(server_runner server_runner.cpp)
+target_link_libraries(server_runner
+    logger
     endpoint
     schema
-    ordering
+    )
+
+add_library(irohad application.cpp)
+target_link_libraries(irohad
+    server_runner
+    model
+    ametsuchi
+    networking
+    ordering_service
+    consensus_service
+    chain_validator
+    stateful_validator
+    hash
+    stateless_validator
+    client_processor
+    torii
+    crypto
     logger
-)
+    )
 
 add_executable(iroha-main iroha-main.cpp)
 target_link_libraries(iroha-main
-    command_service
-    connection
-    logger
-    pthread
-)
+    irohad
+    )

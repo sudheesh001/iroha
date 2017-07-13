@@ -19,28 +19,23 @@ limitations under the License.
 #include <timer/timer.hpp>
 #include "queue.hpp"
 
-#include <api/command_service.hpp>
+#include <torii/command_service.hpp>
 #include <ordering/connection/client.hpp>
 #include <ordering/connection/service.hpp>
 #include <logger/logger.hpp>
 
 namespace ordering {
-
   namespace observer {
 
     using Transaction = iroha::protocol::Transaction;
     auto log = logger::Logger("ordering");
 
     void initialize() {
-      log.info("\n +-------------------+ \n | ordering service  | \n +-------------------+ ");
-      log.info("= Initialize ordering service's observer");
-
-      ::connection::api::receive([](const Transaction &tx) {
-        log.debug("Send tx to active peer");
+      /*
+      api::receive([](const Transaction &tx) {
         // Verified State-less validate Tx
         // TODO : [WIP] temp implement Send to Leader-group
-        for (const std::string& ip : ::peer_service::monitor::getActiveIpList()) {
-          log.debug("  Send tx to peer {}", ip);
+        for (std::string ip : ::peer_service::monitor::getActiveIpList()) {
           ordering::connection::send(ip, tx);
         }
       });
@@ -49,6 +44,7 @@ namespace ordering {
         // Verified State-less validate Tx
         queue::append(tx);
       });
+       */
     }
 
     // This is invoked in thread.
@@ -76,5 +72,5 @@ namespace ordering {
         });
       }
     }
-  }
-};
+  }  // namespace observer
+}  // namespace ordering

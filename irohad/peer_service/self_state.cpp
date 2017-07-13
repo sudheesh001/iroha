@@ -22,8 +22,9 @@ limitations under the License.
 #include <unistd.h>
 
 #include <crypto/crypto.hpp>
-
+#include <logger/logger.hpp>
 #include <iostream>
+#include <cstring>
 
 namespace peer_service {
   namespace self_state {
@@ -42,9 +43,10 @@ namespace peer_service {
     void initializeMyKey() {
       log.info(R"(= initialize my ip)");
       if (public_key_.empty() || private_key_.empty()) {
-        iroha::Keypair keypair = iroha::Keypair::generate_keypair();
-        public_key_ = keypair.pub_base64();
-        private_key_ = *keypair.priv_base64();
+        auto seed = iroha::create_seed();
+        auto keypair = iroha::create_keypair(seed);
+        public_key_ = keypair.pubkey.to_base64();
+        private_key_ = keypair.privkey.to_base64();
       }
       log.info(R"(= my publicKey is {})", public_key_);
       log.info(R"(= my privateKey is {}***...)", private_key_.substr(0, 5));

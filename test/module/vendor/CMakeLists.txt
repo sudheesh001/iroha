@@ -32,7 +32,12 @@ target_link_libraries(uvw_test
     uvw
     )
 
-AddTest(observable_test observable_test.cpp)
-target_link_libraries(observable_test
-    observable
+AddTest(rxcpp_test rxcpp_test.cpp)
+target_link_libraries(rxcpp_test
+    rxcpp
+    )
+
+AddTest(rxcpp_subject_usage rxcpp_subject_usage.cpp)
+target_link_libraries(rxcpp_subject_usage
+    rxcpp
     )

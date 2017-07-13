@@ -16,13 +16,30 @@ limitations under the License.
 #ifndef IROHA_VALIDATION_STATEFUL_VALIDATOR_HPP
 #define IROHA_VALIDATION_STATEFUL_VALIDATOR_HPP
 
-#include <block.pb.h>
+#include <model/model.hpp>
+#include <ametsuchi/temporary_wsv.hpp>
 
-namespace validator {
-    namespace stateful {
-        using Block = iroha::protocol::Block;
-        bool validate(const Block &);
+namespace iroha {
+  namespace validation {
+
+    /**
+     * Interface for performing stateful validation
+     */
+    class StatefulValidator {
+     public:
+
+      /**
+       * Function perform stateful validation on proposal
+       * and return proposal with valid transactions
+       * @param proposal - proposal for validation
+       * @param wsv  - temporary wsv for validation,
+       * this wsv not affected on ledger,
+       * all changes after removing wsv will be ignored
+       * @return proposal with valid transactions
+       */
+      virtual model::Proposal validate(const model::Proposal &proposal,
+                                     ametsuchi::TemporaryWsv &wsv) = 0;
     };
-};
-
-#endif //IROHA_VALIDATION_STATELESS_VALIDATOR_HPP
+  } // namespace validation
+} // namespace iroha
+#endif  // IROHA_VALIDATION_STATELESS_VALIDATOR_HPP
