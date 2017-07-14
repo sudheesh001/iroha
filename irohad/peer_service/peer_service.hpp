@@ -44,7 +44,7 @@ namespace peer_service {
    * @param i index
    * @return A i-th peer that therefore permutation.
    */
-  Peer getPermutationAt(int i);
+  std::shared_ptr<Peer> getPermutationAt(int i);
 
   /**
    * @return List of peers that is used by ordering service.
@@ -106,13 +106,22 @@ namespace peer_service {
   void execute(const Command::Peer::Stop&);
   void execute(const Command::Peer::ChangeRole&);
 
+
+  /**
+   * return 1/3 of active(synced) peers
+   * @return max faulty
+   */
+  size_t getMaxFaulty();
+
   namespace detail {
     void issueStop(const std::string& ip, const Peer& stop_peer);
     void issueActivate(const std::string& ip, const Peer& activate_peer);
 
     SelfStatus self_;
-    std::vector<int> permutation_;
-    std::vector<int> active_ordering_permutation_;
+    std::vector<uint8_t> permutation_;
+    std::vector<uint8_t> ordering_peers_;
+    std::vector<uint8_t> active_ordering_peers_;
+
 
     std::vector<std::shared_ptr<Peer>> peers_;
   }

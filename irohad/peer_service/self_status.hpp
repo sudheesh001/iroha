@@ -33,6 +33,8 @@ namespace peer_service {
     Peer::PeerStatus getStatus() const;
     Peer::PeerRole getRole() const;
 
+    Peer peer() const;
+
     /**
      * When commit successes and state of self peer is UnSynced, It is called.
      * It throw to issue Peer::Activate(self) transaction.

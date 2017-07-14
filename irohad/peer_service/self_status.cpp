@@ -76,4 +76,8 @@ namespace peer_service {
   }
 
   void SelfStatus::stop() { self_->status = Peer::PeerStatus::Synced; }
+
+  Peer SelfStatus::peer() const{
+    return *self_;
+  }
 }

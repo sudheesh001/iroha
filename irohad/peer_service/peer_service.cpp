@@ -14,14 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include <numeric>
+#include <random>
+#include <unordered_set>
+#include <exception>
+
 #include <peer_service/peer_service.hpp>
 
-// TODO
 namespace peer_service {
 
   void initialize() {
     detail::self_ = SelfStatus();
-
+    // TODO
     // detail::peers_ = ametsuchi::getPeers()
   }
 
@@ -29,22 +33,40 @@ namespace peer_service {
    * @return List of peers that therefore permutation.
    */
   std::vector<std::shared_ptr<Peer>> getPermutationPeers() {
-    return std::vector<std::shared_ptr<Peer>>();
+    std::vector<std::shared_ptr<Peer>> v;
+    try {
+      for (auto id : detail::permutation_)
+        v.emplace_back(detail::peers_.at(id));
+      return v;
+    } catch( std::range_error() ) {
+      return v;
+    }
   }
 
   /**
    * @param i index
    * @return A i-th peer that therefore permutation.
    */
-  Peer getPermutationAt(int i) {
-    return Peer();
+  std::shared_ptr<Peer> getPermutationAt(int i) {
+    try {
+      return detail::peers_.at(detail::permutation_[i]);
+    } catch( std::range_error() ){
+      return nullptr;
+    }
   }
 
   /**
    * @return List of peers that is used by ordering service.
    */
   std::vector<std::shared_ptr<Peer>> getOrderingPeers() {
-    return std::vector<std::shared_ptr<Peer>>();
+    std::vector<std::shared_ptr<Peer>> v;
+    try {
+      for (auto id : detail::ordering_peers_)
+        v.emplace_back(detail::peers_.at(id));
+      return v;
+    } catch( std::range_error() ) {
+      return v;
+    }
   }
 
   /**
@@ -52,7 +74,14 @@ namespace peer_service {
    * be send sumeragi.
    */
   std::vector<std::shared_ptr<Peer>> getActiveOrderingPeers() {
-    return std::vector<std::shared_ptr<Peer>>();
+    std::vector<std::shared_ptr<Peer>> v;
+    try {
+      for (auto id : detail::active_ordering_peers_)
+        v.emplace_back(detail::peers_.at(id));
+      return v;
+    } catch( std::range_error() ) {
+      return v;
+    }
   }
 
   /**
@@ -66,26 +95,69 @@ namespace peer_service {
    * issue Peer::Remove transaction.
    * @param commited_block commited block with signs
    */
-  void RemoveDeadPeers(const iroha::model::Block& commited_block) {}
+  void RemoveDeadPeers(const iroha::model::Block& commited_block) {
+    // TODO
+  }
 
   /**
    * When on_commit, it is called.
    * It change peer oreder.
    */
-  void changePermutation() {}
+  void changePermutation() {
+
+    // memo previous used ordering_peers_
+    std::unordered_set<uint8_t> prev;
+    for( auto id : detail::ordering_peers_ )
+      prev.insert(id);
+    if( prev.empty() )
+      for(uint8_t i=0;i<detail::peers_.size();i++) prev.insert(i);
+
+    // make permutation from root hash
+    detail::permutation_.clear();
+    for( uint8_t i=0; i < detail::peers_.size(); ++i )
+      if( detail::peers_.at(i)->status == Peer::Synced )
+        detail::permutation_.emplace_back(i);
+
+    uint64_t rootHash = 0;/* ametsuchi::merkleRoot */
+    std::shuffle( detail::peers_.begin(), detail::peers_.end(), std::mt19937(rootHash) );
+
+    // make ordering permutation
+    uint8_t num_of_order = getMaxFaulty()*2;
+    detail::ordering_peers_.clear();
+    detail::active_ordering_peers_.clear();
+    for(int i=0;i<num_of_order;i++) {
+      detail::ordering_peers_.emplace_back(detail::permutation_[i]);
+      if (prev.count(detail::permutation_[i]))
+        detail::active_ordering_peers_.emplace_back(detail::permutation_[i]);
+    }
+  }
 
   /**
    * When commit fails, it is called.
    * It throw to issue Peer::Stop(Self) transaction.
    */
-  void selfStop() {}
+  void selfStop() {
+    detail::self_.stop();
+    detail::issueStop( self().getIp(), self().peer() );
+  }
 
   /**
    * When commit successes and state of self peer is UnSynced, It is called.
    * It throw to issue Peer::Activate(self) transaction.
    */
-  void selfActivate() {}
+  void selfActivate() {
+    detail::self_.activate();
+    detail::issueActivate( self().getIp(), self().peer() );
+  }
 
+
+
+  size_t getMaxFaulty() {
+    return std::count_if( detail::peers_.begin(), detail::peers_.end(), [](auto &p){ return p->status == Peer::Synced; })/3;
+  }
+
+
+  // TODO
   /**
    * validate command
    */
@@ -105,7 +177,11 @@ namespace peer_service {
   void execute(const Command::Peer::ChangeRole& cmd) {}
 
   namespace detail {
-    void issueStop(const std::string& ip, const Peer& stop_peer) {}
-    void issueActivate(const std::string& ip, const Peer& activate_peer) {}
+    void issueStop(const std::string& ip, const Peer& stop_peer) {
+      // TODO
+    }
+    void issueActivate(const std::string& ip, const Peer& activate_peer) {
+      // TODO
+    }
   }  // namespace detail
 }  // namespace peer_servince
