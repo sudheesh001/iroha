@@ -12,26 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(connection)
-add_library(sumeragi STATIC
-  sumeragi.cpp
-  )
-target_link_libraries(sumeragi
-  schema
-  endpoint
-  crypto
-  sumeragi_connection
-  thread_pool
-  timer
-  optional
-  logger
-  rxcpp
-  )
+#add_subdirectory(connection)
+#add_library(sumeragi STATIC
+#  sumeragi.cpp
+#  )
+#target_link_libraries(sumeragi
+#  schema
+#  endpoint
+#  crypto
+#  sumeragi_connection
+#  thread_pool
+#  timer
+#  optional
+#  logger
+#  rxcpp
+#  )
+#
+#add_library(consensus_service
+#    consensus_service_stub.cpp
+#    )
+#target_link_libraries(consensus_service
+#    rxcpp
+#    optional
+#    )
 
-add_library(consensus_service
-    consensus_service_stub.cpp
-    )
-target_link_libraries(consensus_service
-    rxcpp
-    optional
-    )
+add_subdirectory(model)
+
+add_library(consensus
+        chain.cpp
+        chain.hpp
+        )
+target_link_libraries(consensus
+        grpc++
+        uvw
+        consensus_model
+        )

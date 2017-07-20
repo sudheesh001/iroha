@@ -1,0 +1,23 @@
+add_library(consensus_model
+        abort.cpp
+        abort.hpp
+        commit.cpp
+        commit.hpp
+        peer.cpp
+        peer.hpp
+        proposal.hpp
+        proposal.cpp
+        view.cpp
+        view.hpp
+        vote.cpp
+        vote.hpp
+        signature.cpp
+        signature.hpp
+        ledger_state.cpp
+        ledger_state.hpp
+
+        message.hpp
+        )
+target_link_libraries(consensus_model
+        consensus_grpc
+        )

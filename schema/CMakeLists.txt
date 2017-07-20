@@ -7,6 +7,7 @@ compile_proto_to_cpp(primitive.proto)
 compile_proto_to_cpp(commands.proto)
 compile_proto_to_grpc_cpp(endpoint.proto)
 compile_proto_to_grpc_cpp(peer_service.proto)
+compile_proto_to_grpc_cpp(consensus.proto)
 
 add_dependencies(commandsproto_h primitiveproto_h)
 add_dependencies(blockproto_h commandsproto_h)
@@ -43,3 +44,15 @@ target_link_libraries(peer_service_grpc
         grpc++
         )
 
+
+
+add_library(consensus_grpc
+        consensus.pb.h
+        consensus.pb.cc
+        consensus.grpc.pb.h
+        consensus.grpc.pb.cc
+        )
+target_link_libraries(consensus_grpc
+        grpc++
+        protobuf
+        )

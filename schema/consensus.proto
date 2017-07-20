@@ -1,0 +1,97 @@
+syntax = "proto3";
+package proto.consensus;
+
+
+// we don't have multisig accounts for peers, only one. So,
+// timestamp can be safely stored inside Signature
+message Signature {
+    bytes pubkey    = 1;
+    bytes signature = 2;
+    uint64 timestamp = 3;
+}
+
+message LedgerState {
+    // global merkle root
+    bytes gmroot = 1;
+    // current ledger height = last block id = round number
+    uint64 height = 2;
+}
+
+
+///////////////////////////////////////////
+/// ALGORITHM
+
+// phase 1
+// send proposal and leader's vote to 2f+1 validating peers
+message Proposal {
+    // array of transactions
+    repeated bytes transactions = 1;
+    Vote vote = 2;
+}
+
+// phase 2
+// all validating peers receive proposal and sent their vote to 2f+1th peer, which
+// is called proxy tail
+message Vote {
+    // "I am voting for this state!"
+    LedgerState next_state = 1;
+
+    // sign(sha3_256(next_state + timestamp))
+    Signature sig = 2;
+}
+
+// phase 3
+message Commit {
+    // committed array of transactions
+    repeated bytes transactions = 1;
+
+    // committed state
+    LedgerState commit_state = 2;
+
+    // sign(sha3_256(commit_state + timestamp))
+    repeated Signature sigs = 3;
+}
+
+
+
+message Abort {
+    enum Type {
+        UNDEFINED = 0;
+        SYSTEM_FAIL = 1; // when number of failed nodes > f
+        COMMIT_NOT_ENOUGH_SIGNATURES = 2; // when proxy tail can not collect 2f+1 votes for the same state
+    }
+
+    Type type = 1;
+}
+
+
+// messages for view change:
+message Peer {
+    string    ip = 1;
+    int32   port = 2;
+    bytes pubkey = 3;
+}
+
+// leader creates this message when wants to change view
+message View {
+    repeated Peer view = 1;
+    uint64     view_id = 2;
+    Signature      sig = 3; // sign(sha3_256(view_id + timestamp))
+}
+
+message Void{}
+
+///////////////////////////////////////////
+
+service Sumeragi {
+    rpc SendProposal(Proposal) returns (Void) {}
+    rpc SendVote(Vote) returns (Void) {}
+    rpc SendCommit(Commit) returns (Void) {}
+    rpc SendAbort(Abort) returns (Void) {}
+
+    /// view = the order of peers
+    // any peer can request current view of other peer
+    rpc GetView(Void) returns (View) {}
+    // leader can set view for the cluster
+    rpc SetView(View) returns (Void) {}
+}
