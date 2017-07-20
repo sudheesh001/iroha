@@ -26,7 +26,7 @@ namespace consensus {
    public:
     Abort(const proto::consensus::Abort *ptr);
 
-    bool is_schema_valid() const noexcept {}
+    bool is_schema_valid() const noexcept;
   };
 }
 #endif  // IROHA_ABORT_HPP

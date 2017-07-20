@@ -18,9 +18,7 @@
 #include "proposal.hpp"
 
 bool consensus::Proposal::is_schema_valid() const {
-  bool valid = this->proto_->transactions_size() > 0;
-  valid &= this->vote.is_schema_valid();
-  return valid;
+  return this->proto_->transactions_size() > 0 && this->vote.is_schema_valid();
 }
 
 consensus::Proposal::Proposal(const proto::consensus::Proposal *ptr)

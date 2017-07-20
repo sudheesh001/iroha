@@ -18,10 +18,9 @@
 #include "signature.hpp"
 
 bool consensus::Signature::is_schema_valid() const {
-  bool valid = this->proto_->pubkey().size() == pubkey_t::size();
-  valid &= this->proto_->signature().size() == signature_t::size();
-  valid &= this->proto_->timestamp() != 0;
-  return valid;
+  return this->proto_->pubkey().size() == pubkey_t::size() &&
+         this->proto_->signature().size() == signature_t::size() &&
+         this->proto_->timestamp() > 0;
 }
 
 const pubkey_t consensus::Signature::pubkey() const {

@@ -23,10 +23,10 @@ consensus::View::View(const proto::consensus::View *ptr)
       sig{&this->proto_->sig()} {}
 
 bool consensus::View::is_schema_valid() const {
-  bool valid = this->proto_->view_size() > 0;
+  if (this->proto_->view_size() <= 0) return false;
   for (auto &&peer : view) {
-    valid &= peer.is_schema_valid();
+    if (!peer.is_schema_valid()) return false;
   }
 
-  return valid;
+  return true;
 }

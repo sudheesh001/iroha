@@ -18,9 +18,7 @@
 #include "vote.hpp"
 
 bool consensus::Vote::is_schema_valid() const {
-  bool valid = next_state.is_schema_valid();
-  valid &= sig.is_schema_valid();
-  return valid;
+  return next_state.is_schema_valid() && sig.is_schema_valid();
 }
 
 consensus::Vote::Vote(const proto::consensus::Vote *ptr)

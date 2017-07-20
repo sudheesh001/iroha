@@ -18,13 +18,16 @@
 #include "commit.hpp"
 
 bool consensus::Commit::is_schema_valid() const {
-  bool valid = this->proto_->transactions_size() > 0;
-  valid &= this->proto_->sigs_size() > 0;
+  if (this->proto_->transactions_size() <= 0) return false;
+  if (this->proto_->sigs_size() <= 0) return false;
+
   for (auto&& sig : sigs) {
-    valid &= sig.is_schema_valid();
+    if (!sig.is_schema_valid()) {
+      return false;
+    }
   }
 
-  return valid;
+  return true;
 }
 
 consensus::Commit::Commit(const proto::consensus::Commit* ptr)

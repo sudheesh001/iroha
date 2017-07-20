@@ -18,8 +18,7 @@
 #include "ledger_state.hpp"
 
 bool consensus::LedgerState::is_schema_valid() const {
-  bool valid = this->proto_->gmroot().size() == hash256_t::size();
-  return valid;
+  return this->proto_->gmroot().size() == hash256_t::size();
 }
 
 const uint64_t consensus::LedgerState::height() const {

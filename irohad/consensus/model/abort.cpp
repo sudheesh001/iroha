@@ -18,3 +18,8 @@
 #include "abort.hpp"
 
 consensus::Abort::Abort(const proto::consensus::Abort *ptr) : Message(ptr) {}
+
+bool consensus::Abort::is_schema_valid() const {
+  // there is nothing to validate
+  return true;
+}
