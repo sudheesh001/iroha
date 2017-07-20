@@ -23,13 +23,16 @@
 #include "vote.hpp"
 
 namespace consensus {
-  class Proposal final : public Message<const proto::consensus::Proposal> {
-   public:
-    Proposal(const proto::consensus::Proposal *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class Proposal final : public Message<const proto::Proposal> {
+     public:
+      Proposal(const proto::Proposal *ptr);
 
-    const Vote vote;
-  };
+      bool is_schema_valid() const noexcept override;
+
+      const Vote vote;
+    };
+  }
 }
 #endif  // IROHA_PROPOSAL_HPP

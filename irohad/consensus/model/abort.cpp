@@ -17,9 +17,13 @@
 
 #include "abort.hpp"
 
-consensus::Abort::Abort(const proto::consensus::Abort *ptr) : Message(ptr) {}
+namespace consensus {
+  namespace model {
+    Abort::Abort(const proto::Abort *ptr) : Message(ptr) {}
 
-bool consensus::Abort::is_schema_valid() const {
-  // there is nothing to validate
-  return true;
+    bool Abort::is_schema_valid() const {
+      // there is nothing to validate
+      return true;
+    }
+  }
 }

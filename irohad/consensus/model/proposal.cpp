@@ -17,9 +17,14 @@
 
 #include "proposal.hpp"
 
-bool consensus::Proposal::is_schema_valid() const {
-  return this->proto_->transactions_size() > 0 && this->vote.is_schema_valid();
-}
+namespace consensus {
+  namespace model {
+    bool Proposal::is_schema_valid() const {
+      return this->proto_->transactions_size() > 0 &&
+             this->vote.is_schema_valid();
+    }
 
-consensus::Proposal::Proposal(const proto::consensus::Proposal *ptr)
-    : Message(ptr), vote{&this->proto_->vote()} {}
+    Proposal::Proposal(const proto::Proposal *ptr)
+        : Message(ptr), vote{&this->proto_->vote()} {}
+  }
+}

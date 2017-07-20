@@ -22,29 +22,32 @@
 #include "message.hpp"
 
 namespace consensus {
-  class Signature final : public Message<const proto::consensus::Signature> {
-   public:
-    Signature(const proto::consensus::Signature *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class Signature final : public Message<const proto::Signature> {
+     public:
+      Signature(const proto::Signature *ptr);
 
-    /**
-     * Returns parsed public key.
-     * @return
-     */
-    const pubkey_t pubkey() const;
+      bool is_schema_valid() const noexcept override;
 
-    /**
-     * Returns parsed signature.
-     * @return
-     */
-    const signature_t signature() const;
+      /**
+       * Returns parsed public key.
+       * @return
+       */
+      const pubkey_t pubkey() const;
 
-    /**
-     * Returns
-     * @return
-     */
-    const ts64_t timestamp() const noexcept;
-  };
+      /**
+       * Returns parsed signature.
+       * @return
+       */
+      const signature_t signature() const;
+
+      /**
+       * Returns
+       * @return
+       */
+      const ts64_t timestamp() const noexcept;
+    };
+  }
 }
 #endif  // IROHA_SIGNATURE_HPP

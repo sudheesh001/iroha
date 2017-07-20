@@ -22,11 +22,14 @@
 #include "message.hpp"
 
 namespace consensus {
-  class Abort final : public Message<const proto::consensus::Abort> {
-   public:
-    Abort(const proto::consensus::Abort *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
-  };
+    class Abort final : public Message<const proto::Abort> {
+     public:
+      Abort(const proto::Abort *ptr);
+
+      bool is_schema_valid() const noexcept override;
+    };
+  }
 }
 #endif  // IROHA_ABORT_HPP

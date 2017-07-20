@@ -18,9 +18,37 @@
 #ifndef IROHA_CONSENSUS_HPP
 #define IROHA_CONSENSUS_HPP
 
-namespace consensus {
-  class Consensus {
+#include <consensus.grpc.pb.h>
 
+namespace consensus {
+  class Consensus : public proto::Sumeragi::Service {
+   public:
+    /** **/
+
+    /** GRPC SERVICE IMPLEMENTATION **/
+   public:
+    virtual grpc::Status SendProposal(grpc::ServerContext* context,
+                                      const proto::Proposal* request,
+                                      proto::Void* response) override;
+
+    virtual grpc::Status SendVote(grpc::ServerContext* context,
+                                  const proto::Vote* request,
+                                  proto::Void* response) override;
+    virtual grpc::Status SendCommit(grpc::ServerContext* context,
+                                    const proto::Commit* request,
+                                    proto::Void* response) override;
+    virtual grpc::Status SendAbort(grpc::ServerContext* context,
+                                   const proto::Abort* request,
+                                   proto::Void* response) override;
+    // / view = the order of peers
+    // any peer can request current view of other peer
+    virtual grpc::Status GetView(::grpc::ServerContext* context,
+                                 const proto::Void* request,
+                                 proto::View* response) override;
+    // leader can set view for the cluster
+    virtual grpc::Status SetView(::grpc::ServerContext* context,
+                                 const proto::View* request,
+                                 proto::Void* response) override;
   };
 }
 

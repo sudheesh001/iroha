@@ -1,5 +1,5 @@
 syntax = "proto3";
-package proto.consensus;
+package consensus.proto;
 
 
 // we don't have multisig accounts for peers, only one. So,

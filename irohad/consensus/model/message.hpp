@@ -18,8 +18,8 @@
 #ifndef IROHA_MESSAGE_HPP
 #define IROHA_MESSAGE_HPP
 
-#include <common/types.hpp>
 #include <common/byteutils.hpp>
+#include <common/types.hpp>
 
 using ts64_t = iroha::ts64_t;
 using blob_t = iroha::blob_t;
@@ -28,22 +28,25 @@ using signature_t = iroha::ed25519::sig_t;
 using hash256_t = iroha::hash256_t;
 
 namespace consensus {
-  template <typename T>
-  class Message {
-   public:
-    explicit Message(T* ptr) : proto_{ptr} {}
+  namespace model {
 
-    /**
-     * Returns true if input message is valid according to internal schema.
-     * @return
-     */
-    virtual bool is_schema_valid() const noexcept = 0;
+    template <typename T>
+    class Message {
+     public:
+      explicit Message(T *ptr) : proto_{ptr} {}
 
-    virtual ~Message(){}
+      /**
+       * Returns true if input message is valid according to internal schema.
+       * @return
+       */
+      virtual bool is_schema_valid() const noexcept = 0;
 
-   protected:
-    T* proto_;
-  };
+      virtual ~Message() {}
+
+     protected:
+      T *proto_;
+    };
+  }
 }
 
 #endif  // IROHA_MESSAGE_HPP

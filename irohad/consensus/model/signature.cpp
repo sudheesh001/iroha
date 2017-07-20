@@ -17,23 +17,27 @@
 
 #include "signature.hpp"
 
-bool consensus::Signature::is_schema_valid() const {
-  return this->proto_->pubkey().size() == pubkey_t::size() &&
-         this->proto_->signature().size() == signature_t::size() &&
-         this->proto_->timestamp() > 0;
-}
+namespace consensus {
+  namespace model {
 
-const pubkey_t consensus::Signature::pubkey() const {
-  return to_blob<pubkey_t::size()>(proto_->pubkey());
-}
+    bool Signature::is_schema_valid() const {
+      return this->proto_->pubkey().size() == pubkey_t::size() &&
+             this->proto_->signature().size() == signature_t::size() &&
+             this->proto_->timestamp() > 0;
+    }
 
-const signature_t consensus::Signature::signature() const {
-  return to_blob<signature_t::size()>(proto_->signature());
-}
+    const pubkey_t Signature::pubkey() const {
+      return to_blob<pubkey_t::size()>(proto_->pubkey());
+    }
 
-const ts64_t consensus::Signature::timestamp() const {
-  return this->proto_->timestamp();
-}
+    const signature_t Signature::signature() const {
+      return to_blob<signature_t::size()>(proto_->signature());
+    }
 
-consensus::Signature::Signature(const proto::consensus::Signature *ptr)
-    : Message(ptr) {}
+    const ts64_t Signature::timestamp() const {
+      return this->proto_->timestamp();
+    }
+
+    Signature::Signature(const proto::Signature *ptr) : Message(ptr) {}
+  }
+}

@@ -24,15 +24,18 @@
 #include "signature.hpp"
 
 namespace consensus {
-  class Commit final : public Message<const proto::consensus::Commit> {
-   public:
-    Commit(const proto::consensus::Commit* ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class Commit final : public Message<const proto::Commit> {
+     public:
+      Commit(const proto::Commit *ptr);
 
-    const LedgerState commit_state;
-    const std::vector<Signature> sigs;
-  };
+      bool is_schema_valid() const noexcept override;
+
+      const LedgerState commit_state;
+      const std::vector<Signature> sigs;
+    };
+  }
 }
 
 #endif  // IROHA_COMMIT_HPP

@@ -17,27 +17,30 @@
 
 #include "peer.hpp"
 
-consensus::Peer::Peer(const proto::consensus::Peer *ptr) : Message(ptr) {}
+namespace consensus {
+  namespace model {
 
-bool consensus::Peer::is_schema_valid() const {
-  // len(0.0.0.0) = 7, len(255.255.255.255) = 15
-  bool valid = this->proto_->ip().size() >= 7;
-  valid &= this->proto_->ip().size() <= 15;
+    Peer::Peer(const proto::Peer *ptr) : Message(ptr) {}
 
-  valid &= this->proto_->port() >= 1;
-  valid &= this->proto_->port() <= 65535;
+    bool Peer::is_schema_valid() const {
+      // len(0.0.0.0) = 7, len(255.255.255.255) = 15
+      bool valid = this->proto_->ip().size() >= 7;
+      valid &= this->proto_->ip().size() <= 15;
 
-  valid &= this->proto_->pubkey().size() == pubkey_t::size();
+      valid &= this->proto_->port() >= 1;
+      valid &= this->proto_->port() <= 65535;
 
-  return valid;
+      valid &= this->proto_->pubkey().size() == pubkey_t::size();
+
+      return valid;
+    }
+
+    const pubkey_t Peer::pubkey() const {
+      return to_blob<pubkey_t::size()>(this->proto_->pubkey());
+    }
+
+    const auto Peer::port() const { return (uint16_t)this->proto_->port(); }
+
+    const auto Peer::ip() const { return this->proto_->ip(); }
+  }
 }
-
-const pubkey_t consensus::Peer::pubkey() const {
-  return to_blob<pubkey_t::size()>(this->proto_->pubkey());
-}
-
-const auto consensus::Peer::port() const {
-  return (uint16_t)this->proto_->port();
-}
-
-const auto consensus::Peer::ip() const { return this->proto_->ip(); }

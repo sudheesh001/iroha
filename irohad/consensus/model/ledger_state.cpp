@@ -17,17 +17,21 @@
 
 #include "ledger_state.hpp"
 
-bool consensus::LedgerState::is_schema_valid() const {
-  return this->proto_->gmroot().size() == hash256_t::size();
-}
+namespace consensus {
+  namespace model {
 
-const uint64_t consensus::LedgerState::height() const {
-  return this->proto_->height();
-}
+    bool LedgerState::is_schema_valid() const {
+      return this->proto_->gmroot().size() == hash256_t::size();
+    }
 
-const hash256_t consensus::LedgerState::gmroot() const {
-  return to_blob<hash256_t::size()>(this->proto_->gmroot());
-}
+    const uint64_t LedgerState::height() const {
+      return this->proto_->height();
+    }
 
-consensus::LedgerState::LedgerState(const proto::consensus::LedgerState *ptr)
-    : Message(ptr) {}
+    const hash256_t LedgerState::gmroot() const {
+      return to_blob<hash256_t::size()>(this->proto_->gmroot());
+    }
+
+    LedgerState::LedgerState(const proto::LedgerState *ptr) : Message(ptr) {}
+  }
+}

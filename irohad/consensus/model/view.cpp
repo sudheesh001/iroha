@@ -17,16 +17,21 @@
 
 #include "view.hpp"
 
-consensus::View::View(const proto::consensus::View *ptr)
-    : Message(ptr),
-      view{this->proto_->view().begin(), this->proto_->view().end()},
-      sig{&this->proto_->sig()} {}
+namespace consensus {
+  namespace model {
 
-bool consensus::View::is_schema_valid() const {
-  if (this->proto_->view_size() <= 0) return false;
-  for (auto &&peer : view) {
-    if (!peer.is_schema_valid()) return false;
+    View::View(const proto::consensus::View *ptr)
+        : Message(ptr),
+          view{this->proto_->view().begin(), this->proto_->view().end()},
+          sig{&this->proto_->sig()} {}
+
+    bool View::is_schema_valid() const {
+      if (this->proto_->view_size() <= 0) return false;
+      for (auto &&peer : view) {
+        if (!peer.is_schema_valid()) return false;
+      }
+
+      return true;
+    }
   }
-
-  return true;
 }

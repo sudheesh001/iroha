@@ -22,30 +22,33 @@
 #include "message.hpp"
 
 namespace consensus {
-  class Peer final : public Message<const proto::consensus::Peer> {
-   public:
-    Peer(const proto::consensus::Peer *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class Peer final : public Message<const proto::Peer> {
+     public:
+      Peer(const proto::Peer *ptr);
 
-    /**
-     * Returns peer's ip address in form of string: 127.0.0.1
-     * @return
-     */
-    const auto ip() const noexcept;
+      bool is_schema_valid() const noexcept override;
 
-    /**
-     * Returns peer's port.
-     * @return
-     */
-    const uint16_t port() const noexcept;
+      /**
+       * Returns peer's ip address in form of string: 127.0.0.1
+       * @return
+       */
+      const auto ip() const noexcept;
 
-    /**
-     * Returns peer's public key.
-     * @return
-     */
-    const pubkey_t pubkey() const;
-  };
+      /**
+       * Returns peer's port.
+       * @return
+       */
+      const uint16_t port() const noexcept;
+
+      /**
+       * Returns peer's public key.
+       * @return
+       */
+      const pubkey_t pubkey() const;
+    };
+  }
 }
 
 #endif  // IROHA_PEER_HPP

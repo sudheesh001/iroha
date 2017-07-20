@@ -17,11 +17,16 @@
 
 #include "vote.hpp"
 
-bool consensus::Vote::is_schema_valid() const {
-  return next_state.is_schema_valid() && sig.is_schema_valid();
-}
+namespace consensus {
+  namespace model {
 
-consensus::Vote::Vote(const proto::consensus::Vote *ptr)
-    : Message(ptr),
-      next_state{&this->proto_->next_state()},
-      sig{&this->proto_->sig()} {}
+    bool Vote::is_schema_valid() const {
+      return next_state.is_schema_valid() && sig.is_schema_valid();
+    }
+
+    Vote::Vote(const proto::Vote *ptr)
+        : Message(ptr),
+          next_state{&this->proto_->next_state()},
+          sig{&this->proto_->sig()} {}
+  }
+}

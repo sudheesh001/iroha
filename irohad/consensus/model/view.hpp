@@ -24,15 +24,19 @@
 #include "signature.hpp"
 
 namespace consensus {
-  class View final : public Message<const proto::consensus::View> {
-   public:
-    View(const proto::consensus::View *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class View final : public Message<const proto::View> {
+     public:
+      View(const proto::View *ptr);
 
-    const std::vector<Peer> view;
-    const Signature sig;
-  };
+      bool is_schema_valid() const noexcept override;
+
+      const std::vector<Peer> view;
+
+      const Signature sig;
+    };
+  }
 }
 
 #endif  // IROHA_VIEW_HPP

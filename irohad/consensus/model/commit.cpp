@@ -17,20 +17,25 @@
 
 #include "commit.hpp"
 
-bool consensus::Commit::is_schema_valid() const {
-  if (this->proto_->transactions_size() <= 0) return false;
-  if (this->proto_->sigs_size() <= 0) return false;
+namespace consensus {
+  namespace model {
 
-  for (auto&& sig : sigs) {
-    if (!sig.is_schema_valid()) {
-      return false;
+    bool Commit::is_schema_valid() const {
+      if (this->proto_->transactions_size() <= 0) return false;
+      if (this->proto_->sigs_size() <= 0) return false;
+
+      for (auto&& sig : sigs) {
+        if (!sig.is_schema_valid()) {
+          return false;
+        }
+      }
+
+      return true;
     }
+
+    Commit::Commit(const proto::Commit* ptr)
+        : Message(ptr),
+          commit_state{&this->proto_->commit_state()},
+          sigs{this->proto_->sigs().begin(), this->proto_->sigs().end()} {}
   }
-
-  return true;
 }
-
-consensus::Commit::Commit(const proto::consensus::Commit* ptr)
-    : Message(ptr),
-      commit_state{&this->proto_->commit_state()},
-      sigs{this->proto_->sigs().begin(), this->proto_->sigs().end()} {}

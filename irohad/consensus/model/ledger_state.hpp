@@ -22,25 +22,27 @@
 #include "message.hpp"
 
 namespace consensus {
-  class LedgerState final
-      : public Message<const proto::consensus::LedgerState> {
-   public:
-    LedgerState(const proto::consensus::LedgerState *ptr);
+  namespace model {
 
-    bool is_schema_valid() const noexcept;
+    class LedgerState final : public Message<const proto::LedgerState> {
+     public:
+      LedgerState(const proto::LedgerState *ptr);
 
-    /**
-     * Returns global merkle root.
-     * @return
-     */
-    const hash256_t gmroot() const;
+      bool is_schema_valid() const noexcept override;
 
-    /**
-     * Returns ledger height.
-     * @return
-     */
-    const uint64_t height() const noexcept;
-  };
+      /**
+       * Returns global merkle root.
+       * @return
+       */
+      const hash256_t gmroot() const;
+
+      /**
+       * Returns ledger height.
+       * @return
+       */
+      const uint64_t height() const noexcept;
+    };
+  }
 }
 
 #endif  // IROHA_LEDGER_STATE_HPP

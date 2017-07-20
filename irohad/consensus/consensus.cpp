@@ -16,3 +16,63 @@
  */
 
 #include "consensus.hpp"
+
+#include <consensus/model/abort.hpp>
+#include <consensus/model/commit.hpp>
+#include <consensus/model/proposal.hpp>
+#include <consensus/model/view.hpp>
+
+using grpc::Status;
+using grpc::ServerContext;
+
+namespace consensus {
+
+  Status Consensus::SendProposal(ServerContext *context,
+                                 const proto::Proposal *request,
+                                 proto::Void *response) {
+    model::Proposal proposal(request);
+    if (!proposal.is_schema_valid()) return Status::CANCELLED;
+
+    return Status::OK;
+  }
+
+  Status Consensus::SendVote(ServerContext *context, const proto::Vote *request,
+                             proto::Void *response) {
+    model::Vote vote(request);
+    if (!vote.is_schema_valid()) return Status::CANCELLED;
+
+    return Status::OK;
+  }
+
+  Status Consensus::SendCommit(grpc::ServerContext *context,
+                               const proto::Commit *request,
+                               proto::Void *response) {
+    model::Commit commit(request);
+    if (!commit.is_schema_valid()) return Status::CANCELLED;
+
+    return Status::OK;
+  }
+
+  Status Consensus::SendAbort(grpc::ServerContext *context,
+                              const proto::Abort *request,
+                              proto::Void *response) {
+    model::Abort abort(request);
+    if (!abort.is_schema_valid()) return Status::CANCELLED;
+
+    return Status::OK;
+  }
+
+  Status Consensus::GetView(ServerContext *context, const proto::Void *request,
+                            proto::View *response) {
+    // return my view
+    return Status::OK;
+  }
+
+  Status Consensus::SetView(ServerContext *context, const proto::View *request,
+                            proto::Void *response) {
+    model::View view(request);
+    if (!view.is_schema_valid()) return Status::CANCELLED;
+
+    return Status::OK;
+  }
+}

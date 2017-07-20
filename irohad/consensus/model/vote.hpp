@@ -24,16 +24,18 @@
 #include "signature.hpp"
 
 namespace consensus {
-  class Vote final : public Message<const proto::consensus::Vote> {
-   public:
-    Vote(const proto::consensus::Vote *ptr);
+  namespace model {
+    class Vote final : public Message<const proto::Vote> {
+     public:
+      Vote(const proto::Vote *ptr);
 
-    bool is_schema_valid() const noexcept;
+      bool is_schema_valid() const noexcept override;
 
-    const LedgerState next_state;
+      const LedgerState next_state;
 
-    const Signature sig;
-  };
+      const Signature sig;
+    };
+  }
 }
 
 #endif  // IROHA_VOTE_HPP
