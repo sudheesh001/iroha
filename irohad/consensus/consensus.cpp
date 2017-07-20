@@ -15,13 +15,4 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_CHAIN_HPP
-#define IROHA_CHAIN_HPP
-
-namespace consensus {
-  class Chain {
-    
-  };
-}
-
-#endif //IROHA_CHAIN_HPP
+#include "consensus.hpp"

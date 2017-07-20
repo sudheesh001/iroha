@@ -39,8 +39,8 @@
 add_subdirectory(model)
 
 add_library(consensus
-        chain.cpp
-        chain.hpp
+        consensus.hpp
+        consensus.cpp
         )
 target_link_libraries(consensus
         grpc++
