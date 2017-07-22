@@ -22,10 +22,11 @@ namespace consensus {
 
     View::View(const proto::View *ptr)
         : Message(ptr),
-          peer{this->proto_->peer().begin(), this->proto_->peer().end()},
+          peer{this->proto_->peer().pointer_begin(),
+               this->proto_->peer().pointer_end()},
           sig{&this->proto_->sig()} {}
 
-    bool View::is_schema_valid() const {
+    bool View::is_schema_valid() const noexcept {
       if (this->proto_->peer_size() <= 0) return false;
       for (auto &&p : peer) {
         if (!p.is_schema_valid()) return false;

@@ -24,7 +24,6 @@
 #include <crypto/hash.hpp>
 
 using ts64_t = iroha::ts64_t;
-using blob_t = iroha::blob_t;
 using pubkey_t = iroha::ed25519::pubkey_t;
 using signature_t = iroha::ed25519::sig_t;
 using hash256_t = iroha::hash256_t;

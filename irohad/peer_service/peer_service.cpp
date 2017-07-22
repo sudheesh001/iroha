@@ -55,9 +55,9 @@ namespace peerservice {
     return chain[index];
   }
 
-  std::shared_ptr<Peer> PeerServiceImpl::leader() { return chain[0]; }
+  std::shared_ptr<Peer> PeerServiceImpl::leader() noexcept { return chain[0]; }
 
-  std::shared_ptr<Peer> PeerServiceImpl::proxy_tail() {
+  std::shared_ptr<Peer> PeerServiceImpl::proxy_tail() noexcept {
     return chain[2 * this->max_faulty() + 1];
   }
 
@@ -90,9 +90,11 @@ namespace peerservice {
 
   PeerServiceImpl::~PeerServiceImpl() {}
 
-  consensus::proto::View &PeerServiceImpl::operator*() { return *cachedView; }
+  consensus::proto::View &PeerServiceImpl::operator*() noexcept {
+    return *cachedView;
+  }
 
-  const consensus::proto::View &PeerServiceImpl::operator*() const {
+  const consensus::proto::View &PeerServiceImpl::operator*() const noexcept {
     return *cachedView;
   }
 }

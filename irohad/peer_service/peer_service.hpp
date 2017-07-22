@@ -86,14 +86,14 @@ namespace peerservice {
    private:
     /** members **/
     std::shared_ptr<uvw::Loop> loop_;
-    model::Peer self_node_;
+    iroha::model::Peer self_node_;
     std::vector<std::shared_ptr<Peer>> chain;
     uint64_t view_id_;
     std::shared_ptr<consensus::proto::View> cachedView;
 
    private:
     /** ametsuchi **/
-    iroha::ametsuchi::WsvQuery wsvQuery_;
+    iroha::ametsuchi::WsvQuery& wsvQuery_;
   };
 }
 

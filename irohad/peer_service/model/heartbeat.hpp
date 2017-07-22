@@ -19,12 +19,12 @@
 #define IROHA_HEARTBEAT_HPP
 
 #include <model/message.hpp>
-
+#include "peer_service.pb.h"
 
 namespace peerservice {
   namespace model {
 
-    class Heartbeat : public model::Message<const proto::Heartbeat> {
+    class Heartbeat : public ::model::Message<const proto::Heartbeat> {
      public:
       Heartbeat(const proto::Heartbeat *ptr);
 

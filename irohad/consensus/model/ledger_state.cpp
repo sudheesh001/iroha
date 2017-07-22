@@ -20,16 +20,16 @@
 namespace consensus {
   namespace model {
 
-    bool LedgerState::is_schema_valid() const {
+    bool LedgerState::is_schema_valid() const noexcept {
       return this->proto_->gmroot().size() == hash256_t::size();
     }
 
-    const uint64_t LedgerState::height() const {
+    const uint64_t LedgerState::height() const noexcept {
       return this->proto_->height();
     }
 
     const hash256_t LedgerState::gmroot() const {
-      return to_blob<hash256_t::size()>(this->proto_->gmroot());
+      return iroha::to_blob<hash256_t::size()>(this->proto_->gmroot());
     }
 
     LedgerState::LedgerState(const proto::LedgerState *ptr) : Message(ptr) {}

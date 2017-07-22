@@ -20,31 +20,31 @@
 namespace consensus {
   namespace model {
 
-    bool Signature::is_schema_valid() const {
+    bool Signature::is_schema_valid() const noexcept {
       return this->proto_->pubkey().size() == pubkey_t::size() &&
              this->proto_->signature().size() == signature_t::size() &&
              this->proto_->timestamp() > 0;
     }
 
     const pubkey_t Signature::pubkey() const {
-      return to_blob<pubkey_t::size()>(proto_->pubkey());
+      return iroha::to_blob<pubkey_t::size()>(proto_->pubkey());
     }
 
     const signature_t Signature::signature() const {
-      return to_blob<signature_t::size()>(proto_->signature());
+      return iroha::to_blob<signature_t::size()>(proto_->signature());
     }
 
-    const ts64_t Signature::timestamp() const {
+    const ts64_t Signature::timestamp() const noexcept {
       return this->proto_->timestamp();
     }
 
     Signature::Signature(const proto::Signature *ptr) : Message(ptr) {}
 
-    bool Signature::verify(const std::vector<uint8_t> &msg) const {
+    bool Signature::verify(const std::vector<uint8_t> &msg) const noexcept {
       return iroha::verify(msg.data(), msg.size(), pubkey(), signature());
     }
 
-    bool Signature::verify(const std::string &msg) const {
+    bool Signature::verify(const std::string &msg) const noexcept {
       return iroha::verify(msg, pubkey(), signature());
     }
   }

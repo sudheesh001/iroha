@@ -30,23 +30,22 @@
 add_subdirectory(model)
 
 add_library(peer
-        peer.cpp
-        peer.hpp
-        )
+    peer.cpp
+    peer.hpp
+    )
 target_link_libraries(peer
-        consensus_grpc
-        uvw
-        peerservice_grpc
-        )
-
-
+    consensus_grpc
+    uvw
+    peerservice_grpc
+    optional
+    )
 
 add_library(peerservice
-        peer_service.cpp
-        peer_service.hpp
-        )
+    peer_service.cpp
+    peer_service.hpp
+    )
 target_link_libraries(peerservice
-        peer
-        lookup3
-        optional
-        )
+    peer
+    lookup3
+    optional
+    )

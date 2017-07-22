@@ -25,7 +25,7 @@
 namespace consensus {
   namespace model {
 
-    class Proposal final : public model::Message<const proto::Proposal> {
+    class Proposal final : public ::model::Message<const proto::Proposal> {
      public:
       Proposal(const proto::Proposal *ptr);
 
@@ -34,7 +34,6 @@ namespace consensus {
       const Vote vote;
 
       /** vector of transactions? **/
-
     };
   }
 }

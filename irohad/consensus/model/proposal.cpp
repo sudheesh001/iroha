@@ -19,7 +19,7 @@
 
 namespace consensus {
   namespace model {
-    bool Proposal::is_schema_valid() const {
+    bool Proposal::is_schema_valid() const noexcept {
       return this->proto_->transactions_size() > 0 &&
              this->vote.is_schema_valid();
     }

@@ -20,7 +20,7 @@
 namespace consensus {
   namespace model {
 
-    bool Commit::is_schema_valid() const {
+    bool Commit::is_schema_valid() const noexcept {
       if (this->proto_->transactions_size() <= 0) return false;
       if (this->proto_->sigs_size() <= 0) return false;
 
@@ -36,6 +36,7 @@ namespace consensus {
     Commit::Commit(const proto::Commit* ptr)
         : Message(ptr),
           commit_state{&this->proto_->commit_state()},
-          sigs{this->proto_->sigs().begin(), this->proto_->sigs().end()} {}
+          sigs{this->proto_->sigs().pointer_begin(),
+               this->proto_->sigs().pointer_end()} {}
   }
 }

@@ -26,7 +26,7 @@
 namespace consensus {
   namespace model {
 
-    class Commit final : public model::Message<const proto::Commit> {
+    class Commit final : public ::model::Message<const proto::Commit> {
      public:
       Commit(const proto::Commit *ptr);
 

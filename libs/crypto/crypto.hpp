@@ -46,6 +46,9 @@ namespace iroha {
   bool verify(const uint8_t *msg, size_t msgsize, const ed25519::pubkey_t &pub,
               const ed25519::sig_t &sig);
 
+  bool verify(const std::string &msg, const ed25519::pubkey_t &pub,
+              const ed25519::sig_t &sig);
+
   /**
    * Generate random seed reading from /dev/urandom
    */
@@ -64,7 +67,5 @@ namespace iroha {
    * @return
    */
   ed25519::keypair_t create_keypair(blob_t<32> seed);
-
-
 }
 #endif  // IROHA_CRYPTO_HPP

@@ -25,7 +25,7 @@
 
 namespace consensus {
   namespace model {
-    class Vote final : public model::Message<const proto::Vote> {
+    class Vote final : public ::model::Message<const proto::Vote> {
      public:
       Vote(const proto::Vote *ptr);
 

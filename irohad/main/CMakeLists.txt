@@ -29,7 +29,6 @@ target_link_libraries(irohad
     ametsuchi
     networking
     ordering_service
-    consensus_service
     chain_validator
     hash
     stateless_validator

@@ -8,10 +8,10 @@
 #        )
 
 
-add_executable(peerservice_peer
-        peerservice_peer.cpp
-        )
-target_link_libraries(peerservice_peer
-        peer_service
-        uvw
-        )
+#add_executable(peerservice_peer
+#        peerservice_peer.cpp
+#        )
+#target_link_libraries(peerservice_peer
+#        peer_service
+#        uvw
+#        )

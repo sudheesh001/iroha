@@ -26,7 +26,7 @@
 namespace consensus {
   namespace model {
 
-    class View final : public model::Message<const proto::View> {
+    class View final : public ::model::Message<const proto::View> {
      public:
       View(const proto::View *ptr);
 

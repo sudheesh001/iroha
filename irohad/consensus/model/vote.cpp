@@ -20,7 +20,7 @@
 namespace consensus {
   namespace model {
 
-    bool Vote::is_schema_valid() const {
+    bool Vote::is_schema_valid() const noexcept {
       return next_state.is_schema_valid() && sig.is_schema_valid();
     }
 
@@ -29,7 +29,7 @@ namespace consensus {
           next_state{&this->proto_->next_state()},
           sig{&this->proto_->sig()} {}
 
-    bool Vote::is_signature_valid() const {
+    bool Vote::is_signature_valid() const noexcept {
       return sig.verify(this->proto_->next_state().SerializeAsString());
     }
   }

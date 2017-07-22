@@ -21,7 +21,7 @@ namespace consensus {
   namespace model {
     Abort::Abort(const proto::Abort *ptr) : Message(ptr) {}
 
-    bool Abort::is_schema_valid() const {
+    bool Abort::is_schema_valid() const noexcept {
       // there is nothing to validate
       return true;
     }

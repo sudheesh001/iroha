@@ -24,7 +24,7 @@
 namespace consensus {
   namespace model {
 
-    class LedgerState final : public model::Message<const proto::LedgerState> {
+    class LedgerState final : public ::model::Message<const proto::LedgerState> {
      public:
       LedgerState(const proto::LedgerState *ptr);
 

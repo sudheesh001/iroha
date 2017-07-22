@@ -15,13 +15,13 @@
 add_subdirectory(model)
 add_subdirectory(role)
 
-
 add_library(consensus
-        consensus.hpp
-        consensus.cpp
-        )
+    consensus.hpp
+    consensus.cpp
+    )
 target_link_libraries(consensus
-        grpc++
-        uvw
-        consensus_model
-        )
+    grpc++
+    uvw
+    consensus_model
+    optional
+    )

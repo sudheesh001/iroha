@@ -23,7 +23,11 @@ namespace consensus {
 
     Peer::Peer(const proto::Peer *ptr) : Message(ptr) {}
 
-    bool Peer::is_schema_valid() const {
+    const auto Peer::address() const noexcept {
+      return this->proto_->address();
+    }
+
+    bool Peer::is_schema_valid() const noexcept {
       bool valid = this->proto_->pubkey().size() == pubkey_t::size();
 
       // regex for ip:port
@@ -38,12 +42,10 @@ namespace consensus {
     }
 
     const pubkey_t Peer::pubkey() const {
-      return to_blob<pubkey_t::size()>(this->proto_->pubkey());
+      return iroha::to_blob<pubkey_t::size()>(this->proto_->pubkey());
     }
 
-    const auto Peer::address() const { return this->proto_->address(); }
-
-    const std::vector<uint8_t> Peer::bytes() const {
+    const std::vector<uint8_t> Peer::bytes() const noexcept {
       auto &&addr = address();
       std::vector<uint8_t> b{addr.begin(), addr.end()};
 

@@ -24,7 +24,7 @@
 namespace consensus {
   namespace model {
 
-    class Signature final : public model::Message<const proto::Signature> {
+    class Signature final : public ::model::Message<const proto::Signature> {
      public:
       Signature(const proto::Signature *ptr);
 

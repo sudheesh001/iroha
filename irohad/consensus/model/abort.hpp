@@ -24,7 +24,7 @@
 namespace consensus {
   namespace model {
 
-    class Abort final : public model::Message<const proto::Abort> {
+    class Abort final : public ::model::Message<const proto::Abort> {
      public:
       Abort(const proto::Abort *ptr);
 

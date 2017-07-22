@@ -27,20 +27,22 @@ extern "C" {
 #include <string>
 #include "types.hpp"
 
-/**
- * Converts given string to the blob of given size.
- * @tparam size
- * @param s
- * @return
- */
-template <size_t size>
-blob_t<size> to_blob(std::string s) {
-  if (s.size() != size) throw std::runtime_error("to_blob size mismatch");
+namespace iroha {
+  /**
+   * Converts given string to the blob of given size.
+   * @tparam size
+   * @param s
+   * @return
+   */
+  template <size_t size>
+  blob_t<size> to_blob(std::string s) {
+    if (s.size() != size) throw std::runtime_error("to_blob size mismatch");
 
-  blob_t<size> b;
-  std::copy(s.begin(), s.end(), b.begin());
+    blob_t<size> b;
+    std::copy(s.begin(), s.end(), b.begin());
 
-  return b;
+    return b;
+  }
 }
 
 // extend namespace std with custom hashing function for public key

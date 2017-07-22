@@ -26,23 +26,20 @@
 #include <model/peer.hpp>
 #include <random>
 #include <uvw.hpp>
+#include "model/heartbeat.hpp"
 
 namespace peerservice {
 
-  using namespace iroha;
-
   using pubkey_t = iroha::ed25519::pubkey_t;
 
-  class Peer : public uvw::Emitter<Peer>,
-               public consensus::proto::Sumeragi::StubInterface,
-               public proto::PeerService::StubInterface {
+  class Peer : public uvw::Emitter<Peer> {
    public:
-    explicit Peer(const model::Peer& n, std::shared_ptr<uvw::Loop> loop);
+    explicit Peer(const iroha::model::Peer& n, std::shared_ptr<uvw::Loop> loop);
     Peer(const Peer&) = delete;
     Peer(const Peer&&) = delete;
     virtual ~Peer();
 
-    const model::Peer& peer;
+    const iroha::model::Peer& peer;
     std::shared_ptr<uvw::TimerHandle> timer;
 
     void make_online() noexcept;
@@ -53,6 +50,7 @@ namespace peerservice {
    private:
     bool online_;
     std::shared_ptr<model::Heartbeat> cachedHeartbeat;
+    std::unique_ptr<proto::PeerService::Stub> stub_;
 
    private:
     /**

@@ -50,7 +50,7 @@ namespace peerservice {
   std::uniform_int_distribution<uint32_t> Peer::next_long_timer(
       LONG_TIMER_LOW, LONG_TIMER_HIGH);  // ms
 
-  Peer::Peer(const model::Peer &n, std::shared_ptr<uvw::Loop> loop) : peer(n) {
+  Peer::Peer(const iroha::model::Peer &n, std::shared_ptr<uvw::Loop> loop) : peer(n) {
     if (loop == nullptr) throw std::invalid_argument("loop is null");
 
     this->online_ = false;
