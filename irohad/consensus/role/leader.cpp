@@ -17,9 +17,31 @@
 
 #include "leader.hpp"
 
-
 namespace consensus {
   namespace role {
     Role Leader::self() { return Role::LEADER; }
+    Leader::Leader(peerservice::PeerServiceImpl &ps,
+                   std::atomic<bool> &round_started)
+        : Validator(ps, round_started) {}
+
+    void Leader::on_proposal(const model::Proposal &proposal) {
+      // TODO
+      // leader receives proposal from ordering service and sends it to
+      // chain[1]...chain[2*chain.max_faulty() + 1] peers
+    }
+
+    void Leader::on_commit(const model::Commit &commit) {
+      // leader does the same action with commit as validator
+      Validator::on_commit(commit);
+    }
+
+    void Leader::on_vote(const model::Vote &vote) {
+      // leader ignores votes
+    }
+
+    void Leader::on_abort(const model::Abort &abort) {
+      // leader does the same action with abort as validator
+      Validator::on_abort(abort);
+    }
   }
 }

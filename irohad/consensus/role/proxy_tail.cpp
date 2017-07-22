@@ -21,6 +21,26 @@ namespace consensus {
   namespace role {
 
     Role ProxyTail::self() { return Role::PROXY_TAIL; }
+    ProxyTail::ProxyTail(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started) : Validator(ps,
+
+                                                                                                         round_started) {}
+    void ProxyTail::on_proposal(const model::Proposal &proposal) {
+      // TODO validate proposal and send vote
+    }
+
+    void ProxyTail::on_commit(const model::Commit &commit) {
+      // proxy tail does the same action with commit as validator
+      Validator::on_commit(commit);
+    }
+
+    void ProxyTail::on_vote(const model::Vote &vote) {
+      // TODO: parse and save vote inside proxy_tail role (this)
+    }
+
+    void ProxyTail::on_abort(const model::Abort &abort) {
+      // abort logic is the same as in validator
+      Validator::on_abort(abort);
+    }
 
   }
 }

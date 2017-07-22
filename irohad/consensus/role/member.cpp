@@ -17,9 +17,26 @@
 
 #include "member.hpp"
 
-
 namespace consensus {
   namespace role {
     Role Member::self() { return Role::MEMBER; }
+    Member::Member(peerservice::PeerServiceImpl &ps,
+                   std::atomic<bool> &round_started)
+        : ps_(ps), round_started_(round_started) {}
+
+    void Member::on_commit(const model::Commit &commit) {
+      // TODO: commit uncommitted data to ametsuchi
+    }
+
+    void Member::on_proposal(const model::Proposal &proposal) {
+      // member ignores proposals
+    }
+    void Member::on_vote(const model::Vote &vote) {
+      // member ignores votes
+    }
+
+    void Member::on_abort(const model::Abort &abort) {
+      // TODO: abort uncommitted data in ametsuchi
+    }
   }
 }

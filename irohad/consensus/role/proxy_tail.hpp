@@ -24,11 +24,15 @@ namespace consensus {
 
     class ProxyTail final : public Validator {
      public:
+      ProxyTail(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
       Role self() override;
       virtual void on_proposal(const model::Proposal &proposal) override;
       virtual void on_commit(const model::Commit &commit) override;
       virtual void on_vote(const model::Vote &vote) override;
       virtual void on_abort(const model::Abort &abort) override;
+
+     private:
+      // TODO: write vote validator and put it here
     };
   }
 }

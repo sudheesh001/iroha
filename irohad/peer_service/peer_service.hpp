@@ -41,8 +41,8 @@ namespace peerservice {
    * of full network.
    */
 
-  class PeerServiceImpl : public uvw::Emitter<PeerServiceImpl>,
-                          public proto::PeerService::Service {
+  class PeerServiceImpl final : public uvw::Emitter<PeerServiceImpl>,
+                                public proto::PeerService::Service {
    public:
     /**
      * Service constructor, which MUST be registered to grpc server builder.
@@ -54,6 +54,10 @@ namespace peerservice {
     PeerServiceImpl(iroha::ametsuchi::WsvQuery& wsvQuery, const pubkey_t self,
                     std::shared_ptr<uvw::Loop> loop = uvw::Loop::getDefault());
 
+    PeerServiceImpl(const PeerServiceImpl& other) = delete;
+    PeerServiceImpl(const PeerServiceImpl&& other) = delete;
+    virtual ~PeerServiceImpl();
+
     /**
      * Returns latest state among all available peers
      * @return
@@ -64,7 +68,6 @@ namespace peerservice {
     std::shared_ptr<Peer> leader() noexcept;
     std::shared_ptr<Peer> proxy_tail() noexcept;
     std::shared_ptr<consensus::proto::View> toProto() noexcept;
-
 
    public:
     /** GRPC SERVICE IMPLEMENTATION **/

@@ -20,5 +20,27 @@
 namespace consensus {
   namespace role {
     Role Validator::self() { return Role::VALIDATOR; }
+    Validator::Validator(peerservice::PeerServiceImpl &ps,
+                         std::atomic<bool> &round_started)
+        : Member(ps, round_started) {}
+
+    void Validator::on_proposal(const model::Proposal &proposal) {
+      // TODO: validate proposal and send vote to proxy tail
+    }
+
+    void Validator::on_commit(const model::Commit &commit) {
+      // commit is the  same as for member
+      Member::on_commit(commit);
+    }
+
+    void Validator::on_vote(const model::Vote &vote) {
+      // ignore votes
+    }
+
+    void Validator::on_abort(const model::Abort &abort) {
+      // abort processing is the same as for member
+      Member::on_abort(abort);
+    }
+
   }
 }

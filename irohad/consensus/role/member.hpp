@@ -31,9 +31,9 @@
 namespace consensus {
   namespace role {
 
-    enum class Role : uint8_t {
+    enum Role : uint8_t {
       MEMBER,      // the one who does not participate in validation, but may
-                   // receive commits
+                   // receive commits and aborts
       VALIDATOR,   // the one who participates in validation, may receive
                    // proposals and commits
       PROXY_TAIL,  // the one who creates commits, may receive proposals and
@@ -49,6 +49,10 @@ namespace consensus {
       virtual void on_commit(const model::Commit &commit);
       virtual void on_vote(const model::Vote &vote);
       virtual void on_abort(const model::Abort &abort);
+
+     protected:
+      peerservice::PeerServiceImpl &ps_;
+      std::atomic<bool> &round_started_;
     };
   }
 }

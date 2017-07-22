@@ -28,13 +28,15 @@ namespace consensus {
 
     class Leader final : public Validator {
      public:
-      Leader();
-
+      Leader(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
       Role self() override;
       virtual void on_proposal(const model::Proposal &proposal);
       virtual void on_commit(const model::Commit &commit);
       virtual void on_vote(const model::Vote &vote);
       virtual void on_abort(const model::Abort &abort);
+
+     private:
+      // TODO: declare ordering service here
     };
   }
 }

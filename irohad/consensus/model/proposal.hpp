@@ -32,6 +32,9 @@ namespace consensus {
       bool is_schema_valid() const noexcept override;
 
       const Vote vote;
+
+      std::vector<
+
     };
   }
 }

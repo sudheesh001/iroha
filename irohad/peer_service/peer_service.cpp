@@ -87,4 +87,8 @@ namespace peerservice {
   PeerServiceImpl::operator std::shared_ptr<consensus::proto::View>() noexcept {
     return toProto();
   }
+
+  PeerServiceImpl::~PeerServiceImpl() {
+
+  }
 }

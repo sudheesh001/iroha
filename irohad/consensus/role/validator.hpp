@@ -25,6 +25,7 @@ namespace consensus {
 
     class Validator : public Member {
      public:
+      Validator(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
       Role self() override;
       virtual void on_proposal(const model::Proposal &proposal) override;
       virtual void on_commit(const model::Commit &commit) override;

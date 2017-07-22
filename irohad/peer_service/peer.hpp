@@ -53,7 +53,6 @@ namespace peerservice {
    private:
     bool online_;
     std::shared_ptr<model::Heartbeat> cachedHeartbeat;
-    std::unique_ptr<proto::PeerService::Stub> stub_;
 
    private:
     /**
