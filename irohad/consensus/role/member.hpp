@@ -43,7 +43,7 @@ namespace consensus {
 
     class Member {
      public:
-      Member(peerservice::PeerServiceImpl &ps, State &state);
+      Member(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
       virtual Role self();
       virtual void on_proposal(const model::Proposal &proposal);
       virtual void on_commit(const model::Commit &commit);

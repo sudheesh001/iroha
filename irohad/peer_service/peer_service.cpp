@@ -64,4 +64,27 @@ namespace peerservice {
   size_t PeerServiceImpl::max_faulty() const noexcept {
     return (chain.size() - 1) / 3;
   }
+
+  std::shared_ptr<consensus::proto::View> PeerServiceImpl::toProto() noexcept {
+    if (cachedView && view_id_ == cachedView->view_id()) return cachedView;
+
+    cachedView->Clear();
+
+    auto view = std::make_shared<consensus::proto::View>();
+    view->set_view_id(view_id_);
+
+    for (auto &&p : chain) {
+      auto peer = view->add_peer();
+      peer->set_pubkey(p->peer.pubkey.to_string());
+      peer->set_address(p->peer.address);
+    }
+
+    cachedView = view;
+
+    return cachedView;
+  }
+
+  PeerServiceImpl::operator std::shared_ptr<consensus::proto::View>() noexcept {
+    return toProto();
+  }
 }

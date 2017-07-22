@@ -61,7 +61,7 @@ namespace consensus {
     peerservice::PeerServiceImpl chain;
 
     /** current state  (idle, busy) **/
-    std::atomic<bool> state_;
+    std::atomic<bool> round_started;
 
     /** and role (member, validator, leader, proxy_tail) **/
     std::unique_ptr<role::Member> role_;

@@ -23,6 +23,7 @@
 #include <ametsuchi/wsv_query.hpp>
 #include <common/byteutils.hpp>
 #include <common/types.hpp>
+#include <consensus/model/view.hpp>
 #include <memory>
 #include <random>
 #include <unordered_map>
@@ -45,7 +46,7 @@ namespace peerservice {
    public:
     /**
      * Service constructor, which MUST be registered to grpc server builder.
-     * @param cluster initial information about peers
+     * @param wsvQuery instance of WsvQuery interface
      * @param self this node's public key
      * @param my latest known ledger state (my state)
      * @param loop uvw::Loop instance
@@ -59,10 +60,11 @@ namespace peerservice {
      */
     std::shared_ptr<uvw::Loop> getLoop() noexcept;
 
-
     size_t max_faulty() const noexcept;
     std::shared_ptr<Peer> leader() noexcept;
     std::shared_ptr<Peer> proxy_tail() noexcept;
+    std::shared_ptr<consensus::proto::View> toProto() noexcept;
+
 
    public:
     /** GRPC SERVICE IMPLEMENTATION **/
@@ -74,12 +76,15 @@ namespace peerservice {
     /** operators **/
     std::shared_ptr<Peer> operator[](size_t index);
     const std::shared_ptr<Peer>& operator[](size_t index) const;
+    operator std::shared_ptr<consensus::proto::View>() noexcept;
 
    private:
     /** members **/
     std::shared_ptr<uvw::Loop> loop_;
     model::Peer self_node_;
     std::vector<std::shared_ptr<Peer>> chain;
+    uint64_t view_id_;
+    std::shared_ptr<consensus::proto::View> cachedView;
 
    private:
     /** ametsuchi **/

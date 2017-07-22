@@ -32,6 +32,9 @@ namespace consensus {
                                  proto::Void *response) {
     model::Proposal proposal(request);
     if (!proposal.is_schema_valid()) return Status::CANCELLED;
+    // TODO signature verification
+
+    this->role_->on_proposal(proposal);
 
     return Status::OK;
   }
@@ -40,6 +43,9 @@ namespace consensus {
                              proto::Void *response) {
     model::Vote vote(request);
     if (!vote.is_schema_valid()) return Status::CANCELLED;
+    // TODO signature verification
+
+    this->role_->on_vote(vote);
 
     return Status::OK;
   }
@@ -49,6 +55,9 @@ namespace consensus {
                                proto::Void *response) {
     model::Commit commit(request);
     if (!commit.is_schema_valid()) return Status::CANCELLED;
+    // TODO signature validation
+
+    this->role_->on_commit(commit);
 
     return Status::OK;
   }
@@ -58,13 +67,15 @@ namespace consensus {
                               proto::Void *response) {
     model::Abort abort(request);
     if (!abort.is_schema_valid()) return Status::CANCELLED;
+    // TODO signature verification
+
 
     return Status::OK;
   }
 
   Status Consensus::GetView(ServerContext *context, const proto::Void *request,
                             proto::View *response) {
-    // return my view
+
     return Status::OK;
   }
 

@@ -67,14 +67,13 @@ message Abort {
 
 // messages for view change:
 message Peer {
-    string    ip = 1;
-    int32   port = 2;
-    bytes pubkey = 3;
+    string address = 1;  // ip:port
+    bytes pubkey   = 2;
 }
 
 // leader creates this message when wants to change view
 message View {
-    repeated Peer view = 1;
+    repeated Peer peer = 1;
     uint64     view_id = 2;
     Signature      sig = 3; // sign(sha3_256(view_id + timestamp))
 }
