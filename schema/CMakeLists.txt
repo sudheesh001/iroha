@@ -33,13 +33,13 @@ target_link_libraries(endpoint
     grpc++_reflection
 )
 
-add_library(peer_service_grpc
+add_library(peerservice_grpc
         peer_service.grpc.pb.cc
         peer_service.grpc.pb.h
         peer_service.pb.cc
         peer_service.pb.h
         )
-target_link_libraries(peer_service_grpc
+target_link_libraries(peerservice_grpc
         protobuf
         grpc++
         )

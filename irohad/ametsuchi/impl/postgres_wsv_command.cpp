@@ -151,11 +151,11 @@ namespace iroha {
       try {
         transaction_.exec(
             "INSERT INTO peer(\n"
-            "            public_key, address, state)\n"
+            "            public_key, address, role)\n"
             "    VALUES (" +
             transaction_.quote(public_key) + ", " +
             transaction_.quote(peer.address) + ", " +
-            /*peer.state*/ transaction_.quote(0) + ");");
+            /*peer.role*/ transaction_.quote(0) + ");");
       } catch (const std::exception &e) {
         return false;
       }

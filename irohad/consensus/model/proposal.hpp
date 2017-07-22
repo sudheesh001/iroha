@@ -19,13 +19,13 @@
 #define IROHA_PROPOSAL_HPP
 
 #include <consensus.pb.h>
-#include "message.hpp"
+#include <model/message.hpp>
 #include "vote.hpp"
 
 namespace consensus {
   namespace model {
 
-    class Proposal final : public Message<const proto::Proposal> {
+    class Proposal final : public model::Message<const proto::Proposal> {
      public:
       Proposal(const proto::Proposal *ptr);
 

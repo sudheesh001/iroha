@@ -15,11 +15,23 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_MESSAGES_HPP
-#define IROHA_MESSAGES_HPP
+#ifndef IROHA_VALIDATOR_HPP
+#define IROHA_VALIDATOR_HPP
 
-namespace peerservice {
+#include "member.hpp"
 
+namespace consensus {
+  namespace role {
+
+    class Validator : public Member {
+     public:
+      Role self() override;
+      virtual void on_proposal(const model::Proposal &proposal) override;
+      virtual void on_commit(const model::Commit &commit) override;
+      virtual void on_vote(const model::Vote &vote) override;
+      virtual void on_abort(const model::Abort &abort) override;
+    };
+  }
 }
 
-#endif //IROHA_MESSAGES_HPP
+#endif  // IROHA_VALIDATOR_HPP

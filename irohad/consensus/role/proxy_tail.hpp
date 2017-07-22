@@ -15,27 +15,22 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_COMMIT_HPP
-#define IROHA_COMMIT_HPP
+#ifndef IROHA_PROXY_TAIL_HPP
+#define IROHA_PROXY_TAIL_HPP
 
-#include <consensus.pb.h>
-#include "ledger_state.hpp"
-#include <model/message.hpp>
-#include "signature.hpp"
-
+#include "validator.hpp"
 namespace consensus {
-  namespace model {
+  namespace role {
 
-    class Commit final : public model::Message<const proto::Commit> {
+    class ProxyTail final : public Validator {
      public:
-      Commit(const proto::Commit *ptr);
-
-      bool is_schema_valid() const noexcept override;
-
-      const LedgerState commit_state;
-      const std::vector<Signature> sigs;
+      Role self() override;
+      virtual void on_proposal(const model::Proposal &proposal) override;
+      virtual void on_commit(const model::Commit &commit) override;
+      virtual void on_vote(const model::Vote &vote) override;
+      virtual void on_abort(const model::Abort &abort) override;
     };
   }
 }
 
-#endif  // IROHA_COMMIT_HPP
+#endif  // IROHA_PROXY_TAIL_HPP

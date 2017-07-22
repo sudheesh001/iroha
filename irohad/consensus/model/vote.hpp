@@ -19,13 +19,13 @@
 #define IROHA_VOTE_HPP
 
 #include <consensus.pb.h>
+#include <model/message.hpp>
 #include "ledger_state.hpp"
-#include "message.hpp"
 #include "signature.hpp"
 
 namespace consensus {
   namespace model {
-    class Vote final : public Message<const proto::Vote> {
+    class Vote final : public model::Message<const proto::Vote> {
      public:
       Vote(const proto::Vote *ptr);
 

@@ -20,7 +20,7 @@
 namespace consensus {
   namespace model {
 
-    View::View(const proto::consensus::View *ptr)
+    View::View(const proto::View *ptr)
         : Message(ptr),
           view{this->proto_->view().begin(), this->proto_->view().end()},
           sig{&this->proto_->sig()} {}

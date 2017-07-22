@@ -15,19 +15,12 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_NODE_HPP
-#define IROHA_NODE_HPP
+#include "proxy_tail.hpp"
 
-#include <common/types.hpp>
+namespace consensus {
+  namespace role {
 
-namespace peerservice {
+    Role ProxyTail::self() { return Role::PROXY_TAIL; }
 
-  using pubkey_t = iroha::ed25519::pubkey_t ;
-
-  struct Node {
-    std::string ip;
-    uint16_t port;
-    pubkey_t pubkey;
-  };
+  }
 }
-#endif  // IROHA_NODE_HPP

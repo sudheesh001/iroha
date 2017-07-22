@@ -19,12 +19,12 @@
 #define IROHA_LEDGER_STATE_HPP
 
 #include <consensus.pb.h>
-#include "message.hpp"
+#include <model/message.hpp>
 
 namespace consensus {
   namespace model {
 
-    class LedgerState final : public Message<const proto::LedgerState> {
+    class LedgerState final : public model::Message<const proto::LedgerState> {
      public:
       LedgerState(const proto::LedgerState *ptr);
 

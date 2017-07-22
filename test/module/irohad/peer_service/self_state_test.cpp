@@ -25,7 +25,7 @@ TEST(PeerServiceSelfState, CheckStatus) {
   log.info("    pubkey: " + peer_service::self_state::getPublicKey());
   log.info("privatekey: " + peer_service::self_state::getPrivateKey());
   log.info("      name: " + peer_service::self_state::getName());
-  log.info("     state: " +
+  log.info("     role: " +
            std::to_string(peer_service::self_state::getState()));
   log.info("     trust: " +
            std::to_string(peer_service::self_state::getTrust()));
@@ -42,7 +42,7 @@ TEST(PeerServiceSelfState, ActivateStatus) {
   log.info("    pubkey: " + peer_service::self_state::getPublicKey());
   log.info("privatekey: " + peer_service::self_state::getPrivateKey());
   log.info("      name: " + peer_service::self_state::getName());
-  log.info("     state: " +
+  log.info("     role: " +
            std::to_string(peer_service::self_state::getState()));
   log.info("     trust: " +
            std::to_string(peer_service::self_state::getTrust()));

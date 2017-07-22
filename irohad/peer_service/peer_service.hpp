@@ -1,91 +1,90 @@
-/*
-Copyright Soramitsu Co., Ltd. 2016 All Rights Reserved.
+/**
+ * Copyright Soramitsu Co., Ltd. 2017 All Rights Reserved.
+ * http://soramitsu.co.jp
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+#ifndef IROHA_SERVICE_HPP
+#define IROHA_SERVICE_HPP
 
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-#ifndef __IROHA_PEER_SERVICE_PEER_SERVIEC_HPP__
-#define __IROHA_PEER_SERVICE_PEER_SERVIEC_HPP__
-
-#include <algorithm>
-#include <datetime/time.hpp>
+#include <grpc++/create_channel.h>
+#include <peer_service.grpc.pb.h>
+#include <ametsuchi/wsv_query.hpp>
+#include <common/byteutils.hpp>
+#include <common/types.hpp>
 #include <memory>
-#include <string>
-#include <vector>
-#include <cmath>
+#include <random>
+#include <unordered_map>
+#include <uvw.hpp>
+#include "model/heartbeat.hpp"
+#include "peer.hpp"
 
-namespace peer_service {
+namespace peerservice {
 
-  enum State { PREPARE, READY, ACTIVE };
+  /**
+   * The task of peer service is to send heartbeat messages with given interval
+   * of time to every node in the ledger.
+   *
+   * In future, every node may have certain topology -- "neighbours" -- a subset
+   * of full network.
+   */
 
-  inline static const std::string defaultName() { return ""; }
+  class PeerServiceImpl : public uvw::Emitter<PeerServiceImpl>,
+                          public proto::PeerService::Service {
+   public:
+    /**
+     * Service constructor, which MUST be registered to grpc server builder.
+     * @param cluster initial information about peers
+     * @param self this node's public key
+     * @param my latest known ledger state (my state)
+     * @param loop uvw::Loop instance
+     */
+    PeerServiceImpl(iroha::ametsuchi::WsvQuery& wsvQuery, const pubkey_t self,
+                    std::shared_ptr<uvw::Loop> loop = uvw::Loop::getDefault());
 
-  inline static const std::string defaultIP() { return ""; }
+    /**
+     * Returns latest state among all available peers
+     * @return
+     */
+    std::shared_ptr<uvw::Loop> getLoop() noexcept;
 
-  inline static const std::string defaultPubKey() { return ""; }
 
-  struct Node {
-    std::string ip_;
-    std::string public_key_;
-    std::string name_;
-    double trust_;
-    uint64_t created_;
-    State state_;
+    size_t max_faulty() const noexcept;
+    std::shared_ptr<Peer> leader() noexcept;
+    std::shared_ptr<Peer> proxy_tail() noexcept;
 
-    Node(std::string ip = defaultIP(), std::string public_key = defaultPubKey(),
-         std::string name = defaultName(), double trust = 100.0,
-         uint64_t created_ = iroha::time::now64(), State state = PREPARE)
-        : ip_(ip),
-          public_key_(public_key),
-          name_(name),
-          trust_(trust),
-          state_(state) {}
+   public:
+    /** GRPC SERVICE IMPLEMENTATION **/
+    virtual grpc::Status RequestHeartbeat(grpc::ServerContext* context,
+                                          const proto::Heartbeat* request,
+                                          proto::Heartbeat* response) override;
 
-    Node(const Node& p)
-        : ip_(p.ip_),
-          public_key_(p.public_key_),
-          name_(p.name_),
-          trust_(p.trust_),
-          created_(p.created_),
-          state_(p.state_) {}
+   public:
+    /** operators **/
+    std::shared_ptr<Peer> operator[](size_t index);
+    const std::shared_ptr<Peer>& operator[](size_t index) const;
 
-    void setIp(std::string ip = defaultIP()) { ip_ = ip; }
-    void setPublicKey(std::string public_key = defaultPubKey()) {
-      public_key_ = public_key;
-    }
-    void setName(std::string name = defaultName()) { name_ = name; }
-    void setTrust(double trust = 100.0) { trust_ = trust; }
-    void setCreated(uint64_t created) { created_ = created; }
-    void setState(State state = PREPARE) { state_ = state; }
+   private:
+    /** members **/
+    std::shared_ptr<uvw::Loop> loop_;
+    model::Peer self_node_;
+    std::vector<std::shared_ptr<Peer>> chain;
 
-    std::string getIp() const { return ip_; }
-    std::string getPublicKey() const { return public_key_; }
-    std::string getName() const { return name_; }
-    double getTrust() const { return trust_; }
-    uint64_t getCreated() const { return created_; }
-    State getState() const { return state_; }
-
-    bool isDefaultIP() const { return ip_ == defaultIP(); }
-    bool isDefaultPubKey() const { return public_key_ == defaultPubKey(); }
-
-    bool operator>(const Node& node) const {
-      return (fabs(trust_ - node.trust_) < 1e-5) ? created_ < node.created_
-                                                     : trust_ > node.trust_;
-    }
+   private:
+    /** ametsuchi **/
+    iroha::ametsuchi::WsvQuery wsvQuery_;
   };
+}
 
-  using Nodes = std::vector<std::shared_ptr<Node>>;
-
-}  // namespace peer_service
-
-#endif
+#endif  // IROHA_SERVICE_HPP

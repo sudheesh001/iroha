@@ -106,7 +106,7 @@ namespace iroha {
           "CREATE TABLE IF NOT EXISTS peer (\n"
           "    public_key bytea NOT NULL,\n"
           "    address character varying(21) NOT NULL UNIQUE,\n"
-          "    state int NOT NULL DEFAULT 0,\n"
+          "    role int NOT NULL DEFAULT 0,\n"
           "    PRIMARY KEY (public_key)\n"
           ");\n"
           "CREATE TABLE IF NOT EXISTS asset (\n"

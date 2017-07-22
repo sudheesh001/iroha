@@ -33,7 +33,7 @@ message Proposal {
 // all validating peers receive proposal and sent their vote to 2f+1th peer, which
 // is called proxy tail
 message Vote {
-    // "I am voting for this state!"
+    // "I am voting for this role!"
     LedgerState next_state = 1;
 
     // sign(sha3_256(next_state + timestamp))
@@ -45,7 +45,7 @@ message Commit {
     // committed array of transactions
     repeated bytes transactions = 1;
 
-    // committed state
+    // committed role
     LedgerState commit_state = 2;
 
     // sign(sha3_256(commit_state + timestamp))
@@ -58,7 +58,7 @@ message Abort {
     enum Type {
         UNDEFINED = 0;
         SYSTEM_FAIL = 1; // when number of failed nodes > f
-        COMMIT_NOT_ENOUGH_SIGNATURES = 2; // when proxy tail can not collect 2f+1 votes for the same state
+        COMMIT_NOT_ENOUGH_SIGNATURES = 2; // when proxy tail can not collect 2f+1 votes for the same role
     }
 
     Type type = 1;

@@ -15,4 +15,23 @@
  * limitations under the License.
  */
 
-#include "messages.hpp"
+#include "heartbeat.hpp"
+#include <peer_service.pb.h>
+
+namespace peerservice {
+  namespace model {
+    Heartbeat::Heartbeat(const proto::Heartbeat *ptr) : Message(ptr) {}
+
+    bool Heartbeat::is_schema_valid() const {
+      return this->proto_->gmroot().size() == hash256_t::size();
+    }
+
+    const hash256_t Heartbeat::gmroot() const {
+      return to_blob<hash256_t::size()>(this->proto_->gmroot());
+    }
+
+    uint64_t Heartbeat::height() const {
+      return this->proto_->height();
+    }
+  }
+}

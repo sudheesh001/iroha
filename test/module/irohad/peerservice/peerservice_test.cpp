@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <atomic>
 #include <crypto/crypto.hpp>
-#include <peer_service/service.hpp>
+#include <peer_service/peer_service.hpp>
 #include <thread>
 #define NPEERS 2
 
@@ -113,6 +113,6 @@ TEST_F(Service, AyoungerThanB) {
 
   ASSERT_EQ(B->getLatestState().height(), HEIGHT);
   ASSERT_EQ(A->getLatestState().height(), HEIGHT)
-      << "A(2) -> B(3) and  A did not update its latest state";
+      << "A(2) -> B(3) and  A did not update its latest role";
 }
  */

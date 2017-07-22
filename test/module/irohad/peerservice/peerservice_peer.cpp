@@ -16,7 +16,7 @@
  */
 
 #include <common/byteutils.hpp>
-#include <peer_service/service.hpp>
+#include <peer_service/peer_service.hpp>
 #include <random>
 #include <uvw.hpp>
 

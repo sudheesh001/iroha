@@ -19,12 +19,12 @@
 #define IROHA_PEER_HPP
 
 #include <consensus.pb.h>
-#include "message.hpp"
+#include <model/message.hpp>
 
 namespace consensus {
   namespace model {
 
-    class Peer final : public Message<const proto::Peer> {
+    class Peer final : public model::Message<const proto::Peer> {
      public:
       Peer(const proto::Peer *ptr);
 

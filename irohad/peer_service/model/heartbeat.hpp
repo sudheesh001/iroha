@@ -15,38 +15,26 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_MESSAGE_HPP
-#define IROHA_MESSAGE_HPP
+#ifndef IROHA_HEARTBEAT_HPP
+#define IROHA_HEARTBEAT_HPP
 
-#include <common/byteutils.hpp>
-#include <common/types.hpp>
+#include <model/message.hpp>
 
-using ts64_t = iroha::ts64_t;
-using blob_t = iroha::blob_t;
-using pubkey_t = iroha::ed25519::pubkey_t;
-using signature_t = iroha::ed25519::sig_t;
-using hash256_t = iroha::hash256_t;
 
-namespace consensus {
+namespace peerservice {
   namespace model {
 
-    template <typename T>
-    class Message {
+    class Heartbeat : public model::Message<const proto::Heartbeat> {
      public:
-      explicit Message(T *ptr) : proto_{ptr} {}
+      Heartbeat(const proto::Heartbeat *ptr);
 
-      /**
-       * Returns true if input message is valid according to internal schema.
-       * @return
-       */
-      virtual bool is_schema_valid() const noexcept = 0;
+      bool is_schema_valid() const noexcept override;
 
-      virtual ~Message() {}
+      const hash256_t gmroot() const;
 
-     protected:
-      T *proto_;
+      uint64_t height() const noexcept ;
     };
   }
 }
 
-#endif  // IROHA_MESSAGE_HPP
+#endif  // IROHA_HEARTBEAT_HPP

@@ -19,12 +19,12 @@
 #define IROHA_ABORT_HPP
 
 #include <consensus.pb.h>
-#include "message.hpp"
+#include <model/message.hpp>
 
 namespace consensus {
   namespace model {
 
-    class Abort final : public Message<const proto::Abort> {
+    class Abort final : public model::Message<const proto::Abort> {
      public:
       Abort(const proto::Abort *ptr);
 

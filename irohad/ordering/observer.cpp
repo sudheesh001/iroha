@@ -57,8 +57,8 @@ namespace ordering {
             } else {
               /* TODO send ping Dais Peers -> (if all timeout, this peer is
               altanative leader peer)
-              auto state = sendPingDaisPeers();
-              if( state == ALLTIMEOUT ) {
+              auto role = sendPingDaisPeers();
+              if( role == ALLTIMEOUT ) {
                auto block = queue::getBlock();
                connection::consensus::send(::peer_service::self_state::getIp(),block);
               }

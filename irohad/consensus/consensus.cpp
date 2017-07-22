@@ -17,10 +17,10 @@
 
 #include "consensus.hpp"
 
-#include <consensus/model/abort.hpp>
-#include <consensus/model/commit.hpp>
-#include <consensus/model/proposal.hpp>
-#include <consensus/model/view.hpp>
+#include "model/abort.hpp"
+#include "model/commit.hpp"
+#include "model/proposal.hpp"
+#include "model/view.hpp"
 
 using grpc::Status;
 using grpc::ServerContext;

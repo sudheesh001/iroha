@@ -27,15 +27,26 @@
 #    schema
 #)
 
-add_library(peer_service
-        node.hpp
-        service.cpp
-        service.hpp
-        connection_to.cpp
-        connection_to.hpp
+add_subdirectory(model)
+
+add_library(peer
+        peer.cpp
+        peer.hpp
         )
-target_link_libraries(peer_service
+target_link_libraries(peer
+        consensus_grpc
         uvw
-        peer_service_grpc
+        peerservice_grpc
+        )
+
+
+
+add_library(peerservice
+        peer_service.cpp
+        peer_service.hpp
+        )
+target_link_libraries(peerservice
+        peer
         lookup3
+        optional
         )

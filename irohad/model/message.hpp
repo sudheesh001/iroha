@@ -15,28 +15,36 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_VIEW_HPP
-#define IROHA_VIEW_HPP
+#ifndef IROHA_MESSAGE_HPP
+#define IROHA_MESSAGE_HPP
 
-#include <consensus.pb.h>
-#include <model/message.hpp>
-#include "peer.hpp"
-#include "signature.hpp"
+#include <common/byteutils.hpp>
+#include <common/types.hpp>
 
-namespace consensus {
-  namespace model {
+using ts64_t = iroha::ts64_t;
+using blob_t = iroha::blob_t;
+using pubkey_t = iroha::ed25519::pubkey_t;
+using signature_t = iroha::ed25519::sig_t;
+using hash256_t = iroha::hash256_t;
 
-    class View final : public model::Message<const proto::View> {
-     public:
-      View(const proto::View *ptr);
+namespace model {
 
-      bool is_schema_valid() const noexcept override;
+  template <typename T>
+  class Message {
+   public:
+    explicit Message(T *ptr) : proto_{ptr} {}
 
-      const std::vector<Peer> view;
+    /**
+     * Returns true if input message is valid according to internal schema.
+     * @return
+     */
+    virtual bool is_schema_valid() const noexcept = 0;
 
-      const Signature sig;
-    };
-  }
+    virtual ~Message() {}
+
+   protected:
+    T *proto_;
+  };
 }
 
-#endif  // IROHA_VIEW_HPP
+#endif  // IROHA_MESSAGE_HPP

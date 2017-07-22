@@ -15,27 +15,28 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_COMMIT_HPP
-#define IROHA_COMMIT_HPP
+#ifndef IROHA_LEADER_HPP
+#define IROHA_LEADER_HPP
 
-#include <consensus.pb.h>
-#include "ledger_state.hpp"
-#include <model/message.hpp>
-#include "signature.hpp"
+#include <consensus/model/commit.hpp>
+#include <consensus/model/proposal.hpp>
+#include "validator.hpp"
 
 namespace consensus {
-  namespace model {
 
-    class Commit final : public model::Message<const proto::Commit> {
+  namespace role {
+
+    class Leader final : public Validator {
      public:
-      Commit(const proto::Commit *ptr);
+      Leader();
 
-      bool is_schema_valid() const noexcept override;
-
-      const LedgerState commit_state;
-      const std::vector<Signature> sigs;
+      Role self() override;
+      virtual void on_proposal(const model::Proposal &proposal);
+      virtual void on_commit(const model::Commit &commit);
+      virtual void on_vote(const model::Vote &vote);
+      virtual void on_abort(const model::Abort &abort);
     };
   }
 }
 
-#endif  // IROHA_COMMIT_HPP
+#endif  // IROHA_LEADER_HPP

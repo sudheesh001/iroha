@@ -179,7 +179,7 @@ uint32_t hashword(
 {
   uint32_t a,b,c;
 
-  /* Set up the internal state */
+  /* Set up the internal role */
   a = b = c = 0xdeadbeef + (((uint32_t)length)<<2) + initval;
 
   /*------------------------------------------------- handle most of the key */
@@ -224,7 +224,7 @@ void hashword2 (
 {
   uint32_t a,b,c;
 
-  /* Set up the internal state */
+  /* Set up the internal role */
   a = b = c = 0xdeadbeef + ((uint32_t)(length<<2)) + *pc;
   c += *pb;
 
@@ -283,10 +283,10 @@ acceptable.  Do NOT use for cryptographic purposes.
 
 uint32_t hashlittle( const void *key, size_t length, uint32_t initval)
 {
-  uint32_t a,b,c;                                          /* internal state */
+  uint32_t a,b,c;                                          /* internal role */
   union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
 
-  /* Set up the internal state */
+  /* Set up the internal role */
   a = b = c = 0xdeadbeef + ((uint32_t)length) + initval;
 
   u.ptr = key;
@@ -467,10 +467,10 @@ void hashlittle2(
     uint32_t   *pc,        /* IN: primary initval, OUT: primary hash */
     uint32_t   *pb)        /* IN: secondary initval, OUT: secondary hash */
 {
-  uint32_t a,b,c;                                          /* internal state */
+  uint32_t a,b,c;                                          /* internal role */
   union { const void *ptr; size_t i; } u;     /* needed for Mac Powerbook G4 */
 
-  /* Set up the internal state */
+  /* Set up the internal role */
   a = b = c = 0xdeadbeef + ((uint32_t)length) + *pc;
   c += *pb;
 
@@ -648,7 +648,7 @@ uint32_t hashbig( const void *key, size_t length, uint32_t initval)
   uint32_t a,b,c;
   union { const void *ptr; size_t i; } u; /* to cast key to (size_t) happily */
 
-  /* Set up the internal state */
+  /* Set up the internal role */
   a = b = c = 0xdeadbeef + ((uint32_t)length) + initval;
 
   u.ptr = key;
@@ -955,11 +955,11 @@ void driver3()
 void driver4()
 {
   uint8_t buf[1];
-  uint32_t h,i,state[HASHSTATE];
+  uint32_t h,i,role[HASHSTATE];
 
 
   buf[0] = ~0;
-  for (i=0; i<HASHSTATE; ++i) state[i] = 1;
+  for (i=0; i<HASHSTATE; ++i) role[i] = 1;
   printf("These should all be different\n");
   for (i=0, h=0; i<8; ++i)
   {
