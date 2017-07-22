@@ -28,5 +28,9 @@ namespace consensus {
         : Message(ptr),
           next_state{&this->proto_->next_state()},
           sig{&this->proto_->sig()} {}
+
+    bool Vote::is_signature_valid() const {
+      return sig.verify(this->proto_->next_state().SerializeAsString());
+    }
   }
 }

@@ -20,6 +20,8 @@
 
 #include <common/byteutils.hpp>
 #include <common/types.hpp>
+#include <crypto/crypto.hpp>
+#include <crypto/hash.hpp>
 
 using ts64_t = iroha::ts64_t;
 using blob_t = iroha::blob_t;
@@ -32,7 +34,7 @@ namespace model {
   template <typename T>
   class Message {
    public:
-    explicit Message(T *ptr) : proto_{ptr} {}
+    explicit Message(T* ptr) : proto_{ptr} {}
 
     /**
      * Returns true if input message is valid according to internal schema.
@@ -42,8 +44,12 @@ namespace model {
 
     virtual ~Message() {}
 
+    virtual operator T*() noexcept { return proto_; }
+
+    virtual T* proto() noexcept { return proto_; }
+
    protected:
-    T *proto_;
+    T* proto_;
   };
 }
 

@@ -34,6 +34,8 @@ namespace consensus {
       const LedgerState next_state;
 
       const Signature sig;
+
+      bool is_signature_valid() const noexcept;
     };
   }
 }

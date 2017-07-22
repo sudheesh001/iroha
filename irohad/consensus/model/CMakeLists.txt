@@ -15,9 +15,8 @@ add_library(consensus_model
         signature.hpp
         ledger_state.cpp
         ledger_state.hpp
-
-        ../../model/message.hpp
         )
 target_link_libraries(consensus_model
         consensus_grpc
+        hash
         )

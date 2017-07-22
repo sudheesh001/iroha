@@ -33,5 +33,22 @@ namespace consensus {
     }
 
     LedgerState::LedgerState(const proto::LedgerState *ptr) : Message(ptr) {}
+
+    const std::vector<uint8_t> LedgerState::bytes() const noexcept {
+      constexpr size_t size_ = hash256_t::size() + sizeof(uint64_t);
+
+      auto &&rootbegin = proto_->gmroot().begin();
+      auto &&rootend = proto_->gmroot().end();
+
+      uint64_t h_ = this->height();
+      uint8_t *h_ptr = (uint8_t *)h_;
+
+      std::array<uint8_t, size_> blob{};
+
+      std::copy(rootbegin, rootend, &blob[0]);
+      std::copy(h_ptr, h_ptr + sizeof(uint64_t), &blob[hash256_t::size()]);
+
+      return std::vector<uint8_t>{blob.begin(), blob.end()};
+    }
   }
 }

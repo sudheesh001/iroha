@@ -39,5 +39,13 @@ namespace consensus {
     }
 
     Signature::Signature(const proto::Signature *ptr) : Message(ptr) {}
+
+    bool Signature::verify(const std::vector<uint8_t> &msg) const {
+      return iroha::verify(msg.data(), msg.size(), pubkey(), signature());
+    }
+
+    bool Signature::verify(const std::string &msg) const {
+      return iroha::verify(msg, pubkey(), signature());
+    }
   }
 }

@@ -16,6 +16,7 @@
  */
 
 #include "peer.hpp"
+#include <regex>
 
 namespace consensus {
   namespace model {
@@ -23,14 +24,15 @@ namespace consensus {
     Peer::Peer(const proto::Peer *ptr) : Message(ptr) {}
 
     bool Peer::is_schema_valid() const {
-      // len(0.0.0.0) = 7, len(255.255.255.255) = 15
-      bool valid = this->proto_->ip().size() >= 7;
-      valid &= this->proto_->ip().size() <= 15;
+      bool valid = this->proto_->pubkey().size() == pubkey_t::size();
 
-      valid &= this->proto_->port() >= 1;
-      valid &= this->proto_->port() <= 65535;
+      // regex for ip:port
+      std::regex reg(
+          "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-"
+          "9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\:([0-9]{1,4}|[1-5][0-9]{4}|"
+          "6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])");
 
-      valid &= this->proto_->pubkey().size() == pubkey_t::size();
+      valid &= std::regex_match(this->address(), reg);
 
       return valid;
     }
@@ -39,8 +41,16 @@ namespace consensus {
       return to_blob<pubkey_t::size()>(this->proto_->pubkey());
     }
 
-    const auto Peer::port() const { return (uint16_t)this->proto_->port(); }
+    const auto Peer::address() const { return this->proto_->address(); }
 
-    const auto Peer::ip() const { return this->proto_->ip(); }
+    const std::vector<uint8_t> Peer::bytes() const {
+      auto &&addr = address();
+      std::vector<uint8_t> b{addr.begin(), addr.end()};
+
+      auto &&pubk = pubkey();
+      std::copy(pubk.begin(), pubk.end(), std::back_inserter(b));
+
+      return b;
+    }
   }
 }

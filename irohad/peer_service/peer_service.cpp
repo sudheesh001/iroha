@@ -88,7 +88,11 @@ namespace peerservice {
     return toProto();
   }
 
-  PeerServiceImpl::~PeerServiceImpl() {
+  PeerServiceImpl::~PeerServiceImpl() {}
 
+  consensus::proto::View &PeerServiceImpl::operator*() { return *cachedView; }
+
+  const consensus::proto::View &PeerServiceImpl::operator*() const {
+    return *cachedView;
   }
 }

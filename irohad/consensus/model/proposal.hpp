@@ -33,7 +33,7 @@ namespace consensus {
 
       const Vote vote;
 
-      std::vector<
+      /** vector of transactions? **/
 
     };
   }

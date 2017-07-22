@@ -47,6 +47,14 @@ namespace consensus {
        * @return
        */
       const ts64_t timestamp() const noexcept;
+
+      /**
+       * Verify ed25519 signature.
+       * @param msg
+       * @return
+       */
+      bool verify(const std::vector<uint8_t> &msg) const noexcept;
+      bool verify(const std::string &msg) const noexcept;
     };
   }
 }

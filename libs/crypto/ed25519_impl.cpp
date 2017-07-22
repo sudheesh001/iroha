@@ -45,6 +45,14 @@ namespace iroha {
   }
 
   /**
+  * Verify signature
+  */
+  bool verify(const std::string &msg, const pubkey_t &pub, const sig_t &sig) {
+    return 1 == ed25519_verify(sig.data(), (const unsigned char *)msg.data(),
+                               msg.size(), pub.data());
+  }
+
+  /**
    * Generate seed
    */
   blob_t<32> create_seed() {

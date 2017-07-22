@@ -80,6 +80,8 @@ namespace peerservice {
     std::shared_ptr<Peer> operator[](size_t index);
     const std::shared_ptr<Peer>& operator[](size_t index) const;
     operator std::shared_ptr<consensus::proto::View>() noexcept;
+    consensus::proto::View& operator*() noexcept;
+    const consensus::proto::View& operator*() const noexcept;
 
    private:
     /** members **/

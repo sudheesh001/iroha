@@ -41,6 +41,13 @@ namespace consensus {
        * @return
        */
       const uint64_t height() const noexcept;
+
+      /**
+       * Serialize
+       * <gmroot + height>
+       * @return
+       */
+      const std::vector<uint8_t> bytes() const noexcept;
     };
   }
 }

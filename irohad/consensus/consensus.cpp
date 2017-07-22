@@ -69,13 +69,12 @@ namespace consensus {
     if (!abort.is_schema_valid()) return Status::CANCELLED;
     // TODO signature verification
 
-
     return Status::OK;
   }
 
   Status Consensus::GetView(ServerContext *context, const proto::Void *request,
                             proto::View *response) {
-
+    response->CopyFrom(*chain);
     return Status::OK;
   }
 

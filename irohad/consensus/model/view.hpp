@@ -32,9 +32,13 @@ namespace consensus {
 
       bool is_schema_valid() const noexcept override;
 
-      const std::vector<Peer> view;
+      const std::vector<Peer> peer;
+
+      uint64_t view_id() const noexcept;
 
       const Signature sig;
+
+      bool is_signature_valid() const noexcept;
     };
   }
 }

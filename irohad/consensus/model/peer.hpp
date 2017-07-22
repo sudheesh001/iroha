@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_PEER_HPP
-#define IROHA_PEER_HPP
+#ifndef IROHA_CONSENSUS_MODEL_PEER_HPP
+#define IROHA_CONSENSUS_MODEL_PEER_HPP
 
 #include <consensus.pb.h>
 #include <model/message.hpp>
@@ -34,21 +34,17 @@ namespace consensus {
        * Returns peer's ip address in form of string: 127.0.0.1
        * @return
        */
-      const auto ip() const noexcept;
-
-      /**
-       * Returns peer's port.
-       * @return
-       */
-      const uint16_t port() const noexcept;
+      const auto address() const noexcept;
 
       /**
        * Returns peer's public key.
        * @return
        */
       const pubkey_t pubkey() const;
+
+      const std::vector<uint8_t> bytes() const noexcept;
     };
   }
 }
 
-#endif  // IROHA_PEER_HPP
+#endif  // IROHA_CONSENSUS_MODEL_PEER_HPP

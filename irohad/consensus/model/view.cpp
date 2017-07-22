@@ -22,16 +22,24 @@ namespace consensus {
 
     View::View(const proto::View *ptr)
         : Message(ptr),
-          view{this->proto_->view().begin(), this->proto_->view().end()},
+          peer{this->proto_->peer().begin(), this->proto_->peer().end()},
           sig{&this->proto_->sig()} {}
 
     bool View::is_schema_valid() const {
-      if (this->proto_->view_size() <= 0) return false;
-      for (auto &&peer : view) {
-        if (!peer.is_schema_valid()) return false;
+      if (this->proto_->peer_size() <= 0) return false;
+      for (auto &&p : peer) {
+        if (!p.is_schema_valid()) return false;
       }
 
       return true;
     }
+
+    bool View::is_signature_valid() const noexcept {
+      // TODO
+      // peer1.bytes() + peer2.bytes() + ... + peerN.bytes() + timestamp
+      return true;
+      //return sig.verify(this->proto_->);
+    }
+    uint64_t View::view_id() const noexcept { return this->proto_->view_id(); }
   }
 }
