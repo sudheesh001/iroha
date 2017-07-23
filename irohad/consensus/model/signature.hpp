@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_SIGNATURE_HPP
-#define IROHA_SIGNATURE_HPP
+#ifndef IROHA_CONSENSUS_SIGNATURE_HPP
+#define IROHA_CONSENSUS_SIGNATURE_HPP
 
 #include <consensus.pb.h>
 #include <model/message.hpp>
@@ -58,4 +58,4 @@ namespace consensus {
     };
   }
 }
-#endif  // IROHA_SIGNATURE_HPP
+#endif  // IROHA_CONSENSUS_SIGNATURE_HPP

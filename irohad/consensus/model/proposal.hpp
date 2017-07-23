@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_PROPOSAL_HPP
-#define IROHA_PROPOSAL_HPP
+#ifndef IROHA_CONSENSUS_PROPOSAL_HPP
+#define IROHA_CONSENSUS_PROPOSAL_HPP
 
 #include <consensus.pb.h>
 #include <model/message.hpp>
@@ -37,4 +37,4 @@ namespace consensus {
     };
   }
 }
-#endif  // IROHA_PROPOSAL_HPP
+#endif  // IROHA_CONSENSUS_PROPOSAL_HPP
