@@ -22,7 +22,6 @@ namespace consensus {
 
     Role ProxyTail::self() { return Role::PROXY_TAIL; }
     ProxyTail::ProxyTail(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started) : Validator(ps,
-
                                                                                                          round_started) {}
     void ProxyTail::on_proposal(const model::Proposal &proposal) {
       // TODO validate proposal and send vote
@@ -31,6 +30,7 @@ namespace consensus {
     void ProxyTail::on_commit(const model::Commit &commit) {
       // proxy tail does the same action with commit as validator
       Validator::on_commit(commit);
+      //TODO: shouldn't the proxy tail be sending commits and NEVER receive a commit in the current view (the answer depends on whether or not a non-leader fault is treated as a view change or not)
     }
 
     void ProxyTail::on_vote(const model::Vote &vote) {

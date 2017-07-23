@@ -24,6 +24,7 @@
 #include <atomic>
 
 namespace consensus {
+  // TODO: change all this so that consensus does not know about transmission protocol or data format.
   class Consensus : public proto::Sumeragi::Service {
    public:
     /** **/
@@ -45,7 +46,7 @@ namespace consensus {
     virtual grpc::Status SendAbort(grpc::ServerContext* context,
                                    const proto::Abort* request,
                                    proto::Void* response) override;
-    // / view = the order of peers
+    // view = the order of peers
     // any peer can request current view of other peer
     virtual grpc::Status GetView(grpc::ServerContext* context,
                                  const proto::Void* request,

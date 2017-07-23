@@ -66,7 +66,9 @@ namespace consensus {
                               const proto::Abort *request,
                               proto::Void *response) {
     model::Abort abort(request);
-    if (!abort.is_schema_valid()) return Status::CANCELLED;
+    if (!abort.is_schema_valid()) {
+      return Status::CANCELLED;
+    }
     // TODO signature verification
 
     return Status::OK;
