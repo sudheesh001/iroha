@@ -16,8 +16,6 @@
  */
 
 #include "consensus.hpp"
-#include <consensus.pb.h>
-
 #include "block.pb.h"
 #include "consensus.pb.h"
 #include "consensus/role/member.hpp"
