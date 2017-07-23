@@ -19,13 +19,15 @@
 #define IROHA_CONSENSUS_HPP
 
 #include <consensus.grpc.pb.h>
-#include <peer_service/peer_service.hpp>
 #include <atomic>
+#include <model/converters/pb_transaction_factory.hpp>
+#include <peer_service/peer_service.hpp>
+#include "model/model_crypto_provider.hpp"
 #include "network/consensus_gate.hpp"
 
 namespace consensus {
 
-  namespace role{
+  namespace role {
     class Member;
   }
 
@@ -34,6 +36,9 @@ namespace consensus {
   class Consensus : public proto::Sumeragi::Service,
                     public iroha::network::ConsensusGate {
    public:
+    /** **/
+    Consensus(peerservice::PeerServiceImpl& chain,
+              iroha::model::ModelCryptoProvider& crypto_provider);
     void vote(iroha::model::Block block) override;
     rxcpp::observable<iroha::model::Block> on_commit() override;
     void on_next(iroha::model::Block&& block);
@@ -68,13 +73,18 @@ namespace consensus {
 
    private:
     /** order or peers **/
-    peerservice::PeerServiceImpl chain;
+    peerservice::PeerServiceImpl& chain_;
 
     /** current state  (idle, busy) **/
     std::atomic<bool> round_started;
 
     /** and role (member, validator, leader, proxy_tail) **/
     std::unique_ptr<role::Member> role_;
+
+    /** to verify messages */
+    iroha::model::ModelCryptoProvider& crypto_provider_;
+
+    iroha::model::converters::PbTransactionFactory tx_factory_;
 
     rxcpp::subjects::subject<iroha::model::Block> commits_;
   };
