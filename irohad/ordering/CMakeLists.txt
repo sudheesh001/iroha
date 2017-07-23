@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#add_subdirectory(connection)
-
 add_library(ordering_service
     ordering_service_stub.cpp
     )

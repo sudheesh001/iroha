@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_library(ordering_connection
-    client.cpp
-    service.cpp
-)
-target_link_libraries(ordering_connection
-    endpoint
-    schema
-)
+add_library(query_client STATIC query_client.cpp)
+target_link_libraries(query_client
+  torii_service
+  endpoint
+  )

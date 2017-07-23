@@ -14,25 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef IROHA_PB_QUERY_FACTORY_HPP
+#define IROHA_PB_QUERY_FACTORY_HPP
 
-#include <torii/torii_stub.hpp>
-#include <iostream>
+#include "model/query.hpp"
+#include "queries.pb.h"
 
 namespace iroha {
-  namespace torii {
-    ToriiStub::ToriiStub(TransactionProcessor &transaction_processor,
-                         QueryProcessor &query_processor) :
-        transaction_processor_(transaction_processor),
-        query_processor_(query_processor) {
+  namespace model {
+    namespace converters {
 
-    }
+      /**
+       * Converting business objects to protobuf and vice versa
+       */
+      class PbQueryFactory {
+       public:
 
-    void ToriiStub::get_query(model::Client client, model::Query &query) {
-      query_processor_.query_handle(client, query);
-    }
+        /**
+         * Convert proto query to model query
+         * @param pb_block - reference to proto query
+         * @return model Query
+         */
+        std::shared_ptr<model::Query> deserialize(protocol::Query &pb_query);
 
-    void ToriiStub::get_transaction(model::Client client, model::Transaction &tx) {
-      transaction_processor_.transaction_handle(client, tx);
-    }
-  } // namespace torii
-} // namespace iroha
+
+      };
+
+    }  // namespace converters
+  }    // namespace model
+}  // namespace iroha
+
+#endif  // IROHA_PB_QUERY_FACTORY_HPP
