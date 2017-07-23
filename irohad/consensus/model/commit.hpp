@@ -34,6 +34,7 @@ namespace consensus {
 
       const LedgerState commit_state;
       const std::vector<Signature> sigs;
+      const std::vector<std::string> transactions;
     };
   }
 }

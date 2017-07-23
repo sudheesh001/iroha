@@ -26,12 +26,18 @@ namespace iroha {
      * Signature is a Model structure to store crypto information
      */
     struct Signature {
+      Signature() = default;
+
+      Signature(const ed25519::sig_t& signature,
+                const ed25519::pubkey_t& pubkey)
+          : signature(signature), pubkey(pubkey) {}
+
       ed25519::sig_t signature;
       ed25519::pubkey_t pubkey;
 
       bool operator==(const Signature& rhs) const;
       bool operator!=(const Signature& rhs) const;
     };
-  } // namespace model
-} // namespace iroha
+  }  // namespace model
+}  // namespace iroha
 #endif  // IROHA_SIGNATURE_HPP

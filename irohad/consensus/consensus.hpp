@@ -19,15 +19,24 @@
 #define IROHA_CONSENSUS_HPP
 
 #include <consensus.grpc.pb.h>
-#include <consensus/role/member.hpp>
 #include <peer_service/peer_service.hpp>
 #include <atomic>
+#include "network/consensus_gate.hpp"
 
 namespace consensus {
-  // TODO: change all this so that consensus does not know about transmission protocol or data format.
-  class Consensus : public proto::Sumeragi::Service {
+
+  namespace role{
+    class Member;
+  }
+
+  // TODO: change all this so that consensus does not know about transmission
+  // protocol or data format.
+  class Consensus : public proto::Sumeragi::Service,
+                    public iroha::network::ConsensusGate {
    public:
-    /** **/
+    void vote(iroha::model::Block block) override;
+    rxcpp::observable<iroha::model::Block> on_commit() override;
+    void on_next(iroha::model::Block&& block);
 
    public:
     /** GRPC SERVICE IMPLEMENTATION **/
@@ -66,6 +75,8 @@ namespace consensus {
 
     /** and role (member, validator, leader, proxy_tail) **/
     std::unique_ptr<role::Member> role_;
+
+    rxcpp::subjects::subject<iroha::model::Block> commits_;
   };
 }
 

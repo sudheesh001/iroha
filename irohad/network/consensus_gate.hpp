@@ -15,34 +15,35 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_CONSENSUS_SERVICE_HPP
-#define IROHA_CONSENSUS_SERVICE_HPP
+#ifndef IROHA_CONSENSUS_GATE_HPP
+#define IROHA_CONSENSUS_GATE_HPP
 
-#include <model/proposal.hpp>
-#include <model/block.hpp>
 #include <rxcpp/rx-observable.hpp>
+#include "model/block.hpp"
 
 namespace iroha {
-  namespace consensus {
+  namespace network {
+
     /**
-     * Consensus interface for peer communication service
+     * Public api of consensus module
      */
-    class ConsensusService {
+    class ConsensusGate {
      public:
+      /**
+       * Providing data for consensus for voting
+       */
+      virtual void vote(model::Block block) = 0;
 
       /**
-       * Vote for a block formed from proposal
-       * @param block
+       * Emit committed blocks
+       * Note: committed block may be not satisfy for top block in ledger
+       * because synchronization reasons
        */
-      virtual void vote_block(model::Block &block) = 0;
+      virtual rxcpp::observable<model::Block> on_commit() = 0;
 
-      /**
-       * Return observable of all commits from the consensus
-       * @return
-       */
-      virtual rxcpp::observable<rxcpp::observable<model::Block>> on_commit() = 0;
+      virtual ~ConsensusGate() = default;
     };
-  } // namespace consensus
-} // namespace iroha
+  }  // namespace network
+}  // namespace iroha
 
-#endif //IROHA_CONSENSUS_SERVICE_HPP
+#endif  // IROHA_CONSENSUS_GATE_HPP

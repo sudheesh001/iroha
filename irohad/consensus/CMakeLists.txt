@@ -24,4 +24,5 @@ target_link_libraries(consensus
     uvw
     consensus_model
     optional
+    rxcpp
     )

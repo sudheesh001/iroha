@@ -20,9 +20,10 @@
 namespace consensus {
   namespace role {
     Role Leader::self() { return Role::LEADER; }
-    Leader::Leader(peerservice::PeerServiceImpl &ps,
+    Leader::Leader(consensus::Consensus &consensus,
+                   peerservice::PeerServiceImpl &ps,
                    std::atomic<bool> &round_started)
-        : Validator(ps, round_started) {}
+        : Validator(consensus, ps, round_started) {}
 
     void Leader::on_proposal(const model::Proposal &proposal) {
       // TODO

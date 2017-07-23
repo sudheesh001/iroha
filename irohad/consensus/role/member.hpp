@@ -28,7 +28,12 @@
 #include <grpc++/grpc++.h>
 #include <common/types.hpp>
 
+#include "model/converters/pb_transaction_factory.hpp"
+
 namespace consensus {
+
+  class Consensus;
+
   namespace role {
 
     enum Role : uint8_t {
@@ -43,7 +48,8 @@ namespace consensus {
 
     class Member {
      public:
-      Member(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
+      Member(consensus::Consensus &consensus, peerservice::PeerServiceImpl &ps,
+             std::atomic<bool> &round_started);
       virtual Role self();
       virtual void on_proposal(const model::Proposal &proposal);
       virtual void on_commit(const model::Commit &commit);
@@ -51,8 +57,10 @@ namespace consensus {
       virtual void on_abort(const model::Abort &abort);
 
      protected:
+      consensus::Consensus &consensus_;
       peerservice::PeerServiceImpl &ps_;
       std::atomic<bool> &round_started_;
+      iroha::model::converters::PbTransactionFactory txFactory_;
     };
   }
 }

@@ -21,6 +21,7 @@
 #include "model/commit.hpp"
 #include "model/proposal.hpp"
 #include "model/view.hpp"
+#include "consensus/role/member.hpp"
 
 using grpc::Status;
 using grpc::ServerContext;
@@ -86,5 +87,17 @@ namespace consensus {
     if (!view.is_schema_valid()) return Status::CANCELLED;
 
     return Status::OK;
+  }
+
+  void Consensus::vote(iroha::model::Block block) {
+    // TODO subscription to simulator::BlockCreator
+  }
+
+  rxcpp::observable<iroha::model::Block> Consensus::on_commit() {
+    return commits_.get_observable();
+  }
+
+  void Consensus::on_next(iroha::model::Block &&block) {
+    commits_.get_subscriber().on_next(std::forward<iroha::model::Block>(block));
   }
 }

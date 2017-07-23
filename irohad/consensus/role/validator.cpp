@@ -20,9 +20,10 @@
 namespace consensus {
   namespace role {
     Role Validator::self() { return Role::VALIDATOR; }
-    Validator::Validator(peerservice::PeerServiceImpl &ps,
+    Validator::Validator(consensus::Consensus &consensus,
+                         peerservice::PeerServiceImpl &ps,
                          std::atomic<bool> &round_started)
-        : Member(ps, round_started) {}
+        : Member(consensus, ps, round_started) {}
 
     void Validator::on_proposal(const model::Proposal &proposal) {
       // TODO: validate proposal and send vote to proxy tail
@@ -41,6 +42,5 @@ namespace consensus {
       // abort processing is the same as for member
       Member::on_abort(abort);
     }
-
   }
 }

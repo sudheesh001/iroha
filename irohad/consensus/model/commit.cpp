@@ -37,6 +37,8 @@ namespace consensus {
         : Message(ptr),
           commit_state{&this->proto_->commit_state()},
           sigs{this->proto_->sigs().pointer_begin(),
-               this->proto_->sigs().pointer_end()} {}
+               this->proto_->sigs().pointer_end()},
+          transactions(proto_->transactions().begin(),
+                       proto_->transactions().end()) {}
   }
 }

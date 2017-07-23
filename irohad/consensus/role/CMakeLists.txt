@@ -13,4 +13,5 @@ target_link_libraries(peer_state
     consensus_grpc
     uvw
     optional
+    rxcpp
     )

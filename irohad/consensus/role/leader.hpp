@@ -28,7 +28,8 @@ namespace consensus {
 
     class Leader final : public Validator {
      public:
-      Leader(peerservice::PeerServiceImpl &ps, std::atomic<bool> &round_started);
+      Leader(consensus::Consensus &consensus, peerservice::PeerServiceImpl &ps,
+             std::atomic<bool> &round_started);
       Role self() override;
       virtual void on_proposal(const model::Proposal &proposal);
       virtual void on_commit(const model::Commit &commit);
