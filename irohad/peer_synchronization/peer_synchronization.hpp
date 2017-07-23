@@ -54,7 +54,7 @@ namespace iroha {
 
       void clearCache();
 
-      std::priority_queue<Block, std::vector<Block>, comparator::BlockComparator> temp_block_;
+      std::priority_queue<Block, std::vector<Block>, comparator::BlockHeightComparator> temp_block_;
 
       uint64_t current_;
       uint64_t upd_time_;

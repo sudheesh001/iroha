@@ -9,7 +9,7 @@
 
 namespace comparator {
   using Block = iroha::protocol::Block;
-  class BlockComparator : public std::binary_function<Block, Block, bool> {
+  class BlockHeightComparator : public std::binary_function<Block, Block, bool> {
    public:
     bool operator()(const Block &a, const Block &b) {
       return a.header().height() < b.header().height();

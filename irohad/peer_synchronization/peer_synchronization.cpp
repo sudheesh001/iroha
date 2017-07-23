@@ -70,11 +70,14 @@ namespace iroha {
     }
 
     void Synchronizer::syncObserve(uint64_t offset) {
+
+      const int64_t limited_wait_time = 2;
+
       clearCache();
       current_ = offset;
       while (true /*iroha::demon::self::getStatus()==UnSynced*/) {
         if (temp_block_.empty()) {
-          if (iroha::time::now64() - upd_time_ > 2) break;
+          if (iroha::time::now64() - upd_time_ > limited_wait_time ) break;
           continue;
         }
         auto &ap_tx = temp_block_.top();
