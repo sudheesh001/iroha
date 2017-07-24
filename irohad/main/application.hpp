@@ -18,8 +18,7 @@
 #define IROHA_APPLICATION_HPP
 
 #include <main/context.hpp>
-#include <network/network_api.h>
-#include <ordering/ordering_service_stub.hpp>
+#include <network/peer_communication_service.hpp>
 #include <torii/processor/query_processor_stub.hpp>
 #include <torii/processor/transaction_processor_impl.hpp>
 #include <validation/chain/validator_stub.hpp>
