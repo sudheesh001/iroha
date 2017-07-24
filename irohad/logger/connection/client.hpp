@@ -16,23 +16,21 @@ limitations under the License.
 
 #include <grpc++/grpc++.h>
 #include <memory>
-#include <block.pb.h>
-#include <endpoint.pb.h>
-#include <endpoint.grpc.pb.h>
+#include <logger.pb.h>
+#include <logger.grpc.pb.h>
 
-namespace consensus {
+namespace logger {
   namespace connection {
 
-    iroha::protocol::VerifyResponse sendBlock(
-      const iroha::protocol::Block& block, const std::string& targetPeerIp);
+    bool check(const std::string& address);
 
-    class SumeragiClient {
+    class LoggerLivingConfirmationClient {
     public:
-      SumeragiClient(const std::string& ip, int port);
-      iroha::protocol::VerifyResponse Verify(const iroha::protocol::Block&);
+      LoggerLivingConfirmationClient(const std::string& address);
+      bool check(const iroha::protocol::Ping&);
     private:
       grpc::ClientContext context_;
-      std::unique_ptr<iroha::protocol::SumeragiService::Stub> stub_;
+      std::unique_ptr<iroha::protocol::LoggerLivingConfirmationService::Stub> stub_;
     };
 
   }  // namespace connection

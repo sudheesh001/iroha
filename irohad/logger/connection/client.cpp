@@ -15,34 +15,26 @@ limitations under the License.
 #include <block.pb.h>
 #include "client.hpp"
 
-namespace consensus {
+namespace logger {
   namespace connection {
 
-    using iroha::protocol::Block;
-    using iroha::protocol::VerifyResponse;
+    using iroha::protocol::Ping;
+    using iroha::protocol::Pong;
 
-    VerifyResponse sendBlock(const Block& block, const std::string& targetPeerIp) {
-      SumeragiClient client(targetPeerIp, 50051); // TODO: Get port from config
-      return client.Verify(block);
+    bool check(const std::string& address){
+      LoggerLivingConfirmationClient client(address);
+      return client.check(Ping{});
     }
 
-    SumeragiClient::SumeragiClient(const std::string& ip, int port) {
-      // TODO(motxx): call validation of ip format and port.
-      auto channel = grpc::CreateChannel(ip + ":" + std::to_string(port), grpc::InsecureChannelCredentials());
-      stub_ = iroha::protocol::SumeragiService::NewStub(channel);
+    LoggerLivingConfirmationClient::LoggerLivingConfirmationClient(const std::string& address) {
+      auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
+      stub_ = iroha::protocol::LoggerLivingConfirmationService::NewStub(channel);
     }
 
-    VerifyResponse SumeragiClient::Verify(const Block& block) {
-      VerifyResponse response;
-      auto status = stub_->Verify(&context_, block, &response);
-
-      if (status.ok()) {
-        return response;
-      } else {
-        response.Clear();
-        response.set_code(iroha::protocol::FAIL);
-        return response;
-      }
+    bool LoggerLivingConfirmationClient::check(const iroha::protocol::Ping& ping) {
+      Pong pong;
+      auto status = stub_->check(&context_, ping, &pong);
+      return status.ok();
     }
 
   }  // namespace connection

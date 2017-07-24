@@ -17,22 +17,16 @@ limitations under the License.
 #include <block.pb.h>
 #include <endpoint.pb.h>
 
-namespace consensus {
+namespace logger {
   namespace connection {
 
-    using iroha::protocol::Block;
-    using iroha::protocol::VerifyResponse;
+    using iroha::protocol::Ping;
+    using iroha::protocol::Pong;
 
-    std::function<void(const Block&)> dispatchToSumeragi;
-
-    void receive(const std::function<void(const Block&)>& func) {
-      dispatchToSumeragi = func;
-    }
-
-    grpc::Status SumeragiService::Verify(
-        grpc::ServerContext* context, const ::iroha::protocol::Block* request,
-        iroha::protocol::VerifyResponse* response) {
-      response->set_code(iroha::protocol::ResponseCode::OK);
+    grpc::Status LoggerLivingConfirmationService::check(
+      grpc::ServerContext* context, const ::iroha::protocol::Ping* ping,
+      iroha::protocol::Pong* pong
+    ) {
       return grpc::Status::OK;
     }
   }  // namespace connection

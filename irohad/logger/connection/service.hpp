@@ -14,20 +14,18 @@ limitations under the License.
 #ifndef CONSENSUS_CONNECTION_SERVICE_HPP
 #define CONSENSUS_CONNECTION_SERVICE_HPP
 
-#include <endpoint.grpc.pb.h>
-#include <endpoint.pb.h>
+#include <logger.pb.h>
+#include <logger.grpc.pb.h>
 
-namespace consensus {
+namespace logger {
   namespace connection {
 
-    void receive(const std::function<void(const iroha::protocol::Block&)>&);
-
-    class SumeragiService final
-      : public iroha::protocol::SumeragiService::Service {
+    class LoggerLivingConfirmationService final
+      : public iroha::protocol::LoggerLivingConfirmationService::Service {
     public:
-      grpc::Status Verify(
-        grpc::ServerContext* context, const ::iroha::protocol::Block* request,
-        iroha::protocol::VerifyResponse* response);
+      grpc::Status check(
+        grpc::ServerContext* context, const ::iroha::protocol::Ping* ping,
+        iroha::protocol::Pong* pong);
     };
 
   }  // namespace connection
