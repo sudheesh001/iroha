@@ -29,9 +29,14 @@ using grpc::ServerContext;
 
 namespace consensus {
 
-  Consensus::Consensus(peerservice::PeerServiceImpl &chain,
+  Consensus::Consensus(iroha::simulator::BlockCreator &block_creator,
+                       peerservice::PeerServiceImpl &chain,
                        iroha::model::ModelCryptoProvider &crypto_provider)
-      : chain_(chain), crypto_provider_(crypto_provider) {}
+      : chain_(chain), crypto_provider_(crypto_provider) {
+    block_creator.on_block().subscribe([this](auto block) {
+      this->vote(block);
+    });
+  }
 
   Status Consensus::SendProposal(ServerContext *context,
                                  const proto::Proposal *request,
@@ -108,7 +113,21 @@ namespace consensus {
   }
 
   void Consensus::vote(iroha::model::Block block) {
-    // TODO subscription to simulator::BlockCreator
+    grpc::ClientContext context;
+    proto::Vote request;
+    proto::Void response;
+    // TODO sign block
+    auto next_state = request.mutable_next_state();
+    next_state->set_gmroot(block.merkle_root.data(), block.merkle_root.size());
+    next_state->set_height(block.height);
+    auto sig = request.mutable_sig();
+//    sig->set_pubkey();
+//    sig->set_signature();
+//    sig->set_timestamp();
+    auto res = chain_.proxy_tail()->SendVote(&context, request, &response);
+    if (!res.ok()){
+      // TODO handle error
+    }
   }
 
   rxcpp::observable<iroha::model::Block> Consensus::on_commit() {

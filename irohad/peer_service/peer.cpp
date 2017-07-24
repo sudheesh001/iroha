@@ -50,14 +50,17 @@ namespace peerservice {
   std::uniform_int_distribution<uint32_t> Peer::next_long_timer(
       LONG_TIMER_LOW, LONG_TIMER_HIGH);  // ms
 
-  Peer::Peer(const iroha::model::Peer &n, std::shared_ptr<uvw::Loop> loop) : peer(n) {
+  Peer::Peer(const iroha::model::Peer &n, std::shared_ptr<uvw::Loop> loop)
+      : peer(n) {
     if (loop == nullptr) throw std::invalid_argument("loop is null");
 
     this->online_ = false;
     this->timer = loop->resource<uvw::TimerHandle>();
 
-    auto channel = grpc::CreateChannel(peer.address, grpc::InsecureChannelCredentials());
-    stub_ = proto::PeerService::NewStub(channel);
+    auto channel =
+        grpc::CreateChannel(peer.address, grpc::InsecureChannelCredentials());
+    peer_service_stub_ = proto::PeerService::NewStub(channel);
+    consensus_stub_ = consensus::proto::Sumeragi::NewStub(channel);
   }
 
   Peer::~Peer() { this->timer->close(); }
@@ -79,7 +82,98 @@ namespace peerservice {
     this->start_timer(next_long_timer);
   }
 
-  bool Peer::online() const {
-    return online_;
+  bool Peer::online() const { return online_; }
+
+  grpc::Status Peer::SendProposal(::grpc::ClientContext *context,
+                                  const ::consensus::proto::Proposal &request,
+                                  ::consensus::proto::Void *response) {
+    return consensus_stub_->SendProposal(context, request, response);
+  }
+
+  grpc::Status Peer::SendVote(::grpc::ClientContext *context,
+                              const ::consensus::proto::Vote &request,
+                              ::consensus::proto::Void *response) {
+    return consensus_stub_->SendVote(context, request, response);
+  }
+
+  grpc::Status Peer::SendCommit(::grpc::ClientContext *context,
+                                const ::consensus::proto::Commit &request,
+                                ::consensus::proto::Void *response) {
+    return consensus_stub_->SendCommit(context, request, response);
+  }
+
+  grpc::Status Peer::SendAbort(::grpc::ClientContext *context,
+                               const ::consensus::proto::Abort &request,
+                               ::consensus::proto::Void *response) {
+    return consensus_stub_->SendAbort(context, request, response);
+  }
+
+  grpc::Status Peer::GetView(::grpc::ClientContext *context,
+                             const ::consensus::proto::Void &request,
+                             ::consensus::proto::View *response) {
+    return consensus_stub_->GetView(context, request, response);
+  }
+
+  grpc::Status Peer::SetView(::grpc::ClientContext *context,
+                             const ::consensus::proto::View &request,
+                             ::consensus::proto::Void *response) {
+    return consensus_stub_->SetView(context, request, response);
+  }
+
+  grpc::Status Peer::RequestHeartbeat(
+      ::grpc::ClientContext *context,
+      const ::peerservice::proto::Heartbeat &request,
+      ::peerservice::proto::Heartbeat *response) {
+    return peer_service_stub_->RequestHeartbeat(context, request, response);
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+      *Peer::AsyncSendProposalRaw(::grpc::ClientContext *context,
+                                  const ::consensus::proto::Proposal &request,
+                                  ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncSendProposal(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+      *Peer::AsyncSendVoteRaw(::grpc::ClientContext *context,
+                              const ::consensus::proto::Vote &request,
+                              ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncSendVote(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+      *Peer::AsyncSendCommitRaw(::grpc::ClientContext *context,
+                                const ::consensus::proto::Commit &request,
+                                ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncSendCommit(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+      *Peer::AsyncSendAbortRaw(::grpc::ClientContext *context,
+                               const ::consensus::proto::Abort &request,
+                               ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncSendAbort(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::View>
+      *Peer::AsyncGetViewRaw(::grpc::ClientContext *context,
+                             const ::consensus::proto::Void &request,
+                             ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncGetView(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+      *Peer::AsyncSetViewRaw(::grpc::ClientContext *context,
+                             const ::consensus::proto::View &request,
+                             ::grpc::CompletionQueue *cq) {
+    return consensus_stub_->AsyncSetView(context, request, cq).release();
+  }
+
+  grpc::ClientAsyncResponseReaderInterface<proto::Heartbeat> *
+  Peer::AsyncRequestHeartbeatRaw(::grpc::ClientContext *context,
+                                 const ::peerservice::proto::Heartbeat &request,
+                                 ::grpc::CompletionQueue *cq) {
+    return peer_service_stub_->AsyncRequestHeartbeat(context, request, cq)
+        .release();
   }
 }

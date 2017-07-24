@@ -20,6 +20,7 @@
 
 #include <consensus/model/commit.hpp>
 #include <consensus/model/proposal.hpp>
+#include "network/ordering_gate.hpp"
 #include "validator.hpp"
 
 namespace consensus {
@@ -29,7 +30,8 @@ namespace consensus {
     class Leader final : public Validator {
      public:
       Leader(consensus::Consensus &consensus, peerservice::PeerServiceImpl &ps,
-             std::atomic<bool> &round_started);
+             std::atomic<bool> &round_started,
+             iroha::network::OrderingGate &ordering_gate);
       Role self() override;
       virtual void on_proposal(const model::Proposal &proposal);
       virtual void on_commit(const model::Commit &commit);
@@ -37,7 +39,7 @@ namespace consensus {
       virtual void on_abort(const model::Abort &abort);
 
      private:
-      // TODO: declare ordering service here
+      iroha::network::OrderingGate &ordering_gate_;
     };
   }
 }

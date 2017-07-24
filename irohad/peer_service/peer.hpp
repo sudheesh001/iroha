@@ -32,14 +32,16 @@ namespace peerservice {
 
   using pubkey_t = iroha::ed25519::pubkey_t;
 
-  class Peer : public uvw::Emitter<Peer> {
+  class Peer : public uvw::Emitter<Peer>,
+               public consensus::proto::Sumeragi::StubInterface,
+               public proto::PeerService::StubInterface {
    public:
-    explicit Peer(const iroha::model::Peer& n, std::shared_ptr<uvw::Loop> loop);
-    Peer(const Peer&) = delete;
-    Peer(const Peer&&) = delete;
+    explicit Peer(const iroha::model::Peer &n, std::shared_ptr<uvw::Loop> loop);
+    Peer(const Peer &) = delete;
+    Peer(const Peer &&) = delete;
     virtual ~Peer();
 
-    const iroha::model::Peer& peer;
+    const iroha::model::Peer &peer;
     std::shared_ptr<uvw::TimerHandle> timer;
 
     void make_online() noexcept;
@@ -47,10 +49,67 @@ namespace peerservice {
 
     bool online() const;
 
+    /*
+     * gRPC client methods
+     */
+    grpc::Status SendProposal(::grpc::ClientContext *context,
+                              const ::consensus::proto::Proposal &request,
+                              ::consensus::proto::Void *response) override;
+    grpc::Status SendVote(::grpc::ClientContext *context,
+                          const ::consensus::proto::Vote &request,
+                          ::consensus::proto::Void *response) override;
+    grpc::Status SendCommit(::grpc::ClientContext *context,
+                            const ::consensus::proto::Commit &request,
+                            ::consensus::proto::Void *response) override;
+    grpc::Status SendAbort(::grpc::ClientContext *context,
+                           const ::consensus::proto::Abort &request,
+                           ::consensus::proto::Void *response) override;
+    grpc::Status GetView(::grpc::ClientContext *context,
+                         const ::consensus::proto::Void &request,
+                         ::consensus::proto::View *response) override;
+    grpc::Status SetView(::grpc::ClientContext *context,
+                         const ::consensus::proto::View &request,
+                         ::consensus::proto::Void *response) override;
+    grpc::Status RequestHeartbeat(
+        ::grpc::ClientContext *context,
+        const ::peerservice::proto::Heartbeat &request,
+        ::peerservice::proto::Heartbeat *response) override;
+
+   private:
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+        *AsyncSendProposalRaw(::grpc::ClientContext *context,
+                              const ::consensus::proto::Proposal &request,
+                              ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+        *AsyncSendVoteRaw(::grpc::ClientContext *context,
+                          const ::consensus::proto::Vote &request,
+                          ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+        *AsyncSendCommitRaw(::grpc::ClientContext *context,
+                            const ::consensus::proto::Commit &request,
+                            ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+        *AsyncSendAbortRaw(::grpc::ClientContext *context,
+                           const ::consensus::proto::Abort &request,
+                           ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::View>
+        *AsyncGetViewRaw(::grpc::ClientContext *context,
+                         const ::consensus::proto::Void &request,
+                         ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<consensus::proto::Void>
+        *AsyncSetViewRaw(::grpc::ClientContext *context,
+                         const ::consensus::proto::View &request,
+                         ::grpc::CompletionQueue *cq) override;
+    grpc::ClientAsyncResponseReaderInterface<proto::Heartbeat> *
+    AsyncRequestHeartbeatRaw(::grpc::ClientContext *context,
+                             const ::peerservice::proto::Heartbeat &request,
+                             ::grpc::CompletionQueue *cq) override;
+
    private:
     bool online_;
     std::shared_ptr<model::Heartbeat> cachedHeartbeat;
-    std::unique_ptr<proto::PeerService::Stub> stub_;
+    std::unique_ptr<proto::PeerService::Stub> peer_service_stub_;
+    std::unique_ptr<consensus::proto::Sumeragi::Stub> consensus_stub_;
 
    private:
     /**
@@ -59,7 +118,7 @@ namespace peerservice {
      * timer with short timer. If peer is dead, then we restart long timer.
      * @param distr
      */
-    void start_timer(std::uniform_int_distribution<uint32_t>& distr);
+    void start_timer(std::uniform_int_distribution<uint32_t> &distr);
 
    private:
     static std::random_device random_device;

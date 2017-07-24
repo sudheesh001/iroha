@@ -22,8 +22,10 @@ namespace consensus {
     Role Leader::self() { return Role::LEADER; }
     Leader::Leader(consensus::Consensus &consensus,
                    peerservice::PeerServiceImpl &ps,
-                   std::atomic<bool> &round_started)
-        : Validator(consensus, ps, round_started) {}
+                   std::atomic<bool> &round_started,
+                   iroha::network::OrderingGate &ordering_gate)
+        : Validator(consensus, ps, round_started),
+          ordering_gate_(ordering_gate) {}
 
     void Leader::on_proposal(const model::Proposal &proposal) {
       // TODO

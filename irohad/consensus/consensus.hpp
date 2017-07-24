@@ -22,6 +22,7 @@
 #include <atomic>
 #include <model/converters/pb_transaction_factory.hpp>
 #include <peer_service/peer_service.hpp>
+#include "simulator/block_creator.hpp"
 #include "model/model_crypto_provider.hpp"
 #include "network/consensus_gate.hpp"
 
@@ -37,7 +38,8 @@ namespace consensus {
                     public iroha::network::ConsensusGate {
    public:
     /** **/
-    Consensus(peerservice::PeerServiceImpl& chain,
+    Consensus(iroha::simulator::BlockCreator& block_creator,
+              peerservice::PeerServiceImpl& chain,
               iroha::model::ModelCryptoProvider& crypto_provider);
     void vote(iroha::model::Block block) override;
     rxcpp::observable<iroha::model::Block> on_commit() override;

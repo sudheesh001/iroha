@@ -18,7 +18,6 @@
 #include "consensus/role/member.hpp"
 #include "consensus/consensus.hpp"
 #include "model/block.hpp"
-#include "block.pb.h"
 
 namespace consensus {
   namespace role {
@@ -30,12 +29,12 @@ namespace consensus {
 
     void Member::on_commit(const model::Commit &commit) {
       auto block = iroha::model::Block();
-      for (const auto &s : commit.sigs){
+      for (const auto &s : commit.sigs) {
         block.sigs.emplace_back(s.signature(), s.pubkey());
       }
       block.merkle_root = commit.commit_state.gmroot();
       block.height = commit.commit_state.height();
-      for (const auto &tx : commit.transactions){
+      for (const auto &tx : commit.transactions) {
         auto pb_tx = iroha::protocol::Transaction();
         auto res = pb_tx.ParseFromString(tx);
         if (!res) {
