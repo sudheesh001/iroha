@@ -19,9 +19,21 @@ limitations under the License.
 #include <sstream>
 #include <string>
 
+#include <logger/connection/client.hpp>
 #include <spdlog/spdlog.h>
 
+#include <vector>
+#include <string>
+#include <algorithm>
+
+#include <datetime/time.hpp>
+
+#include <logger/fmt/format.h>
+
 namespace logger {
+
+void addLogSubscribers(const std::string& address);
+void removeLogSubscribers(const std::string& address);
 
 
 enum class level{
@@ -35,6 +47,8 @@ enum class level{
 void setGlobalLogLevel(const level& l);
 
 struct Logger {
+
+    void post(const std::string& msg);
     std::shared_ptr<spdlog::logger> console;
 
     Logger(std::string &&name):
@@ -47,38 +61,54 @@ struct Logger {
 
     template <typename ... Args>
     void debug(const char* fmt, const Args&... args){
-        console->debug(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->debug(msg);
     }
     template <typename ... Args>
     void debug(const std::string& fmt, const Args&... args){
-        console->debug(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->debug(msg);
     }
 
     template <typename ... Args>
     void info(const char* fmt, const Args&... args){
-        console->info(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->info(msg);
     }
     template <typename ... Args>
     void info(const std::string& fmt, const Args&... args){
-        console->info(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->info(msg);
     }
 
     template <typename ... Args>
     void warning(const char* fmt, const Args&... args){
-        console->warn(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->warn(msg);
     }
     template <typename ... Args>
     void warning(const std::string& fmt, const Args&... args){
-        console->warn(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->warn(msg);
     }
 
     template <typename ... Args>
     void error(const char* fmt, const Args&... args){
-        console->error(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->error(msg);
     }
     template <typename ... Args>
     void error(const std::string& fmt, const Args&... args){
-        console->error(fmt,args...);
+        auto msg = fmt::format( fmt, args...);
+        post(msg);
+        console->error(msg);
     }
 
 };

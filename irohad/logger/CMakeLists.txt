@@ -15,7 +15,10 @@
 
 add_subdirectory(connection)
 
-add_library(logger STATIC logger.cpp)
+add_library(logger STATIC
+    fmt/format.cc
+    logger.cpp)
 target_link_libraries(logger
+    logger_connection
     spdlog
 )

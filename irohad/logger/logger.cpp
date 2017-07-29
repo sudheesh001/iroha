@@ -19,6 +19,28 @@ limitations under the License.
 
 namespace logger {
 
+
+    static std::vector<std::string> log_subscribers;
+
+    void addLogSubscribers(const std::string& address){
+      log_subscribers.push_back(address);
+    }
+    void removeLogSubscribers(const std::string& address){
+      log_subscribers.erase(std::remove(
+        log_subscribers.begin(),
+        log_subscribers.end(),
+        address
+      ));
+    }
+    void Logger::post(const std::string& msg){
+        if(! log_subscribers.empty()){
+            for(auto &s: log_subscribers){
+                connection::post(s,msg,iroha::time::now64());
+            }
+        }
+    }
+
+
     enum LoggerStatue{
         LEADER,
         CANDIDATE,
