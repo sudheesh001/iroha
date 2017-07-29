@@ -2,14 +2,27 @@ syntax = "proto3";
 
 package iroha.protocol;
 
-message Ping {
+
+
+message LoggerContents{
+    string message = 1;
+    uint64 timestamp = 2;
+
+    // In future, we filter
+    enum LogLevel {
+        debug = 0;
+        info = 1;
+        warning = 2;
+        error = 3;
+    }
+    LogLevel loglevel = 3;
+}
+
+message LoggerResponse{
     string message = 1;
 }
 
-message Pong {
-    string message = 1;
-}
-
-service LoggerLivingConfirmationService {
-    rpc check (Ping) returns (Pong);
+// ToDo outside server should implements this function
+service LoggerService {
+    rpc post (LoggerContents) returns (LoggerResponse);
 }
