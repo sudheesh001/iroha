@@ -22,15 +22,21 @@ limitations under the License.
 namespace logger {
   namespace connection {
 
-    bool check(const std::string& address);
+    bool post(
+      const std::string& address,
+      const std::string& message,
+      unsigned int timestamp
+   );
 
-    class LoggerLivingConfirmationClient {
-    public:
-      LoggerLivingConfirmationClient(const std::string& address);
-      bool check(const iroha::protocol::Ping&);
+    struct LoggerServiceClient {
+
+        LoggerServiceClient(const std::string &address);
+
+        bool post(const iroha::protocol::LoggerContents &contents);
+
     private:
-      grpc::ClientContext context_;
-      std::unique_ptr<iroha::protocol::LoggerLivingConfirmationService::Stub> stub_;
+        grpc::ClientContext context_;
+        std::unique_ptr<iroha::protocol::LoggerService::Stub> stub_;
     };
 
   }  // namespace connection
