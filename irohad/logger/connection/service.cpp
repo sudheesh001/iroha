@@ -19,15 +19,6 @@ limitations under the License.
 
 namespace logger {
   namespace connection {
-
-    using iroha::protocol::Ping;
-    using iroha::protocol::Pong;
-
-    grpc::Status LoggerLivingConfirmationService::check(
-      grpc::ServerContext* context, const ::iroha::protocol::Ping* ping,
-      iroha::protocol::Pong* pong
-    ) {
-      return grpc::Status::OK;
-    }
+      // Todo
   }  // namespace connection
 }  // namespace consensus
