@@ -19,6 +19,12 @@ limitations under the License.
 
 namespace logger {
 
+    enum LoggerStatue{
+        LEADER,
+        CANDIDATE,
+        FOLLOWER
+    };
+
     // To hide spdlog
     void setGlobalLogLevel(const level &l) {
         switch (l) {
@@ -42,3 +48,4 @@ namespace logger {
     }
 
 }
+

@@ -45,9 +45,6 @@ struct Logger {
             console(spdlog::stdout_color_mt(name))
     {};
 
-    void run();
-    void stop();
-
     template <typename ... Args>
     void debug(const char* fmt, const Args&... args){
         console->debug(fmt,args...);
