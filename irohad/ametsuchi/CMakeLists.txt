@@ -16,5 +16,5 @@ target_link_libraries(ametsuchi
     optional
     pqxx
     cpp_redis
-    model
+    json_model_converters
     )

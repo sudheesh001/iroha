@@ -29,7 +29,8 @@ add_library(genesis_block_server
     )
 target_link_libraries(genesis_block_server
     ametsuchi
-    model
+    json_model_converters
+    pb_model_converters
     timer
     endpoint
     optional
@@ -47,7 +48,8 @@ target_link_libraries(application
     gmock
     yac
     server_runner
-    model
+    json_model_converters
+    pb_model_converters
     ametsuchi
     networking
     ordering_service
