@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <string>
 #include <typeinfo>
+#include <algorithm>
 
 /**
  * This file defines common types used in iroha.
@@ -52,6 +53,13 @@ namespace iroha {
         throw std::invalid_argument("input string has wrong size");
 
       std::copy(s.begin(), s.end(), this->begin());
+    }
+
+    blob_t(std::vector<uint8_t> b) {
+      if (b.size() != size_)
+        throw std::invalid_argument("input string has wrong size");
+
+      std::copy(b.begin(), b.end(), this->begin());
     }
 
     blob_t &operator=(std::string s) {
