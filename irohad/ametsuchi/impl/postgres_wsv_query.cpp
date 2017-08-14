@@ -55,7 +55,7 @@ namespace iroha {
       row.at("account_id") >> account.account_id;
       row.at("domain_id") >> account.domain_name;
       pqxx::binarystring master_key(row.at("master_key"));
-      account.master_key = std::string{master_key.begin(), master_key.end()};
+      account.master_key = master_key.str();
       row.at("quorum") >> account.quorum;
       //      row.at("status") >> ?
       //      row.at("transaction_count") >> ?
