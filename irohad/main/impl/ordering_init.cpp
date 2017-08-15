@@ -16,11 +16,14 @@
  */
 
 #include "main/impl/ordering_init.hpp"
+#include "ordering/impl/ordering_gate_transport_grpc.hpp"
 
 namespace iroha {
   namespace network {
     auto OrderingInit::createGate(std::string network_address) {
-      return std::make_shared<ordering::OrderingGateImpl>(network_address);
+      auto transport = std::make_shared<iroha::ordering::OrderingGateTransportgRPC>(network_address);
+      auto gate_impl = std::make_shared<ordering::OrderingGateImpl>(transport);
+      return gate_impl;
     }
 
     auto OrderingInit::createService(std::shared_ptr<ametsuchi::PeerQuery> wsv,

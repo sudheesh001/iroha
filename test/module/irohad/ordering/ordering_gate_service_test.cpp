@@ -20,6 +20,7 @@
 #include "ordering/impl/ordering_service_impl.hpp"
 #include "ordering_mocks.hpp"
 #include "module/irohad/ametsuchi/ametsuchi_mocks.hpp"
+#include "ordering/impl/ordering_gate_transport_grpc.hpp"
 
 using namespace iroha::ordering;
 using namespace iroha::model;
@@ -31,7 +32,8 @@ using ::testing::Return;
 class OrderingGateServiceTest : public OrderingTest {
  public:
   OrderingGateServiceTest() {
-    gate_impl = std::make_shared<OrderingGateImpl>(address);
+    auto transport = std::make_shared<OrderingGateTransportgRPC>(address);
+    gate_impl = std::make_shared<OrderingGateImpl>(transport);
     gate = gate_impl;
   }
 
