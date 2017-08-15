@@ -29,4 +29,5 @@ target_link_libraries(torii_service
   endpoint
   stateless_validator
   model
+  logger
 )
