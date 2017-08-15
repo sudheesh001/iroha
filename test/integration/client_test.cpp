@@ -118,7 +118,7 @@ TEST_F(ClientServerTest, SendTxWhenValid) {
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "                }]}";
 
-  auto status = client.sendTx(json_tx);
+  auto status = client.sendJsonTx(json_tx);
   ASSERT_EQ(status.answer, iroha_cli::CliClient::OK);
 }
 
@@ -139,7 +139,7 @@ TEST_F(ClientServerTest, SendTxWhenInvalidJson) {
       "  }]\n"
       "}";
 
-  ASSERT_EQ(client.sendTx(json_tx).answer, iroha_cli::CliClient::WRONG_FORMAT);
+  ASSERT_EQ(client.sendJsonTx(json_tx).answer, iroha_cli::CliClient::WRONG_FORMAT);
 }
 
 TEST_F(ClientServerTest, SendTxWhenStatelessInvalid) {
@@ -163,7 +163,7 @@ TEST_F(ClientServerTest, SendTxWhenStatelessInvalid) {
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "                }]}";
 
-  ASSERT_EQ(client.sendTx(json_tx).answer, iroha_cli::CliClient::NOT_VALID);
+  ASSERT_EQ(client.sendJsonTx(json_tx).answer, iroha_cli::CliClient::NOT_VALID);
 }
 
 TEST_F(ClientServerTest, SendQueryWhenInvalidJson) {
@@ -184,7 +184,7 @@ TEST_F(ClientServerTest, SendQueryWhenInvalidJson) {
       "  }]\n"
       "}";
 
-  auto res = client.sendQuery(json_query);
+  auto res = client.sendJsonQuery(json_query);
   ASSERT_TRUE(res.status.ok());
   ASSERT_TRUE(res.answer.has_error_response());
   ASSERT_EQ(res.answer.error_response().reason(),
@@ -211,7 +211,7 @@ TEST_F(ClientServerTest, SendQueryWhenStatelessInvalid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendQuery(json_query);
+  auto res = client.sendJsonQuery(json_query);
   ASSERT_TRUE(res.status.ok());
   ASSERT_TRUE(res.answer.has_error_response());
   ASSERT_EQ(res.answer.error_response().reason(),
@@ -250,7 +250,7 @@ TEST_F(ClientServerTest, SendQueryWhenValid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendQuery(json_query);
+  auto res = client.sendJsonQuery(json_query);
   ASSERT_EQ(res.answer.account_response().account().account_id(), "test@test");
 }
 
@@ -284,7 +284,7 @@ TEST_F(ClientServerTest, SendQueryWhenStatefulInvalid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendQuery(json_query);
+  auto res = client.sendJsonQuery(json_query);
   ASSERT_TRUE(res.status.ok());
   ASSERT_TRUE(res.answer.has_error_response());
   ASSERT_EQ(res.answer.error_response().reason(),
