@@ -1,8 +1,23 @@
-//
-// Created by Dumitru Savva on 12/08/2017.
-//
+/**
+ * Copyright Soramitsu Co., Ltd. 2017 All Rights Reserved.
+ * http://soramitsu.co.jp
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#pragma once
+#ifndef ORDERING_GATE_TRANSPORT_GRPC_HPP
+#define ORDERING_GATE_TRANSPORT_GRPC_HPP
+
 
 #include <ordering.grpc.pb.h>
 #include <model/converters/pb_transaction_factory.hpp>
@@ -10,23 +25,34 @@
 #include "network/impl/async_grpc_client.hpp"
 
 namespace iroha {
-    using namespace iroha::network;
-    using namespace iroha::model;
-    namespace ordering {
-        class OrderingGateTransportgRPC : public OrderingGateTransport,
-                                          public network::AsyncGrpcClient<google::protobuf::Empty>  {
-        private:
-          std::unique_ptr<proto::OrderingService::Stub> client_;
-          model::converters::PbTransactionFactory factory_;
+  namespace ordering {
 
-        public:
+    class OrderingGateTransportgRPC : public iroha::network::OrderingGateTransport,
+                                      public network::AsyncGrpcClient<google::protobuf::Empty>  {
+    private:
+      std::unique_ptr<proto::OrderingService::Stub> client_;
+      model::converters::PbTransactionFactory factory_;
 
-            explicit OrderingGateTransportgRPC(const std::string& server_address);
+    public:
 
-            void propagate(std::shared_ptr<const Transaction> transaction)  override;
+      explicit OrderingGateTransportgRPC(const std::string& server_address);
 
-          ~OrderingGateTransportgRPC() override = default;
-        };
-    }
+      OrderingGateTransportgRPC(const OrderingGateTransportgRPC& rhs) = delete;
+      OrderingGateTransportgRPC& operator=(const OrderingGateTransportgRPC& rhs) = delete;
+
+      OrderingGateTransportgRPC(const OrderingGateTransportgRPC&& rhs) = delete;
+      OrderingGateTransportgRPC& operator=(const OrderingGateTransportgRPC&& rhs) = delete;
+
+      void propagate(std::shared_ptr<const iroha::model::Transaction> transaction)  override;
+
+      void subscribe(std::shared_ptr<iroha::network::OrderingGateNotification> subscriber) override;
+
+
+      std::shared_ptr<model::Proposal> getProposal(const iroha::ordering::proto::Proposal *request) override;
+
+      ~OrderingGateTransportgRPC() override = default;
+    };
+  }
 }
 
+#endif
