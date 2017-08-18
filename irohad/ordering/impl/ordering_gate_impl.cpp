@@ -35,14 +35,9 @@ namespace iroha {
     grpc::Status OrderingGateImpl::SendProposal(
         ::grpc::ServerContext *context, const proto::Proposal *request,
         ::google::protobuf::Empty *response) {
-      // auto removes const qualifier of model::Proposal.transactions
-      auto transactions =
-          decltype(std::declval<model::Proposal>().transactions)();
-      for (const auto &tx : request->transactions()) {
-        transactions.push_back(*factory_.deserialize(tx));
-      }
 
-      auto proposal = std::make_shared<model::Proposal>(transactions);
+      auto proposal = transport_->getProposal(request);
+
       proposal->height = request->height();
       handleProposal(proposal);
 

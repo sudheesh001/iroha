@@ -23,7 +23,6 @@
 #include "network/impl/async_grpc_client.hpp"
 #include "network/ordering_gate.hpp"
 #include "ordering.grpc.pb.h"
-#include "network/ordering_service_notification.hpp"
 
 namespace iroha {
   namespace ordering {
@@ -36,7 +35,7 @@ namespace iroha {
      */
     class OrderingGateImpl : public network::OrderingGate,
                              public proto::OrderingGate::Service,
-                             public network::OrderingServiceNotification,
+                             public network::OrderingGateNotification,
                              network::AsyncGrpcClient<google::protobuf::Empty> {
      public:
 
