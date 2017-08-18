@@ -1,5 +1,6 @@
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
+add_subdirectory(interactive)
 # GenesisBlockClient
 add_library(genesis_block_client genesis_block_client_impl.cpp)
 target_link_libraries(genesis_block_client
@@ -32,9 +33,9 @@ add_library(client
     impl/query_response_handler.cpp
     impl/transaction_response_handler.cpp
     impl/grpc_response_handler.cpp
-    impl/interactive_cli.cpp
     )
 target_link_libraries(client
+    interactive_cli
     model_converters
     crypto
     optional
