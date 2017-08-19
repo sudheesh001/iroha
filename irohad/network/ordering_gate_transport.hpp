@@ -36,10 +36,10 @@ namespace iroha {
 
 
     class OrderingGateTransport {
-    protected:
-      std::shared_ptr<OrderingGateNotification> subscriber_ {nullptr};
 
     public:
+      std::shared_ptr<OrderingGateNotification> subscriber_ {nullptr};
+
       virtual void propagate(std::shared_ptr<const iroha::model::Transaction>) = 0;
 
       virtual void subscribe(std::shared_ptr<OrderingGateNotification>) = 0;

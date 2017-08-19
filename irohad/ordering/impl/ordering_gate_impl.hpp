@@ -50,7 +50,9 @@ namespace iroha {
                                 const proto::Proposal *request,
                                 ::google::protobuf::Empty *response) override;
 
-     private:
+      std::shared_ptr<network::OrderingGateTransport> transport_;
+
+    private:
       /**
        * Process proposal received from network
        * Publishes proposal to on_proposal subscribers
@@ -60,7 +62,6 @@ namespace iroha {
 
       rxcpp::subjects::subject<model::Proposal> proposals_;
       model::converters::PbTransactionFactory factory_;
-      std::shared_ptr<network::OrderingGateTransport> transport_;
     };
   }  // namespace ordering
 }  // namespace iroha

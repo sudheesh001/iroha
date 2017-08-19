@@ -39,8 +39,8 @@ namespace iroha {
       auto proposal = transport_->getProposal(request);
 
       proposal->height = request->height();
-      handleProposal(proposal);
-
+      transport_->subscriber_->handleProposal(proposal);
+      //handleProposal(proposal);
       return grpc::Status::OK;
     }
 
