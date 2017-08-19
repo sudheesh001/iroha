@@ -21,11 +21,14 @@ namespace iroha {
   namespace ordering {
 
     OrderingGateImpl::OrderingGateImpl(std::shared_ptr<network::OrderingGateTransport> transport)
-        : transport_(transport){}
+        : transport_(transport) {
+      log_ = logger::log("OrderingGate");
+    }
 
     void OrderingGateImpl::propagate_transaction(
         std::shared_ptr<const model::Transaction> transaction) {
-        transport_->propagate(transaction);
+      log_->info("propagate tx");
+      transport_->propagate(transaction);
     }
 
     rxcpp::observable<model::Proposal> OrderingGateImpl::on_proposal() {
@@ -35,6 +38,14 @@ namespace iroha {
     grpc::Status OrderingGateImpl::SendProposal(
         ::grpc::ServerContext *context, const proto::Proposal *request,
         ::google::protobuf::Empty *response) {
+      log_->info("receive proposal");
+      // auto removes const qualifier of model::Proposal.transactions
+      auto transactions =
+          decltype(std::declval<model::Proposal>().transactions)();
+      for (const auto &tx : request->transactions()) {
+        transactions.push_back(*factory_.deserialize(tx));
+      }
+      log_->info("transactions in proposal: {}", transactions.size());
 
       auto proposal = transport_->getProposal(request);
 
@@ -47,7 +58,5 @@ namespace iroha {
     void OrderingGateImpl::handleProposal(std::shared_ptr<model::Proposal> proposal) {
       proposals_.get_subscriber().on_next(*proposal);
     }
-
-
   }  // namespace ordering
 }  // namespace iroha

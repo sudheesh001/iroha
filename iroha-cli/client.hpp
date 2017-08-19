@@ -19,13 +19,20 @@
 #define IROHA_CLIENT_HPP
 
 #include <string>
+#include <torii_utils/query_client.hpp>
 #include "torii/command_client.hpp"
 
 namespace iroha_cli {
 
   class CliClient {
    public:
-    enum Status { WRONG_FORMAT, NOT_VALID, OK };
+    template <typename T>
+    struct Response{
+      grpc::Status status;
+      T answer;
+    };
+
+    enum TxStatus { WRONG_FORMAT, NOT_VALID, OK,  };
 
     CliClient(std::string target_ip, int port);
     /**
@@ -33,10 +40,13 @@ namespace iroha_cli {
      * @param json_tx
      * @return
      */
-    Status sendTx(std::string json_tx);
+    CliClient::Response<CliClient::TxStatus> sendTx(std::string json_tx);
+
+    CliClient::Response<iroha::protocol::QueryResponse> sendQuery(std::string json_query);
 
    private:
-    torii::CommandSyncClient client_;
+    torii::CommandSyncClient command_client_;
+    torii_utils::QuerySyncClient query_client_;
   };
 }  // namespace iroha_cli
 

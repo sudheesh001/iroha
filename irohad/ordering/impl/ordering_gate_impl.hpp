@@ -24,6 +24,8 @@
 #include "network/ordering_gate.hpp"
 #include "ordering.grpc.pb.h"
 
+#include "logger/logger.hpp"
+
 namespace iroha {
   namespace ordering {
 
@@ -62,6 +64,8 @@ namespace iroha {
 
       rxcpp::subjects::subject<model::Proposal> proposals_;
       model::converters::PbTransactionFactory factory_;
+      std::unique_ptr<proto::OrderingService::Stub> client_;
+      logger::Logger log_;
     };
   }  // namespace ordering
 }  // namespace iroha

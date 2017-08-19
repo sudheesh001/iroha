@@ -19,10 +19,10 @@
 #define IROHA_COMMON_HPP
 
 #include <array>
-#include <crypto/base64.hpp>
 #include <cstdio>
 #include <string>
 #include <typeinfo>
+#include <vector>
 
 /**
  * This file defines common types used in iroha.
@@ -110,6 +110,13 @@ namespace iroha {
    */
   inline std::string bytesToString(const std::vector<uint8_t> &source) {
     return std::string(source.begin(), source.end());
+  }
+
+  // Deserialize hex string to array
+  template <size_t size>
+  inline void hexstringToArray(const std::string& string, blob_t<size>& array) {
+    auto bytes = hex2bytes(string);
+    std::copy(bytes.begin(), bytes.end(), array.begin());
   }
 
   /**

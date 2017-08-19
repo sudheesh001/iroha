@@ -35,8 +35,8 @@ namespace logger {
 
   std::string input(const std::string &string) { return red("<--- " + string); }
 
-  void setGlobalPattern(){
-    spdlog::set_pattern("[%H:%M:%S] [%n] [th: %t] [%l] << %v");
+  void setGlobalPattern() {
+    spdlog::set_pattern("[%H:%M:%S][th: %t][%l] [%n] << %v");
   }
 
   std::shared_ptr<spdlog::logger> createLogger(const std::string &tag) {
@@ -44,12 +44,20 @@ namespace logger {
     return spdlog::stdout_color_mt(tag);
   }
 
-  std::shared_ptr<spdlog::logger> log(const std::string &tag) {
+  Logger log(const std::string &tag) {
     auto logger = spdlog::get(tag);
     if (logger == nullptr) {
       logger = createLogger(tag);
     }
     return logger;
+  }
+
+  Logger testLog(const std::string &tag){
+    return log(tag);
+  }
+
+  std::string boolRepr(bool value) {
+    return value ? "true" : "false";
   }
 
 }  // namespace logger

@@ -18,12 +18,16 @@
 #ifndef IROHA_SIMULATOR_HPP
 #define IROHA_SIMULATOR_HPP
 
+#include <nonstd/optional.hpp>
 #include "ametsuchi/block_query.hpp"
 #include "ametsuchi/temporary_factory.hpp"
 #include "model/model_hash_provider_impl.hpp"
+#include "network/ordering_gate.hpp"
 #include "simulator/block_creator.hpp"
 #include "simulator/verified_proposal_creator.hpp"
 #include "validation/stateful_validator.hpp"
+
+#include "logger/logger.hpp"
 
 namespace iroha {
   namespace simulator {
@@ -31,6 +35,7 @@ namespace iroha {
     class Simulator : public VerifiedProposalCreator, public BlockCreator {
      public:
       Simulator(
+          std::shared_ptr<network::OrderingGate> ordering_gate,
           std::shared_ptr<validation::StatefulValidator> statefulValidator,
           std::shared_ptr<ametsuchi::TemporaryFactory> factory,
           std::shared_ptr<ametsuchi::BlockQuery> blockQuery,
@@ -57,8 +62,10 @@ namespace iroha {
       std::shared_ptr<ametsuchi::BlockQuery> block_queries_;
       std::shared_ptr<model::HashProviderImpl> hash_provider_;
 
+      logger::Logger log_;
+
       // last block
-      model::Block last_block;
+      nonstd::optional<model::Block> last_block;
     };
   }  // namespace simulator
 }  // namespace iroha

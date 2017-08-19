@@ -54,4 +54,31 @@ target_link_libraries(model_operators_test
 addtest(command_validate_execute_test command_validate_execute_test.cpp)
 target_link_libraries(command_validate_execute_test
     model
+    ametsuchi
+    )
+
+addtest(json_command_converter_test converters/json_commands_test.cpp)
+target_link_libraries(json_command_converter_test
+    model
+    )
+
+addtest(json_transaction_converter_test converters/json_transaction_test.cpp)
+target_link_libraries(json_transaction_converter_test
+    model
+    )
+
+addtest(json_block_converter_test converters/json_block_test.cpp)
+target_link_libraries(json_block_converter_test
+    model
+    )
+
+addtest(json_query_factory_test converters/json_query_factory_test.cpp)
+target_link_libraries(json_query_factory_test
+    model_converters
+    )
+
+addtest(static_map static_map.cpp)
+target_link_libraries(static_map
+    model_registrations
+    logger
     )

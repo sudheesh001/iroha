@@ -23,25 +23,57 @@
 #include <pqxx/pqxx>
 #include <shared_mutex>
 #include <cmath>
-#include "ametsuchi/block_serializer.hpp"
+#include "model/converters/json_block_factory.hpp"
 #include "ametsuchi/impl/flat_file/flat_file.hpp"
 #include "ametsuchi/storage.hpp"
+#include "logger/logger.hpp"
 
 namespace iroha {
   namespace ametsuchi {
+
+    struct ConnectionContext {
+      ConnectionContext(std::unique_ptr<FlatFile> block_store,
+                        std::unique_ptr<cpp_redis::redis_client> index,
+                        std::unique_ptr<pqxx::lazyconnection> pg_lazy,
+                        std::unique_ptr<pqxx::nontransaction> pg_nontx,
+                        std::unique_ptr<WsvQuery> wsv)
+          : block_store(std::move(block_store)),
+            index(std::move(index)),
+            pg_lazy(std::move(pg_lazy)),
+            pg_nontx(std::move(pg_nontx)),
+            wsv(std::move(wsv)) {
+      }
+
+      std::unique_ptr<FlatFile> block_store;
+      std::unique_ptr<cpp_redis::redis_client> index;
+      std::unique_ptr<pqxx::lazyconnection> pg_lazy;
+      std::unique_ptr<pqxx::nontransaction> pg_nontx;
+      std::unique_ptr<WsvQuery> wsv;
+    };
+
     class StorageImpl : public Storage {
+     protected:
+      static nonstd::optional<ConnectionContext>
+      initConnections(std::string block_store_dir,
+                      std::string redis_host,
+                      std::size_t redis_port,
+                      std::string postgres_options);
+
      public:
       static std::shared_ptr<StorageImpl> create(
           std::string block_store_dir, std::string redis_host,
           std::size_t redis_port, std::string postgres_connection);
+
       std::unique_ptr<TemporaryWsv> createTemporaryWsv() override;
       std::unique_ptr<MutableStorage> createMutableStorage() override;
       void commit(std::unique_ptr<MutableStorage> mutableStorage) override;
 
       rxcpp::observable<model::Transaction> getAccountTransactions(
           std::string account_id) override;
-      rxcpp::observable<model::Block> getBlocks(uint32_t from,
-                                                uint32_t to) override;
+      rxcpp::observable<model::Block> getBlocks(uint32_t height,
+                                                uint32_t count) override;
+      rxcpp::observable<model::Block> getBlocksFrom(uint32_t height) override;
+      rxcpp::observable<model::Block> getTopBlocks(uint32_t count) override;
 
       nonstd::optional<model::Account> getAccount(
           const std::string &account_id) override;
@@ -53,32 +85,53 @@ namespace iroha {
           const std::string &account_id, const std::string &asset_id) override;
       nonstd::optional<std::vector<model::Peer>> getPeers() override;
 
-     private:
-      StorageImpl(std::string block_store_dir, std::string redis_host,
-                  std::size_t redis_port, std::string postgres_options,
+     protected:
+
+      StorageImpl(std::string block_store_dir,
+                  std::string redis_host,
+                  std::size_t redis_port,
+                  std::string postgres_options,
                   std::unique_ptr<FlatFile> block_store,
                   std::unique_ptr<cpp_redis::redis_client> index,
                   std::unique_ptr<pqxx::lazyconnection> wsv_connection,
                   std::unique_ptr<pqxx::nontransaction> wsv_transaction,
                   std::unique_ptr<WsvQuery> wsv);
-      // Storage info
+
+      /**
+       * Folder with raw blocks
+       */
       const std::string block_store_dir_;
+
+      // db info
       const std::string redis_host_;
       const std::size_t redis_port_;
       const std::string postgres_options_;
 
+     private:
       std::unique_ptr<FlatFile> block_store_;
+
+      /**
+       * Redis connection
+       */
       std::unique_ptr<cpp_redis::redis_client> index_;
 
+      /**
+       * Pg connection with direct transaction management
+       */
       std::unique_ptr<pqxx::lazyconnection> wsv_connection_;
+
       std::unique_ptr<pqxx::nontransaction> wsv_transaction_;
+
       std::unique_ptr<WsvQuery> wsv_;
 
-      BlockSerializer serializer_;
+      model::converters::JsonBlockFactory serializer_;
 
       // Allows multiple readers and a single writer
       std::shared_timed_mutex rw_lock_;
 
+      logger::Logger log_;
+
+     protected:
       const std::string init_ =
           "CREATE TABLE IF NOT EXISTS domain (\n"
           "    domain_id character varying(164),\n"
