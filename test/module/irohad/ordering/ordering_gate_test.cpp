@@ -33,8 +33,12 @@ class OrderingGateTest : public OrderingTest {
   OrderingGateTest() {
     auto transport = std::make_shared<OrderingGateTransportgRPC>(address);
     gate_impl = std::make_shared<OrderingGateImpl>(transport);
+    gate_impl->transport_->subscribe(gate_impl);
+
     gate = gate_impl;
     fake_service = static_cast<MockOrderingService*>(service.get());
+
+
   }
 
   std::shared_ptr<OrderingGateImpl> gate_impl;
@@ -61,7 +65,6 @@ TEST_F(OrderingGateTest, ProposalReceivedByGateWhenSent) {
   iroha::ordering::proto::Proposal proposal;
 
   google::protobuf::Empty response;
-
   gate_impl->SendProposal(&context, &proposal, &response);
 
   ASSERT_TRUE(wrapper.validate());

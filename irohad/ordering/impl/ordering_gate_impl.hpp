@@ -41,7 +41,7 @@ namespace iroha {
                              network::AsyncGrpcClient<google::protobuf::Empty> {
      public:
 
-      explicit OrderingGateImpl(const std::string &server_address);
+      explicit OrderingGateImpl(std::shared_ptr<network::OrderingGateTransport>);
 
       void propagate_transaction(
           std::shared_ptr<const model::Transaction> transaction) override;
@@ -52,7 +52,9 @@ namespace iroha {
                                 const proto::Proposal *request,
                                 ::google::protobuf::Empty *response) override;
 
-     private:
+      std::shared_ptr<network::OrderingGateTransport> transport_;
+
+    private:
       /**
        * Process proposal received from network
        * Publishes proposal to on_proposal subscribers

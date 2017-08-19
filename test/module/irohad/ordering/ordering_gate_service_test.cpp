@@ -34,6 +34,7 @@ class OrderingGateServiceTest : public OrderingTest {
   OrderingGateServiceTest() {
     auto transport = std::make_shared<OrderingGateTransportgRPC>(address);
     gate_impl = std::make_shared<OrderingGateImpl>(transport);
+    gate_impl->transport_->subscribe(gate_impl);
     gate = gate_impl;
   }
 
