@@ -64,7 +64,6 @@ namespace iroha {
 
       rxcpp::subjects::subject<model::Proposal> proposals_;
       model::converters::PbTransactionFactory factory_;
-      std::shared_ptr<network::OrderingGateTransport> transport_;
       logger::Logger log_;
     };
   }  // namespace ordering
