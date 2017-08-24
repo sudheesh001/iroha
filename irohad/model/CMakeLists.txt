@@ -1,0 +1,56 @@
+add_subdirectory(generators)
+
+add_library(model
+    model_crypto_provider_impl.cpp
+    model_hash_provider_impl.cpp
+    impl/model_operators.cpp
+    converters/impl/pb_block_factory.cpp
+    converters/impl/pb_transaction_factory.cpp
+    converters/impl/pb_command_factory.cpp
+    converters/impl/pb_query_response_factory.cpp
+    impl/query_execution.cpp
+    converters/impl/pb_query_factory.cpp
+    converters/impl/json_common.cpp
+    converters/impl/json_command_factory.cpp
+    converters/impl/json_transaction_factory.cpp
+    converters/impl/json_block_factory.cpp
+    )
+
+target_link_libraries(model
+    schema
+    optional
+    rxcpp
+    hash
+    crypto
+    rapidjson
+    logger
+    )
+
+
+add_library(model_converters
+    converters/impl/json_query_factory.cpp
+    )
+
+target_link_libraries(model_converters
+    rapidjson
+    optional
+    logger
+    model_generators
+    model
+    )
+
+add_library(model_registrations INTERFACE)
+target_include_directories(model_registrations INTERFACE
+    registration
+    )
+target_link_libraries(model_registrations INTERFACE
+    model
+    )
+
+add_library(command_execution
+    execution/impl/command_executor.cpp
+    execution/impl/command_executor_factory.cpp
+    )
+target_link_libraries(command_execution
+    ametsuchi
+    )
