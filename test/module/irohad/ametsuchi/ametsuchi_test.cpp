@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 #include "ametsuchi/impl/storage_impl.hpp"
+#include "common/byteutils.hpp"
 #include "common/types.hpp"
 #include "framework/test_subscriber.hpp"
 #include "model/commands/add_asset_quantity.hpp"
@@ -25,6 +26,9 @@
 #include "model/commands/create_asset.hpp"
 #include "model/commands/create_domain.hpp"
 #include "model/commands/transfer_asset.hpp"
+#include "model/commands/add_signatory.hpp"
+#include "model/commands/assign_master_key.hpp"
+#include "model/commands/remove_signatory.hpp"
 #include "model/model_hash_provider_impl.hpp"
 #include "module/irohad/ametsuchi/ametsuchi_fixture.hpp"
 
@@ -190,4 +194,163 @@ TEST_F(AmetsuchiTest, PeerTest) {
   ASSERT_EQ(peers->size(), 1);
   ASSERT_EQ(peers->at(0).pubkey, addPeer.peer_key);
   ASSERT_EQ(peers->at(0).address, addPeer.address);
+}
+
+TEST_F(AmetsuchiTest, AddSignatoryTest) {
+  HashProviderImpl hashProvider;
+
+  auto storage = StorageImpl::create(block_store_path, redishost_, redisport_, pgopt_);
+  ASSERT_TRUE(storage);
+
+  std::string pubkeyStr1 = "b+etgin9x1S16omALSjr4HTVzv9IEXQzlvSTp7el0Js=";
+  std::string pubkeyStr2 = "slyr7oz2+EU6dh2dY9+jNeO/hVrXCkT3rGhcNZo5rrE=";
+  auto pubkeyBytes1 = base64_decode(pubkeyStr1);
+  auto pubkey1 = iroha::to_blob<iroha::ed25519::pubkey_t::size()>(
+      std::string{pubkeyBytes1.begin(), pubkeyBytes1.end()});
+  auto pubkeyBytes2 = base64_decode(pubkeyStr2);
+  auto pubkey2 = iroha::to_blob<iroha::ed25519::pubkey_t::size()>(
+      std::string{pubkeyBytes2.begin(), pubkeyBytes2.end()});
+
+  // 1st tx
+  Transaction txn;
+  txn.creator_account_id = "admin1";
+  CreateDomain createDomain;
+  createDomain.domain_name = "domain";
+  txn.commands.push_back(std::make_shared<CreateDomain>(createDomain));
+  CreateAccount createAccount;
+  createAccount.account_name = "user1";
+  createAccount.domain_id = "domain";
+  createAccount.pubkey = pubkey1;
+  txn.commands.push_back(std::make_shared<CreateAccount>(createAccount));
+
+  Block block;
+  block.transactions.push_back(txn);
+  block.height = 1;
+  block.prev_hash.fill(0);
+  auto block1hash = hashProvider.get_hash(block);
+  block.hash = block1hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &blk, auto &query, const auto &top_hash) {
+      return true;
+    });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto account = storage->getAccount(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(account);
+    ASSERT_EQ(account->account_id, createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_EQ(account->domain_name, createAccount.domain_id);
+    ASSERT_EQ(account->master_key, createAccount.pubkey);
+    ASSERT_EQ(account->master_key, pubkey1);
+
+    auto signatories = storage->getSignatories(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(signatories);
+    ASSERT_EQ(signatories->size(), 1);
+    ASSERT_EQ(signatories->at(0), pubkey1);
+  }
+
+  // 2nd tx
+  txn = Transaction();
+  txn.creator_account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  auto addSignatory = AddSignatory();
+  addSignatory.account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  addSignatory.pubkey = pubkey2;
+  txn.commands.push_back(std::make_shared<AddSignatory>(addSignatory));
+
+  block = Block();
+  block.transactions.push_back(txn);
+  block.height = 2;
+  block.prev_hash = block1hash;
+  auto block2hash = hashProvider.get_hash(block);
+  block.hash = block2hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &, auto &, const auto &) { return true; });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto account = storage->getAccount(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(account);
+    ASSERT_EQ(account->master_key, pubkey1);
+
+    auto signatories = storage->getSignatories(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(signatories);
+    ASSERT_EQ(signatories->size(), 2);
+    ASSERT_EQ(signatories->at(0), pubkey1);
+    ASSERT_EQ(signatories->at(1), pubkey2);
+  }
+
+  // 3rd tx
+  txn = Transaction();
+  txn.creator_account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  auto assignMasterKey = AssignMasterKey();
+  assignMasterKey.account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  assignMasterKey.pubkey = pubkey2;
+  txn.commands.push_back(std::make_shared<AssignMasterKey>(assignMasterKey));
+
+  block = Block();
+  block.transactions.push_back(txn);
+  block.height = 3;
+  block.prev_hash = block2hash;
+  auto block3hash = hashProvider.get_hash(block);
+  block.hash = block3hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &, auto &, const auto &) { return true; });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto account = storage->getAccount(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(account);
+    ASSERT_EQ(account->master_key, pubkey2);
+
+    auto signatories = storage->getSignatories(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(signatories);
+    ASSERT_EQ(signatories->size(), 2);
+    ASSERT_EQ(signatories->at(0), pubkey1);
+    ASSERT_EQ(signatories->at(1), pubkey2);
+  }
+
+  // 4th tx
+  txn = Transaction();
+  txn.creator_account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  auto removeSignatory = RemoveSignatory();
+  removeSignatory.account_id = createAccount.account_name + "@" + createAccount.domain_id;
+  removeSignatory.pubkey = pubkey1;
+  txn.commands.push_back(std::make_shared<RemoveSignatory>(removeSignatory));
+
+  block = Block();
+  block.transactions.push_back(txn);
+  block.height = 4;
+  block.prev_hash = block3hash;
+  auto block4hash = hashProvider.get_hash(block);
+  block.hash = block4hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &, auto &, const auto &) { return true; });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto account = storage->getAccount(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(account);
+    ASSERT_EQ(account->master_key, pubkey2);
+
+    auto signatories = storage->getSignatories(createAccount.account_name + "@" + createAccount.domain_id);
+    ASSERT_TRUE(signatories);
+    ASSERT_EQ(signatories->size(), 1);
+    ASSERT_EQ(signatories->at(0), pubkey2);
+  }
 }
