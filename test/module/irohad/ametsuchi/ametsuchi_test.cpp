@@ -167,6 +167,11 @@ TEST_F(AmetsuchiTest, SampleTest) {
       [](auto tx) { EXPECT_EQ(tx.commands.size(), 2); });
   storage->getAccountTransactions("admin2").subscribe(
       [](auto tx) { EXPECT_EQ(tx.commands.size(), 4); });
+
+  storage->getAccountAssetTransactions("user1@ru", "RUB#ru").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
+  storage->getAccountAssetTransactions("user2@ru", "RUB#ru").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
 }
 
 TEST_F(AmetsuchiTest, PeerTest) {
@@ -353,4 +358,215 @@ TEST_F(AmetsuchiTest, AddSignatoryTest) {
     ASSERT_EQ(signatories->size(), 1);
     ASSERT_EQ(signatories->at(0), pubkey2);
   }
+}
+
+TEST_F(AmetsuchiTest, queryGetAccountAssetTransactionsTest) {
+  HashProviderImpl hashProvider;
+
+  auto storage = StorageImpl::create(block_store_path, redishost_, redisport_, pgopt_);
+  ASSERT_TRUE(storage);
+
+  // 1st tx
+  Transaction txn;
+  txn.creator_account_id = "admin1";
+  CreateDomain createDomain;
+  createDomain.domain_name = "domain";
+  txn.commands.push_back(std::make_shared<CreateDomain>(createDomain));
+  CreateAccount createAccount1;
+  createAccount1.account_name = "user1";
+  createAccount1.domain_id = "domain";
+  txn.commands.push_back(std::make_shared<CreateAccount>(createAccount1));
+  CreateAccount createAccount2;
+  createAccount2.account_name = "user2";
+  createAccount2.domain_id = "domain";
+  txn.commands.push_back(std::make_shared<CreateAccount>(createAccount2));
+  CreateAccount createAccount3;
+  createAccount3.account_name = "user3";
+  createAccount3.domain_id = "domain";
+  txn.commands.push_back(std::make_shared<CreateAccount>(createAccount3));
+  CreateAsset createAsset1;
+  createAsset1.domain_id = "domain";
+  createAsset1.asset_name = "asset1";
+  createAsset1.precision = 2;
+  txn.commands.push_back(std::make_shared<CreateAsset>(createAsset1));
+  CreateAsset createAsset2;
+  createAsset2.domain_id = "domain";
+  createAsset2.asset_name = "asset2";
+  createAsset2.precision = 2;
+  txn.commands.push_back(std::make_shared<CreateAsset>(createAsset2));
+  AddAssetQuantity addAssetQuantity1;
+  addAssetQuantity1.asset_id = "asset1#domain";
+  addAssetQuantity1.account_id = "user1@domain";
+  addAssetQuantity1.amount = iroha::Amount(3, 00);
+  txn.commands.push_back(std::make_shared<AddAssetQuantity>(addAssetQuantity1));
+  AddAssetQuantity addAssetQuantity2;
+  addAssetQuantity2.asset_id = "asset2#domain";
+  addAssetQuantity2.account_id = "user2@domain";
+  addAssetQuantity2.amount = iroha::Amount(2, 50);
+  txn.commands.push_back(std::make_shared<AddAssetQuantity>(addAssetQuantity2));
+
+  Block block;
+  block.transactions.push_back(txn);
+  block.height = 1;
+  block.prev_hash.fill(0);
+  auto block1hash = hashProvider.get_hash(block);
+  block.hash = block1hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &blk, auto &query, const auto &top_hash) {
+      return true;
+    });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto account1 = storage->getAccount("user1@domain");
+    ASSERT_TRUE(account1);
+    ASSERT_EQ(account1->account_id, "user1@domain");
+    ASSERT_EQ(account1->domain_name, "domain");
+    auto account2 = storage->getAccount("user2@domain");
+    ASSERT_TRUE(account2);
+    ASSERT_EQ(account2->account_id, "user2@domain");
+    ASSERT_EQ(account2->domain_name, "domain");
+    auto account3 = storage->getAccount("user3@domain");
+    ASSERT_TRUE(account3);
+    ASSERT_EQ(account3->account_id, "user3@domain");
+    ASSERT_EQ(account3->domain_name, "domain");
+
+    auto asset1 = storage->getAccountAsset("user1@domain", "asset1#domain");
+    ASSERT_TRUE(asset1);
+    ASSERT_EQ(asset1->account_id, "user1@domain");
+    ASSERT_EQ(asset1->asset_id, "asset1#domain");
+    ASSERT_EQ(asset1->balance, 300);
+    auto asset2 = storage->getAccountAsset("user2@domain", "asset2#domain");
+    ASSERT_TRUE(asset2);
+    ASSERT_EQ(asset2->account_id, "user2@domain");
+    ASSERT_EQ(asset2->asset_id, "asset2#domain");
+    ASSERT_EQ(asset2->balance, 250);
+  }
+
+  // 2th tx (user1 -> user2 # asset1)
+  txn = Transaction();
+  txn.creator_account_id = "user1@domain";
+  TransferAsset transferAsset;
+  transferAsset.src_account_id = "user1@domain";
+  transferAsset.dest_account_id = "user2@domain";
+  transferAsset.asset_id = "asset1#domain";
+  transferAsset.amount = iroha::Amount(1, 20);
+  txn.commands.push_back(std::make_shared<TransferAsset>(transferAsset));
+
+  block = Block();
+  block.transactions.push_back(txn);
+  block.height = 2;
+  block.prev_hash = block1hash;
+  auto block2hash = hashProvider.get_hash(block);
+  block.hash = block2hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &, auto &, const auto &) { return true; });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto asset1 = storage->getAccountAsset("user1@domain", "asset1#domain");
+    ASSERT_TRUE(asset1);
+    ASSERT_EQ(asset1->account_id, "user1@domain");
+    ASSERT_EQ(asset1->asset_id, "asset1#domain");
+    ASSERT_EQ(asset1->balance, 180);
+    auto asset2 = storage->getAccountAsset("user2@domain", "asset1#domain");
+    ASSERT_TRUE(asset2);
+    ASSERT_EQ(asset2->account_id, "user2@domain");
+    ASSERT_EQ(asset2->asset_id, "asset1#domain");
+    ASSERT_EQ(asset2->balance, 120);
+  }
+
+  // 3rd tx
+  //   (user2 -> user3 # asset2)
+  //   (user2 -> user1 # asset2)
+  txn = Transaction();
+  txn.creator_account_id = "user2@domain";
+  TransferAsset transferAsset1;
+  transferAsset1.src_account_id = "user2@domain";
+  transferAsset1.dest_account_id = "user3@domain";
+  transferAsset1.asset_id = "asset2#domain";
+  transferAsset1.amount = iroha::Amount(1, 50);
+  txn.commands.push_back(std::make_shared<TransferAsset>(transferAsset1));
+  TransferAsset transferAsset2;
+  transferAsset2.src_account_id = "user2@domain";
+  transferAsset2.dest_account_id = "user1@domain";
+  transferAsset2.asset_id = "asset2#domain";
+  transferAsset2.amount = iroha::Amount(0, 10);
+  txn.commands.push_back(std::make_shared<TransferAsset>(transferAsset2));
+
+  block = Block();
+  block.transactions.push_back(txn);
+  block.height = 3;
+  block.prev_hash = block2hash;
+  auto block3hash = hashProvider.get_hash(block);
+  block.hash = block3hash;
+  block.txs_number = block.transactions.size();
+
+  {
+    auto ms = storage->createMutableStorage();
+    ms->apply(block, [](const auto &, auto &, const auto &) { return true; });
+    storage->commit(std::move(ms));
+  }
+
+  {
+    auto asset1 = storage->getAccountAsset("user2@domain", "asset2#domain");
+    ASSERT_TRUE(asset1);
+    ASSERT_EQ(asset1->account_id, "user2@domain");
+    ASSERT_EQ(asset1->asset_id, "asset2#domain");
+    ASSERT_EQ(asset1->balance, 90);
+    auto asset2 = storage->getAccountAsset("user3@domain", "asset2#domain");
+    ASSERT_TRUE(asset2);
+    ASSERT_EQ(asset2->account_id, "user3@domain");
+    ASSERT_EQ(asset2->asset_id, "asset2#domain");
+    ASSERT_EQ(asset2->balance, 150);
+    auto asset3 = storage->getAccountAsset("user1@domain", "asset2#domain");
+    ASSERT_TRUE(asset3);
+    ASSERT_EQ(asset3->account_id, "user1@domain");
+    ASSERT_EQ(asset3->asset_id, "asset2#domain");
+    ASSERT_EQ(asset3->balance, 10);
+  }
+
+  // Block store tests
+  storage->getBlocks(1, 3).subscribe([block1hash, block2hash, block3hash](auto block) {
+    if (block.height == 1) {
+      EXPECT_EQ(block.hash, block1hash);
+    } else if (block.height == 2) {
+      EXPECT_EQ(block.hash, block2hash);
+    } else if (block.height == 3) {
+      EXPECT_EQ(block.hash, block3hash);
+    }
+  });
+
+  storage->getAccountTransactions("admin1").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 8); });
+  storage->getAccountTransactions("user1@domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
+  storage->getAccountTransactions("user2@domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 2); });
+  storage->getAccountTransactions("user3@domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 0); });
+
+  // (user1 -> user2 # asset1)
+  // (user2 -> user3 # asset2)
+  // (user2 -> user1 # asset2)
+  storage->getAccountAssetTransactions("user1@domain", "asset1#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
+  storage->getAccountAssetTransactions("user2@domain", "asset1#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
+  storage->getAccountAssetTransactions("user3@domain", "asset1#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 0); });
+  storage->getAccountAssetTransactions("user1@domain", "asset2#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
+  storage->getAccountAssetTransactions("user2@domain", "asset2#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 2); });
+  storage->getAccountAssetTransactions("user3@domain", "asset2#domain").subscribe(
+      [](auto tx) { EXPECT_EQ(tx.commands.size(), 1); });
 }

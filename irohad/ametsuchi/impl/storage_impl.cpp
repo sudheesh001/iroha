@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <algorithm>
+#include <model/commands/transfer_asset.hpp>
 
 #include "ametsuchi/impl/storage_impl.hpp"
 #include "ametsuchi/impl/mutable_storage_impl.hpp"
@@ -244,6 +245,31 @@ namespace iroha {
           })
           .filter([account_id](auto tx) {
             return tx.creator_account_id == account_id;
+          });
+    }
+
+    rxcpp::observable<model::Transaction> StorageImpl::getAccountAssetTransactions(
+        std::string account_id, std::string asset_id) {
+      std::shared_lock<std::shared_timed_mutex> write(rw_lock_);
+      return getBlocksFrom(1)
+          .flat_map([](auto block) {
+            return rxcpp::observable<>::iterate(block.transactions);
+          })
+          .map([account_id, asset_id](model::Transaction tx) {
+            std::vector<std::shared_ptr<model::Command>> assetCommands;
+            std::for_each(tx.commands.begin(), tx.commands.end(), [account_id, asset_id, &assetCommands](std::shared_ptr<model::Command> command) {
+              if (instanceof <iroha::model::TransferAsset>(*command)) {
+                auto transferAsset = (iroha::model::TransferAsset*) command.get();
+                if ((transferAsset->src_account_id == account_id || transferAsset->dest_account_id == account_id) && transferAsset->asset_id == asset_id) {
+                  assetCommands.push_back(command);
+                }
+              }
+            });
+            tx.commands = assetCommands;
+            return tx;
+          })
+          .filter([](auto tx) {
+            return tx.commands.size() > 0;
           });
     }
 

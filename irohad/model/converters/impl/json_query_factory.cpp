@@ -30,21 +30,16 @@ namespace iroha {
       JsonQueryFactory::JsonQueryFactory()
           : log_(logger::log("JsonQueryFactory")) {
         deserializers_["GetAccount"] = &JsonQueryFactory::deserializeGetAccount;
-        deserializers_["GetAccountAssets"] =
-            &JsonQueryFactory::deserializeGetAccountAssets;
-        deserializers_["GetAccountTransactions"] =
-            &JsonQueryFactory::deserializeGetAccountTransactions;
-        deserializers_["GetAccountSignatories"] =
-            &JsonQueryFactory::deserializeGetSignatories;
+        deserializers_["GetAccountAssets"] = &JsonQueryFactory::deserializeGetAccountAssets;
+        deserializers_["GetAccountTransactions"] = &JsonQueryFactory::deserializeGetAccountTransactions;
+        deserializers_["GetAccountAssetTransactions"] = &JsonQueryFactory::deserializeGetAccountAssetTransactions;
+        deserializers_["GetAccountSignatories"] = &JsonQueryFactory::deserializeGetSignatories;
         // Serializers
-        serializers_[typeid(GetAccount)] =
-            &JsonQueryFactory::serializeGetAccount;
-        serializers_[typeid(GetSignatories)] =
-            &JsonQueryFactory::serializeGetSignatories;
-        serializers_[typeid(GetAccountAssets)] =
-            &JsonQueryFactory::serializeGetAccountAssets;
-        serializers_[typeid(GetAccountTransactions)] =
-            &JsonQueryFactory::serializeGetAccountTransactions;
+        serializers_[typeid(GetAccount)] = &JsonQueryFactory::serializeGetAccount;
+        serializers_[typeid(GetSignatories)] = &JsonQueryFactory::serializeGetSignatories;
+        serializers_[typeid(GetAccountAssets)] = &JsonQueryFactory::serializeGetAccountAssets;
+        serializers_[typeid(GetAccountTransactions)] = &JsonQueryFactory::serializeGetAccountTransactions;
+        serializers_[typeid(GetAccountAssetTransactions)] = &JsonQueryFactory::serializeGetAccountAssetTransactions;
       }
 
       optional_ptr<model::Query> JsonQueryFactory::deserialize(
