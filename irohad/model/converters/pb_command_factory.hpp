@@ -52,10 +52,6 @@ namespace iroha {
         protocol::AddSignatory serializeAddSignatory(const model::AddSignatory &addSignatory);
         model::AddSignatory deserializeAddSignatory(const protocol::AddSignatory &addSignatory);
 
-        // assign master key
-        protocol::AssignMasterKey serializeAssignMasterKey(const model::AssignMasterKey &assignMasterKey);
-        model::AssignMasterKey deserializeAssignMasterKey(const protocol::AssignMasterKey &assignMasterKey);
-
         // create asset
         protocol::CreateAsset serializeCreateAsset(const model::CreateAsset &createAsset);
         model::CreateAsset deserializeCreateAsset(const protocol::CreateAsset &createAsset);
