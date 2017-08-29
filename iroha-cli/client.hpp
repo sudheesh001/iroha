@@ -35,39 +35,32 @@ namespace iroha_cli {
     };
 
     enum TxStatus {
-      WRONG_FORMAT,
+      /**
+       * Not stateful invalid.
+       */
       NOT_VALID,
+      /**
+       * Transaction passed to Iroha
+       */
       OK,
     };
 
     CliClient(std::string target_ip, int port);
 
     /**
-     * Send transaction to Iroha-Network
-     * @param json_tx
+     * Send Transaction to Iroha Peer, i.e. target_ip:port
+     * @param tx
      * @return
      */
     CliClient::Response<CliClient::TxStatus> sendTx(iroha::model::Transaction tx);
+
     /**
-     *
-     * @param json_tx
-     * @return
-     */
-    CliClient::Response<CliClient::TxStatus> sendJsonTx(std::string json_tx);
-    /**
-     *
+     * Send Query to Iroha Peer, i.e. target_ip:port
      * @param query
      * @return
      */
     CliClient::Response<iroha::protocol::QueryResponse> sendQuery(
         std::shared_ptr<iroha::model::Query> query);
-    /**
-     *
-     * @param json_query
-     * @return
-     */
-    CliClient::Response<iroha::protocol::QueryResponse> sendJsonQuery(
-        std::string json_query);
 
 
    private:

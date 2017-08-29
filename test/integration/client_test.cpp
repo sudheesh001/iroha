@@ -26,6 +26,10 @@
 #include "torii/processor/query_processor_impl.hpp"
 #include "torii/processor/transaction_processor_impl.hpp"
 
+#include "model/converters/json_transaction_factory.hpp"
+#include "model/converters/json_query_factory.hpp"
+#include "model/converters/json_common.hpp"
+
 constexpr const char *Ip = "0.0.0.0";
 constexpr int Port = 50051;
 
@@ -37,6 +41,7 @@ using ::testing::AtLeast;
 using namespace iroha::ametsuchi;
 using namespace iroha::network;
 using namespace iroha::validation;
+using namespace iroha::model::converters;
 
 class ClientServerTest : public testing::Test {
  public:
@@ -101,7 +106,7 @@ TEST_F(ClientServerTest, SendTxWhenValid) {
       .WillOnce(Return(true));
   EXPECT_CALL(*pcsMock, propagate_transaction(_)).Times(1);
 
-  auto json_tx =
+  auto json_string =
       "{\"signatures\": [ {\n"
       "                    \"pubkey\": "
       "\"2323232323232323232323232323232323232323232323232323232323232323\",\n"
@@ -118,7 +123,12 @@ TEST_F(ClientServerTest, SendTxWhenValid) {
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "                }]}";
 
-  auto status = client.sendJsonTx(json_tx);
+  JsonTransactionFactory tx_factory;
+  auto json_doc = stringToJson(json_string);
+  ASSERT_TRUE(json_doc.has_value());
+  auto model_tx = tx_factory.deserialize(json_doc.value());
+  ASSERT_TRUE(model_tx.has_value());
+  auto status = client.sendTx(model_tx.value());
   ASSERT_EQ(status.answer, iroha_cli::CliClient::OK);
 }
 
@@ -128,7 +138,7 @@ TEST_F(ClientServerTest, SendTxWhenInvalidJson) {
   EXPECT_CALL(*svMock, validate(A<const iroha::model::Transaction &>()))
       .Times(0);
   // Json with no Transaction
-  auto json_tx =
+  auto json_string =
       "{\n"
       "  \"creator_account_id\": \"test\", \n"
       "  \"commands\":[{\n"
@@ -138,15 +148,18 @@ TEST_F(ClientServerTest, SendTxWhenInvalidJson) {
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "  }]\n"
       "}";
-
-  ASSERT_EQ(client.sendJsonTx(json_tx).answer, iroha_cli::CliClient::WRONG_FORMAT);
+  JsonTransactionFactory tx_factory;
+  auto json_doc = stringToJson(json_string);
+  ASSERT_TRUE(json_doc.has_value());
+  auto model_tx = tx_factory.deserialize(json_doc.value());
+  ASSERT_FALSE(model_tx.has_value());
 }
 
 TEST_F(ClientServerTest, SendTxWhenStatelessInvalid) {
   iroha_cli::CliClient client(Ip, Port);
   EXPECT_CALL(*svMock, validate(A<const iroha::model::Transaction &>()))
       .WillOnce(Return(false));
-  auto json_tx =
+  auto json_string =
       "{\"signatures\": [ {\n"
       "                    \"pubkey\": "
       "\"2423232323232323232323232323232323232323232323232323232323232323\",\n"
@@ -162,8 +175,13 @@ TEST_F(ClientServerTest, SendTxWhenStatelessInvalid) {
       "                    \"peer_key\": "
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "                }]}";
-
-  ASSERT_EQ(client.sendJsonTx(json_tx).answer, iroha_cli::CliClient::NOT_VALID);
+  JsonTransactionFactory tx_factory;
+  auto json_doc = stringToJson(json_string);
+  ASSERT_TRUE(json_doc.has_value());
+  auto model_tx = tx_factory.deserialize(json_doc.value());
+  ASSERT_TRUE(model_tx.has_value());
+  auto status = client.sendTx(model_tx.value());
+  ASSERT_EQ(status.answer, iroha_cli::CliClient::NOT_VALID);
 }
 
 TEST_F(ClientServerTest, SendQueryWhenInvalidJson) {
@@ -183,12 +201,9 @@ TEST_F(ClientServerTest, SendQueryWhenInvalidJson) {
       "\"2323232323232323232323232323232323232323232323232323232323232323\"\n"
       "  }]\n"
       "}";
-
-  auto res = client.sendJsonQuery(json_query);
-  ASSERT_TRUE(res.status.ok());
-  ASSERT_TRUE(res.answer.has_error_response());
-  ASSERT_EQ(res.answer.error_response().reason(),
-            iroha::protocol::ErrorResponse::WRONG_FORMAT);
+  JsonQueryFactory queryFactory;
+  auto model_query = queryFactory.deserialize(json_query);
+  ASSERT_FALSE(model_query.has_value());
 }
 
 TEST_F(ClientServerTest, SendQueryWhenStatelessInvalid) {
@@ -211,7 +226,11 @@ TEST_F(ClientServerTest, SendQueryWhenStatelessInvalid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendJsonQuery(json_query);
+  JsonQueryFactory queryFactory;
+  auto model_query = queryFactory.deserialize(json_query);
+  ASSERT_TRUE(model_query.has_value());
+
+  auto res = client.sendQuery(model_query.value());
   ASSERT_TRUE(res.status.ok());
   ASSERT_TRUE(res.answer.has_error_response());
   ASSERT_EQ(res.answer.error_response().reason(),
@@ -250,7 +269,11 @@ TEST_F(ClientServerTest, SendQueryWhenValid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendJsonQuery(json_query);
+  JsonQueryFactory queryFactory;
+  auto model_query = queryFactory.deserialize(json_query);
+  ASSERT_TRUE(model_query.has_value());
+
+  auto res = client.sendQuery(model_query.value());
   ASSERT_EQ(res.answer.account_response().account().account_id(), "test@test");
 }
 
@@ -284,7 +307,11 @@ TEST_F(ClientServerTest, SendQueryWhenStatefulInvalid) {
       "            \"account_id\": \"test@test\"\n"
       "                }";
 
-  auto res = client.sendJsonQuery(json_query);
+  JsonQueryFactory queryFactory;
+  auto model_query = queryFactory.deserialize(json_query);
+  ASSERT_TRUE(model_query.has_value());
+
+  auto res = client.sendQuery(model_query.value());
   ASSERT_TRUE(res.status.ok());
   ASSERT_TRUE(res.answer.has_error_response());
   ASSERT_EQ(res.answer.error_response().reason(),
