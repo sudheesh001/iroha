@@ -15,27 +15,10 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_HASH_H
-#define IROHA_HASH_H
-
+#pragma once
 #include <common/types.hpp>
+#include <string>
 
-namespace iroha {
-
-  void sha3_256(unsigned char *output, unsigned char *input,
-                      size_t in_size);
-
-  void sha3_512(unsigned char *output, unsigned char *input,
-                      size_t in_size);
-
-  hash256_t sha3_256(const uint8_t *input, size_t in_size);
-
-  hash512_t sha3_512(const uint8_t *input, size_t in_size);
-
-  hash256_t sha3_256(const std::string &msg);
-
-  hash512_t sha3_512(const std::string &msg);
-
-}  // namespace iroha
-
-#endif  // IROHA_HASH_H
+namespace builder {
+  class CreateAsset {};
+}

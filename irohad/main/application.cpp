@@ -15,21 +15,21 @@ limitations under the License.
 */
 
 #include "main/application.hpp"
+#include <gmock/gmock.h>
 #include <synchronizer/impl/synchronizer_impl.hpp>
 #include <validation/impl/chain_validator_impl.hpp>
-#include <gmock/gmock.h>
 #include "model/converters/pb_transaction_factory.hpp"
-#include "torii/processor/transaction_processor_impl.hpp"
 #include "network/block_loader.hpp"
+#include "torii/processor/transaction_processor_impl.hpp"
 
-#include "simulator/impl/simulator.hpp"
 #include "network/impl/peer_communication_service_impl.hpp"
+#include "simulator/impl/simulator.hpp"
 
 #include "validation/impl/stateful_validator_impl.hpp"
 
-#include "main/impl/ordering_init.hpp"
-#include "main/impl/consensus_init.hpp"
 #include "ametsuchi/impl/peer_query_wsv.hpp"
+#include "main/impl/consensus_init.hpp"
+#include "main/impl/ordering_init.hpp"
 
 using namespace iroha;
 using namespace iroha::ametsuchi;
@@ -54,8 +54,8 @@ Irohad::Irohad(const std::string &block_store_dir,
       storage(StorageImpl::create(block_store_dir, redis_host, redis_port,
                                   pg_conn)),
       peer_number_(peer_number) {
-      log_ = logger::log("IROHAD");
-      log_->info("created");
+  log_ = logger::log("IROHAD");
+  log_->info("created");
 }
 
 Irohad::~Irohad() {
@@ -70,13 +70,13 @@ class MockBlockLoader : public iroha::network::BlockLoader {
   MOCK_METHOD2(requestBlocks,
                rxcpp::observable<model::Block>(model::Peer, model::Block));
 };
-
-class MockCryptoProvider : public ModelCryptoProvider {
- public:
-  MOCK_CONST_METHOD1(verify, bool(const Transaction &));
-  MOCK_CONST_METHOD1(verify, bool(std::shared_ptr<const Query>));
-  MOCK_CONST_METHOD1(verify, bool(const Block &));
-};
+//
+//class MockCryptoProvider : public ModelCryptoProvider {
+// public:
+//  MOCK_CONST_METHOD1(verify, bool(const Transaction &));
+//  MOCK_CONST_METHOD1(verify, bool(std::shared_ptr<const Query>));
+//  MOCK_CONST_METHOD1(verify, bool(const Block &));
+//};
 
 void Irohad::run() {
   loop = uvw::Loop::create();
@@ -91,20 +91,16 @@ void Irohad::run() {
   log_->info("[Init] => converters");
 
   // Crypto Provider:
-  auto crypto_verifier = std::make_shared<MockCryptoProvider>();
+  auto crypto_verifier = std::make_shared<ModelCryptoProviderImpl>();
 
-  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Transaction &>()))
-      .WillRepeatedly(::testing::Return(true));
-  EXPECT_CALL(*crypto_verifier,
-              verify(::testing::A<std::shared_ptr<const Query>>()))
-      .WillRepeatedly(::testing::Return(true));
-  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Block &>()))
-      .WillRepeatedly(::testing::Return(true));
+//  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Transaction &>()))
+//      .WillRepeatedly(::testing::Return(true));
+//  EXPECT_CALL(*crypto_verifier,
+//              verify(::testing::A<std::shared_ptr<const Query>>()))
+//      .WillRepeatedly(::testing::Return(true));
+//  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Block &>()))
+//      .WillRepeatedly(::testing::Return(true));
   log_->info("[Init] => crypto provider");
-
-  // Hash provider
-  auto hash_provider = std::make_shared<HashProviderImpl>();
-  log_->info("[Init] => hash provider");
 
   // Validators:
   auto stateless_validator = createStatelessValidator(crypto_verifier);
@@ -122,17 +118,15 @@ void Irohad::run() {
   // Ordering gate
   auto ordering_gate = ordering_init.initOrderingGate(wsv, loop, 10, 5000);
   log_->info("[Init] => init ordering gate - [{}]",
-              logger::logBool(ordering_gate));
+             logger::logBool(ordering_gate));
 
   // Simulator
-  auto simulator = createSimulator(ordering_gate, stateful_validator, storage,
-                                   storage, hash_provider);
+  auto simulator =
+      createSimulator(ordering_gate, stateful_validator, storage, storage);
 
   // Consensus gate
-  auto consensus_gate = yac_init.initConsensusGate(peer_address,
-                                                   loop,
-                                                   orderer,
-                                                   simulator);
+  auto consensus_gate =
+      yac_init.initConsensusGate(peer_address, loop, orderer, simulator);
 
   // Block loader
   auto block_loader = std::make_shared<MockBlockLoader>();
@@ -144,13 +138,11 @@ void Irohad::run() {
   // PeerCommunicationService
   auto pcs = createPeerCommunicationService(ordering_gate, synchronizer);
 
-  pcs->on_proposal().subscribe([this](auto) {
-    log_->info("~~~~~~~~~| PROPOSAL ^_^ |~~~~~~~~~ ");
-  });
+  pcs->on_proposal().subscribe(
+      [this](auto) { log_->info("~~~~~~~~~| PROPOSAL ^_^ |~~~~~~~~~ "); });
 
-  pcs->on_commit().subscribe([this](auto) {
-    log_->info("~~~~~~~~~| COMMIT =^._.^= |~~~~~~~~~ ");
-  });
+  pcs->on_commit().subscribe(
+      [this](auto) { log_->info("~~~~~~~~~| COMMIT =^._.^= |~~~~~~~~~ "); });
 
   // Torii:
   // --- Transactions:
@@ -170,8 +162,8 @@ void Irohad::run() {
 
   grpc::ServerBuilder builder;
   int port = 0;
-  builder.AddListeningPort(peer_address,
-                           grpc::InsecureServerCredentials(), &port);
+  builder.AddListeningPort(peer_address, grpc::InsecureServerCredentials(),
+                           &port);
   builder.RegisterService(ordering_init.ordering_gate.get());
   builder.RegisterService(ordering_init.ordering_service.get());
   builder.RegisterService(yac_init.consensus_network.get());
@@ -189,11 +181,9 @@ std::shared_ptr<Simulator> Irohad::createSimulator(
     std::shared_ptr<OrderingGate> ordering_gate,
     std::shared_ptr<StatefulValidator> stateful_validator,
     std::shared_ptr<BlockQuery> block_query,
-    std::shared_ptr<TemporaryFactory> temporary_factory,
-    std::shared_ptr<HashProviderImpl> hash_provider) {
+    std::shared_ptr<TemporaryFactory> temporary_factory) {
   return std::make_shared<Simulator>(ordering_gate, stateful_validator,
-                                     temporary_factory, block_query,
-                                     hash_provider);
+                                     temporary_factory, block_query);
 }
 
 std::shared_ptr<PeerCommunicationService>

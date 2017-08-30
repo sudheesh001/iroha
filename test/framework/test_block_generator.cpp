@@ -17,7 +17,6 @@
 
 #include <chrono>
 #include "framework/test_block_generator.hpp"
-#include "model/model_hash_provider_impl.hpp"
 #include "model/commands/add_peer.hpp"
 #include "model/commands/create_domain.hpp"
 #include "model/commands/create_domain.hpp"
@@ -101,7 +100,7 @@ namespace framework {
 
       Signature sign{};
       block.sigs = {sign};
-      block.hash = iroha::model::HashProviderImpl().get_hash(block);
+//      block.hash = iroha::model::HashProviderImpl().get_hash(block);
       return block;
     }
   } // namespace generator

@@ -2,7 +2,6 @@ add_subdirectory(generators)
 
 add_library(model
     model_crypto_provider_impl.cpp
-    model_hash_provider_impl.cpp
     impl/model_operators.cpp
     converters/impl/pb_block_factory.cpp
     converters/impl/pb_transaction_factory.cpp

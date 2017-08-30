@@ -47,7 +47,7 @@ namespace iroha {
         tx.commands.push_back(
             command_generator.generateSetAdminPermissions("admin@test"));
 
-        tx.tx_hash = hash_provider_.get_hash(tx);
+//        tx.tx_hash = hash_provider_.get_hash(tx);
         return tx;
       }
 
@@ -59,7 +59,7 @@ namespace iroha {
         tx.creator_account_id = creator_account_id;
         tx.tx_counter = tx_counter;
         tx.commands = commands;
-        tx.tx_hash = hash_provider_.get_hash(tx);
+//        tx.tx_hash = hash_provider_.get_hash(tx);
         return tx;
       }
 

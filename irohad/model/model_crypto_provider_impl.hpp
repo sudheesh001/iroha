@@ -19,7 +19,6 @@
 #define IROHA_MODEL_CRYPTO_PROVIDER_IMPL_HPP
 
 #include <model/model_crypto_provider.hpp>
-#include <model/model_hash_provider.hpp>
 
 namespace iroha {
   namespace model {
@@ -28,7 +27,7 @@ namespace iroha {
      public:
       bool verify(const Transaction &tx) const override;
 
-      bool verify(std::shared_ptr<const Query> tx) const override;
+      bool verify(std::shared_ptr<Query> tx) const override;
 
       bool verify(const Block& block) const override;
 

@@ -97,13 +97,11 @@ namespace iroha_cli {
 
   void QueryResponseHandler::handleTransactionsResponse(
       const iroha::protocol::QueryResponse &response) {
-    auto txs = response.transactions_response().transactions();
     log_->info("[Transactions]");
-    std::for_each(txs.begin(), txs.end(), [this](auto tx) {
+    for(const auto& tx: response.transactions_response().transactions()) {
       log_->info("-[tx]-");
-      log_->info("--[Creator Id] -- {}", tx.meta().creator_account_id());
-      // TODO: add other fields
-    });
+      log_->info("--[Creator Id] -- {}", tx.payload().creator_account_id());
+    }
   }
 
 }  // namespace iroha_cli

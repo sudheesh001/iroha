@@ -37,7 +37,6 @@
 #include "simulator/block_creator.hpp"
 #include "network/ordering_gate.hpp"
 #include "validation/stateful_validator.hpp"
-#include "model/model_hash_provider_impl.hpp"
 
 #include "simulator/impl/simulator.hpp"
 
@@ -75,8 +74,7 @@ class Irohad {
       std::shared_ptr<iroha::network::OrderingGate> ordering_gate,
       std::shared_ptr<iroha::validation::StatefulValidator> stateful_validator,
       std::shared_ptr<iroha::ametsuchi::BlockQuery> block_query,
-      std::shared_ptr<iroha::ametsuchi::TemporaryFactory> temporary_factory,
-      std::shared_ptr<iroha::model::HashProviderImpl> hash_provider);
+      std::shared_ptr<iroha::ametsuchi::TemporaryFactory> temporary_factory);
 
   std::shared_ptr<iroha::network::PeerCommunicationService>
   createPeerCommunicationService(

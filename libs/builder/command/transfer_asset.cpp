@@ -1,3 +1,4 @@
+#include <common/uint256_t.h>
 /**
  * Copyright Soramitsu Co., Ltd. 2017 All Rights Reserved.
  * http://soramitsu.co.jp
@@ -15,27 +16,14 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_HASH_H
-#define IROHA_HASH_H
+#include "transfer_asset.hpp"
 
-#include <common/types.hpp>
+static iroha::protocol::TransferAsset proto;
 
-namespace iroha {
-
-  void sha3_256(unsigned char *output, unsigned char *input,
-                      size_t in_size);
-
-  void sha3_512(unsigned char *output, unsigned char *input,
-                      size_t in_size);
-
-  hash256_t sha3_256(const uint8_t *input, size_t in_size);
-
-  hash512_t sha3_512(const uint8_t *input, size_t in_size);
-
-  hash256_t sha3_256(const std::string &msg);
-
-  hash512_t sha3_512(const std::string &msg);
-
-}  // namespace iroha
-
-#endif  // IROHA_HASH_H
+builder::TransferAsset::TransferAsset(std::string src_account_id,
+                                      std::string dst_account_id,
+                                      std::string asset_id,
+                                      uint256_t amount) {
+  // validate src account id
+  // validate
+}

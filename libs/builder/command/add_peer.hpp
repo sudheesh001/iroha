@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_HASH_H
-#define IROHA_HASH_H
+#pragma once
 
 #include <common/types.hpp>
+#include <string>
 
-namespace iroha {
+namespace builder {
 
-  void sha3_256(unsigned char *output, unsigned char *input,
-                      size_t in_size);
+  using pubkey_t = iroha::ed25519::pubkey_t;
 
-  void sha3_512(unsigned char *output, unsigned char *input,
-                      size_t in_size);
+  class AddPeer {
+   public:
+    AddPeer(std::string address, pubkey_t pubkey)
+        : address_{std::move(address)}, pubkey_{pubkey_} {}
 
-  hash256_t sha3_256(const uint8_t *input, size_t in_size);
 
-  hash512_t sha3_512(const uint8_t *input, size_t in_size);
-
-  hash256_t sha3_256(const std::string &msg);
-
-  hash512_t sha3_512(const std::string &msg);
-
-}  // namespace iroha
-
-#endif  // IROHA_HASH_H
+   private:
+    std::string address_;
+    pubkey_t pubkey_;
+  };
+}

@@ -19,9 +19,9 @@
 #include "generator.hpp"
 
 namespace generator {
+  static uint32_t SEED_ = 1337;
 
   int64_t random_number(int64_t min, int64_t max) {
-    uint32_t SEED_ = 1337;
     return min + (rand_r(&SEED_) % (max - min));
   }
 

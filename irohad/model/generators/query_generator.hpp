@@ -19,7 +19,6 @@
 #include "model/queries/get_signatories.hpp"
 #include "model/queries/get_transactions.hpp"
 
-#include "model/model_hash_provider_impl.hpp"
 
 #ifndef IROHA_QUERY_GENERATOR_HPP
 #define IROHA_QUERY_GENERATOR_HPP
@@ -47,9 +46,6 @@ namespace iroha {
         std::shared_ptr<GetAccountTransactions> generateGetAccountTransactions(
             ts64_t timestamp, std::string creator, uint64_t query_counter,
             std::string account_id);
-
-       private:
-        HashProviderImpl hash_provider_;
       };
     }  // namespace generators
   }    // namespace model

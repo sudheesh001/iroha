@@ -15,27 +15,18 @@
  * limitations under the License.
  */
 
-#ifndef IROHA_HASH_H
-#define IROHA_HASH_H
-
-#include <common/types.hpp>
+#pragma once
 
 namespace iroha {
+  namespace model {
+    namespace converters {
 
-  void sha3_256(unsigned char *output, unsigned char *input,
-                      size_t in_size);
+      template<typename ModelT, typename ProtoT>
+      class Factory {
+        static ModelT deserialize(const ProtoT &arg) const;
+        static ProtoT serialize(const ModelT &arg) const;
+      };
 
-  void sha3_512(unsigned char *output, unsigned char *input,
-                      size_t in_size);
-
-  hash256_t sha3_256(const uint8_t *input, size_t in_size);
-
-  hash512_t sha3_512(const uint8_t *input, size_t in_size);
-
-  hash256_t sha3_256(const std::string &msg);
-
-  hash512_t sha3_512(const std::string &msg);
-
-}  // namespace iroha
-
-#endif  // IROHA_HASH_H
+    }
+  }
+}

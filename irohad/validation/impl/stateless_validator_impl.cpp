@@ -55,7 +55,7 @@ namespace iroha {
       return true;
     }
 
-    bool StatelessValidatorImpl::validate(std::shared_ptr<const model::Query> query) const {
+    bool StatelessValidatorImpl::validate(std::shared_ptr<model::Query> query) const {
       // signatures are correct
       if (!crypto_provider_->verify(query)){
         log_->warn("crypto verification broken");
