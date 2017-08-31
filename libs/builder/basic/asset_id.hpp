@@ -16,3 +16,10 @@
  */
 
 #pragma once
+
+namespace type {
+
+  class AssetID {
+
+  };
+}

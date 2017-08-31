@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "asset_id.hpp"

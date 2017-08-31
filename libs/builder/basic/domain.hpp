@@ -16,3 +16,11 @@
  */
 
 #pragma once
+
+
+
+class domain {
+
+};
+
+

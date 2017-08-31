@@ -15,4 +15,8 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "amount.hpp"
+
+namespace type {
+  Amount::Amount(uint256_t amount) : amount_{std::move(amount)} {}
+}

@@ -16,3 +16,14 @@
  */
 
 #pragma once
+
+#include "add_asset_quantity.hpp"
+#include "add_peer.hpp"
+#include "add_signatory.hpp"
+#include "create_account.hpp"
+#include "create_asset.hpp"
+#include "create_domain.hpp"
+#include "remove_signatory.hpp"
+#include "set_account_permissions.hpp"
+#include "set_account_quorum.hpp"
+#include "transfer_asset.hpp"

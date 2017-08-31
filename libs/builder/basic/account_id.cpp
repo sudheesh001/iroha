@@ -15,4 +15,12 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "account_id.hpp"
+
+namespace type {
+
+  AccountID::AccountID(std::string id) {
+    // validate string id
+    id_ = std::move(id);
+  }
+}

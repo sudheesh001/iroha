@@ -16,3 +16,18 @@
  */
 
 #pragma once
+
+#include <string>
+
+namespace type {
+  class AccountID {
+   public:
+    AccountID() = default;
+    explicit AccountID(std::string id);
+
+    explicit operator std::string() const noexcept { return id_; }
+
+   private:
+    std::string id_;
+  };
+}

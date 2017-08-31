@@ -16,3 +16,24 @@
  */
 
 #pragma once
+
+#include <common/uint256_t.h>
+
+namespace type {
+
+  class Amount {
+   public:
+    using OverflowException = std::overflow_error;
+
+    Amount() = default;
+    explicit Amount(uint256_t amount);
+
+    // TODO: (warchant) write operators +, -, ++, -- (prefix and postfix), +=,
+    // -=. check for overflow at every operation!!! throw OverflowException if overflow
+
+    explicit operator uint256_t() const noexcept { return amount_; }
+
+   private:
+    uint256_t amount_;
+  };
+}
