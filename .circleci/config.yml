@@ -45,7 +45,8 @@ jobs:
           command : |
             apt update -y
             apt install lcov -y
-            lcov --capture --directory $IROHA_BUILD --output-file $IROHA_COVERAGE
+            lcov --capture --initial --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
+
 
             IROHA_COVERAGE_TARGET_DIRECTORIES=('irohad' 'iroha-cli' 'libs')
             for directory in ${IROHA_COVERAGE_TARGET_DIRECTORIES[@]}; do
