@@ -45,14 +45,14 @@ jobs:
           command: cmake --build $IROHA_BUILD -- -j4
       - run:
           name: initialize coverage reporting
-          command: lcov --capture --initial --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
+          command: lcov --capture --initial --directory $IROHA_BUILD --output-file $IROHA_COVERAGE
       - run:
           name: run tests
           command: cmake --build $IROHA_BUILD --target test
       - run:
           name: reporting coverage
           command : |
-            lcov --capture --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
+            lcov --capture --directory $IROHA_BUILD --output-file $IROHA_COVERAGE
             IROHA_COVERAGE_TARGET_DIRECTORIES=('irohad' 'iroha-cli' 'libs')
             for directory in ${IROHA_COVERAGE_TARGET_DIRECTORIES[@]}; do
               lcov --extract $IROHA_COVERAGE "$IROHA_HOME/$directory/*" > ${IROHA_COVERAGE}_$directory
