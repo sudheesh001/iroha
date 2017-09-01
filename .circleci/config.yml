@@ -14,6 +14,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install depensices
+          command: |
+            apt update -y
+            apt install lcov -y
+
+      - run:
           name: ensure, required folders created
           command: |
             mkdir -p $IROHA_HOME
@@ -38,14 +44,15 @@ jobs:
           name: make
           command: cmake --build $IROHA_BUILD -- -j4
       - run:
+          name: initialize coverage reporting
+          command: lcov --capture --initial --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
+      - run:
           name: run tests
           command: cmake --build $IROHA_BUILD --target test
       - run:
           name: reporting coverage
           command : |
-            apt update -y
-            apt install lcov -y
-            lcov --capture --initial --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
+            lcov --capture --directory $IROHA_BUILD --output-file ${IROHA_COVERAGE}_exulude_direcotires
             IROHA_COVERAGE_TARGET_DIRECTORIES=('irohad' 'iroha-cli' 'libs')
             for directory in ${IROHA_COVERAGE_TARGET_DIRECTORIES[@]}; do
               lcov --extract $IROHA_COVERAGE "$IROHA_HOME/$directory/*" > ${IROHA_COVERAGE}_$directory
