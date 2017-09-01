@@ -16,9 +16,24 @@
  */
 
 #pragma once
-#include <common/types.hpp>
-#include <string>
+
+#include <command.pb.h>
 
 namespace builder {
-  class CreateAsset {};
+
+  // forward declaration
+  namespace iroha {
+    namespace protocol {
+      class Command;
+    }
+  };
+
+  template <typename T>
+  class Command {
+   public:
+    virtual void register_cmd(iroha::protocol::Command* cmd) = 0;
+
+   protected:
+    std::unique_ptr<T> t;
+  };
 }

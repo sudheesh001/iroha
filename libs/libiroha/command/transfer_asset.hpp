@@ -17,11 +17,24 @@
 
 #pragma once
 
-#include <common/types.hpp>
+#include <commands.pb.h>
+#include <common/uint256_t.h>
+#include <builder/basic/types.hpp>
 #include <string>
+#include "command.hpp"
+
+/* EXPERIMENT */
 
 namespace builder {
-  class AddSignatory {};
-}
+  class TransferAsset : public Command<iroha::protocol::TransferAsset> {
+   public:
+    TransferAsset() = default;
 
-#endif  // IROHA_ADD_PEER_HPP
+    TransferAsset(std::string from, std::string to, std::string asset_id,
+                  uint256_t amount);
+
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_transfer_asset(t.release());
+    }
+  };
+}

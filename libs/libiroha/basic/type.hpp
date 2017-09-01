@@ -15,4 +15,26 @@
  * limitations under the License.
  */
 
-#include "asset_id.hpp"
+#pragma once
+
+#include <stdexcept>
+#include <string>
+
+namespace basic {
+
+  template <typename Base_t>
+  class Type {
+   public:
+    using BadFormatException = std::exception;
+
+    Type() = default;
+
+    explicit operator Base_t() const noexcept { return t_; }
+    Base_t data() const noexcept { return t_; }
+
+    virtual bool is_valid(Base_t t) const noexcept = 0;
+
+   protected:
+    Base_t t_;
+  };
+};

@@ -17,17 +17,16 @@
 
 #pragma once
 
-#include <string>
+#include <common/types.hpp>
 
-namespace type {
-  class AccountID {
-   public:
-    AccountID() = default;
-    explicit AccountID(std::string id);
+namespace basic {
 
-    explicit operator std::string() const noexcept { return id_; }
+  // abstract interface
+  struct Signable {
+    virtual Signable& sign(iroha::keypair_t kp) noexcept = 0;
+  };
 
-   private:
-    std::string id_;
+  struct Executable {
+    virtual void execute(Executor& e) = 0;
   };
 }

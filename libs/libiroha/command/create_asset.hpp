@@ -16,3 +16,15 @@
  */
 
 #pragma once
+#include <common/types.hpp>
+#include <string>
+#include "command.hpp"
+
+namespace builder {
+  class CreateAsset : public Command<iroha::protocol::CreateAsset> {
+   public:
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_create_asset(t.release());
+    }
+  };
+}

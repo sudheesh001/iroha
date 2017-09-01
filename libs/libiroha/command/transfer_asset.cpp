@@ -1,3 +1,4 @@
+#include <common/uint256_t.h>
 /**
  * Copyright Soramitsu Co., Ltd. 2017 All Rights Reserved.
  * http://soramitsu.co.jp
@@ -15,4 +16,11 @@
  * limitations under the License.
  */
 
-#include "domain.hpp"
+#include "transfer_asset.hpp"
+
+namespace builder {
+  TransferAsset::TransferAsset(std::string from, std::string to,
+                               std::string asset_id, uint256_t amount) {
+    /// TODO
+  }
+}

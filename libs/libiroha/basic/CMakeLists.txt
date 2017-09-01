@@ -1,9 +1,10 @@
-add_library(type
+add_library(basic_types
     amount.cpp
     account_id.cpp
     asset_id.cpp
+    domain.cpp
     type.hpp
     )
-target_link_libraries(type
+target_link_libraries(basic_types
     uint256
     )

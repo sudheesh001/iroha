@@ -15,20 +15,4 @@
  * limitations under the License.
  */
 
-#pragma once
-
-#include <commands.pb.h>
-#include <common/uint256_t.h>
-#include <string>
-
-namespace builder {
-  class TransferAsset {
-   public:
-    TransferAsset(
-        std::string src_account_id,
-        std::string dst_account_id,
-        std::string asset_id,
-        uint256_t   amount
-    );
-  };
-}
+#include "util.hpp"

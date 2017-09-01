@@ -19,19 +19,13 @@
 
 #include <common/types.hpp>
 #include <string>
+#include "command.hpp"
 
 namespace builder {
-
-  using pubkey_t = iroha::ed25519::pubkey_t;
-
-  class AddPeer {
+  class CreateAccount : public Command<iroha::protocol::CreateAccount> {
    public:
-    AddPeer(std::string address, pubkey_t pubkey)
-        : address_{std::move(address)}, pubkey_{pubkey_} {}
-
-
-   private:
-    std::string address_;
-    pubkey_t pubkey_;
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_create_account(t.release());
+    }
   };
 }

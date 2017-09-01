@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-#pragma once
-
-#include <common/types.hpp>
-#include <string>
+#include "transaction.hpp"
 
 namespace builder {
-  class CreateAccount {};
 }
+

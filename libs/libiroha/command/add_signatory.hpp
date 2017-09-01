@@ -17,10 +17,17 @@
 
 #pragma once
 
+#include <common/types.hpp>
+#include <string>
+#include "command.hpp"
 
+namespace builder {
+  class AddSignatory : public Command<iroha::protocol::AddSignatory> {
+   public:
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_add_signatory(t.release());
+    }
+  };
+}
 
-class domain {
-
-};
-
-
+#endif  // IROHA_ADD_PEER_HPP

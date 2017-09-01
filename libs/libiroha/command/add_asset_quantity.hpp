@@ -16,3 +16,16 @@
  */
 
 #pragma once
+
+#include <common/types.hpp>
+#include <string>
+#include "command.hpp"
+
+namespace builder {
+  class AddAssetQuantity : public Command<iroha::protocol::AddAssetQuantity> {
+   public:
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_add_asset_quantity(t.release());
+    }
+  };
+}

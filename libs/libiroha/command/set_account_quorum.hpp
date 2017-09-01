@@ -16,3 +16,15 @@
  */
 
 #pragma once
+#include <common/types.hpp>
+#include <string>
+#include "command.hpp"
+
+namespace builder {
+  class SetAccountQuorum : public Command<iroha::protocol::SetAccountQuorum> {
+   public:
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_set_quorum(t.release());
+    }
+  };
+}

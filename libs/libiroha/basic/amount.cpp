@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "amount.hpp"
 
-#include <common/types.hpp>
-#include <string>
 
-namespace builder {
-  class AddAssetQuantity {};
-}

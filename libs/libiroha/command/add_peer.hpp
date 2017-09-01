@@ -16,9 +16,30 @@
  */
 
 #pragma once
+
 #include <common/types.hpp>
 #include <string>
+#include "command.hpp"
 
 namespace builder {
-  class SetAccountQuorum{};
+
+  using pubkey_t = iroha::pubkey_t;
+
+  class AddPeer : public Command<iroha::protocol::AddPeer> {
+   public:
+    AddPeer(std::string address, pubkey_t pubkey)
+        : address_{std::move(address)}, pubkey_{pubkey_} {}
+    AddPeer(std::string address, const std::string& pubkey)
+        : address_{std::move(address)} {
+      pubkey_ = pubkey_t::from_string(pubkey);
+    }
+
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_add_peer(t.release());
+    }
+
+   private:
+    std::string address_;
+    pubkey_t pubkey_;
+  };
 }

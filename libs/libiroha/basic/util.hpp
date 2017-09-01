@@ -1,4 +1,3 @@
-#include <common/uint256_t.h>
 /**
  * Copyright Soramitsu Co., Ltd. 2017 All Rights Reserved.
  * http://soramitsu.co.jp
@@ -16,14 +15,12 @@
  * limitations under the License.
  */
 
-#include "transfer_asset.hpp"
+#pragma once
 
-static iroha::protocol::TransferAsset proto;
 
-builder::TransferAsset::TransferAsset(std::string src_account_id,
-                                      std::string dst_account_id,
-                                      std::string asset_id,
-                                      uint256_t amount) {
-  // validate src account id
-  // validate
-}
+
+class util {
+
+};
+
+

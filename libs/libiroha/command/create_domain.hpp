@@ -16,10 +16,15 @@
  */
 
 #pragma once
+#include <common/types.hpp>
+#include <string>
+#include "command.hpp"
 
-namespace type {
-
-  class AssetID {
-
+namespace builder {
+  class CreateDomain : public Command<iroha::protocol::CreateDomain> {
+   public:
+    void register_cmd(iroha::protocol::Command* cmd) override {
+      cmd->set_allocated_create_domain(t.release());
+    }
   };
 }

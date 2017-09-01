@@ -16,9 +16,12 @@
  */
 
 #pragma once
-#include <common/types.hpp>
-#include <string>
 
-namespace builder {
-  class SetAccountPermissions {};
+namespace model {
+  class Transaction {
+   public:
+
+  };
 }
+
+
