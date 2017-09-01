@@ -17,11 +17,59 @@
 
 #pragma once
 
-namespace model {
-  class Transaction {
-   public:
+#include <block.pb.h>
+#include <libiroha/command/commands.hpp>
 
-  };
+namespace iroha {
+  namespace view {
+
+    class Transaction {
+     public:
+      explicit Transaction(std::unique_ptr<protocol::Transaction> tx)
+          : tx_(std::move(tx)), pl{tx_->payload()} {
+        for (const auto &p : pl.commands()) {
+          using protocol::Command::CommandCase;
+          switch (p.command_case()) {
+            case CommandCase::kTransferAsset: {
+              cmds.push_back(
+                  std::make_unique<TransferAsset>(p.transfer_asset()));
+              break;
+            }
+            // TODO: add others
+            default: {
+              /// bad command ///
+            }
+          }
+        }
+      }
+
+      const std::string creator_account_id() const noexcept {
+        return pl.creator_account_id();
+      }
+
+      const uint64_t tx_counter() const noexcept { return pl.tx_counter(); }
+
+      const ts64_t created_time() const noexcept { return pl.created_time(); }
+
+      void execute(Executor &e) {
+        for (const auto &c : cmds) {
+          c->execute(e);
+        }
+      }
+
+     private:
+      std::unique_ptr<protocol::Transaction> tx_;
+      const protocol::Transaction_Payload &pl;
+
+      std::vector<std::unique_ptr<Command>> cmds{};
+    };
+
+    void f() {
+      std::unique_ptr<protocol::Transaction> pb;
+      Transaction tx(pb);
+
+      Executor e;
+      tx.execute(e);
+    }
+  }
 }
-
-

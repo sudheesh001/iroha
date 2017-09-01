@@ -21,75 +21,61 @@
 #include <common/types.hpp>
 #include <crypto/crypto.hpp>
 #include <crypto/hash.hpp>
+#include <libiroha/basic/signable.hpp>
+#include <libiroha/command/commands.hpp>
 #include <string>
 #include <vector>
 #include "block.pb.h"
-#include "builder/command/commands.hpp"
-#include "signable.hpp"
 
 /**
  * Registers new command.
  *  - command is the name of interface method
  *  - type is the according interface (model) type
  */
-#define REGISTER_COMMAND(command, type)             \
-  Transaction& command(type arg) {                  \
-    auto cmd = p.mutable_payload()->add_commands(); \
-    arg.register_cmd(cmd);                          \
-    return *this;                                   \
+#define REGISTER_COMMAND(command, type)                                      \
+  Transaction& command(type arg) {                                           \
+    if (final)                                                               \
+      throw TransactionFinalException("transaction is immutable and final"); \
+    arg.register_cmd(p.mutable_payload()->add_commands());                   \
+    return *this;                                                            \
   }
 
-namespace builder {
+namespace iroha {
+  namespace builder {
 
-  class Transaction final : public Signable {
-   public:
-    REGISTER_COMMAND(add_asset_quantity, AddAssetQuantity);
-    REGISTER_COMMAND(add_peer, AddPeer);
-    REGISTER_COMMAND(add_signatory, AddSignatory);
-    REGISTER_COMMAND(create_asset, CreateAsset);
-    REGISTER_COMMAND(create_account, CreateAccount);
-    REGISTER_COMMAND(create_domain, CreateDomain);
-    REGISTER_COMMAND(remove_signatory, RemoveSignatory);
-    REGISTER_COMMAND(set_account_permissions, SetAccountPermissions);
-    REGISTER_COMMAND(set_account_quorum, SetAccountQuorum);
-    REGISTER_COMMAND(transfer_asset, TransferAsset);
+    class Transaction final : public basic::Signable {
+     public:
+      using TransactionFinalException = std::domain_error;
 
-    Signable& sign(iroha::keypair_t kp) noexcept override {
-      if (!cache.final) {
-        cache.final = true;
-        cache.payload_hash =
-            iroha::sha3_256(p.payload().SerializeAsString()).to_string();
-      }
 
-      const iroha::sig_t signature =
-          iroha::sign(cache.payload_hash, kp.pubkey, kp.privkey);
+      REGISTER_COMMAND(add_asset_quantity, AddAssetQuantity);
+      REGISTER_COMMAND(add_peer, AddPeer);
+      REGISTER_COMMAND(add_signatory, AddSignatory);
+      REGISTER_COMMAND(create_asset, CreateAsset);
+      REGISTER_COMMAND(create_account, CreateAccount);
+      REGISTER_COMMAND(create_domain, CreateDomain);
+      REGISTER_COMMAND(remove_signatory, RemoveSignatory);
+      REGISTER_COMMAND(set_account_permissions, SetAccountPermissions);
+      REGISTER_COMMAND(set_account_quorum, SetAccountQuorum);
+      REGISTER_COMMAND(transfer_asset, TransferAsset);
 
-      auto sig = p.add_signature();
-      sig->set_pubkey(kp.pubkey.to_string());
-      sig->set_signature(signature.to_string());
+      basic::Signable& sign(iroha::keypair_t kp) noexcept override;
 
-      return *this;
-    }
+     private:
+      iroha::protocol::Transaction p;
 
-   private:
-    iroha::protocol::Transaction p;
-
-    struct {
       bool final{};
       std::string payload_hash;
-    } cache;
-
-    void a() {}
-  };
-}
+    };
+  }  // namespace builder
+}  // namespace iroha
 
 void f() {
+  using namespace iroha;
   using namespace builder;
 
-  iroha::keypair_t kp1 =
-      iroha::create_keypair(iroha::create_seed("hooi pidr1"));
-  iroha::keypair_t kp2 =
-      iroha::create_keypair(iroha::create_seed("hooi pidr2"));
+  keypair_t kp1 = create_keypair(create_seed("hooi pidr1"));
+  keypair_t kp2 = create_keypair(create_seed("hooi pidr2"));
 
   Transaction builder;
   builder.add_peer({"1", "2"})

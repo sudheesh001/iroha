@@ -21,7 +21,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class RemoveSignatory : public Command<iroha::protocol::RemoveSignatory> {
    public:
     void register_cmd(iroha::protocol::Command* cmd) override {

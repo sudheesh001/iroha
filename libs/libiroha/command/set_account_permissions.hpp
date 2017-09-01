@@ -20,7 +20,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class SetAccountPermissions
       : public Command<iroha::protocol::SetAccountPermissions> {
    public:

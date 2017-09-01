@@ -20,7 +20,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class SetAccountQuorum : public Command<iroha::protocol::SetAccountQuorum> {
    public:
     void register_cmd(iroha::protocol::Command* cmd) override {

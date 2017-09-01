@@ -25,8 +25,4 @@ namespace basic {
   struct Signable {
     virtual Signable& sign(iroha::keypair_t kp) noexcept = 0;
   };
-
-  struct Executable {
-    virtual void execute(Executor& e) = 0;
-  };
 }

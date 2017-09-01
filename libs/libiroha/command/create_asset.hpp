@@ -20,7 +20,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class CreateAsset : public Command<iroha::protocol::CreateAsset> {
    public:
     void register_cmd(iroha::protocol::Command* cmd) override {

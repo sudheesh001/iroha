@@ -19,21 +19,22 @@
 
 #include <command.pb.h>
 
-namespace builder {
-
+namespace iroha {
   // forward declaration
-  namespace iroha {
-    namespace protocol {
-      class Command;
-    }
+  class Transaction;
+  class TransferAsset;
+  class AddPeer;
+
+  struct Executor {
+    bool execute(TransferAsset& e);
+    bool execute(AddPeer& e);
   };
 
-  template <typename T>
   class Command {
-   public:
-    virtual void register_cmd(iroha::protocol::Command* cmd) = 0;
-
    protected:
-    std::unique_ptr<T> t;
+    friend class Transaction;
+
+    virtual void register_cmd(iroha::protocol::Command* cmd) = 0;
+    virtual void execute(Executor&) = 0;
   };
 }

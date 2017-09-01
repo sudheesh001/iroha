@@ -19,22 +19,57 @@
 
 #include <commands.pb.h>
 #include <common/uint256_t.h>
-#include <builder/basic/types.hpp>
+#include <libiroha/basic/types.hpp>
 #include <string>
 #include "command.hpp"
 
-/* EXPERIMENT */
-
-namespace builder {
-  class TransferAsset : public Command<iroha::protocol::TransferAsset> {
+namespace iroha {
+  class TransferAsset : public Command {
    public:
-    TransferAsset() = default;
+    /**
+     * Build view from protobuf
+     * @param p
+     */
+    explicit TransferAsset(std::unique_ptr<protocol::TransferAsset> p) : t{std::move(p)} {}
 
-    TransferAsset(std::string from, std::string to, std::string asset_id,
-                  uint256_t amount);
+    /**
+     * Build protobuf object from arguments
+     * @param from
+     * @param to
+     * @param asset_id
+     * @param amount
+     */
+    explicit TransferAsset(const std::string &from, const std::string &to,
+                           const std::string &asset_id,
+                           const uint256_t &amount);
 
-    void register_cmd(iroha::protocol::Command* cmd) override {
+    const std::string from() const { return t->src_account_id(); }
+
+    const std::string to() const { return t->dest_account_id(); }
+
+    const std::string asset_id() const { return t->asset_id(); }
+
+    /* decide how to store amount
+    const uint256_t amount() const {
+      return // amount;
+    }
+     */
+
+    void execute(Executor &e) final {
+      e.execute(*this);
+    }
+
+    TransferAsset() = delete;
+
+   private:
+    friend class Transaction;
+
+    void register_cmd(iroha::protocol::Command *cmd) override {
       cmd->set_allocated_transfer_asset(t.release());
     }
+
+    std::unique_ptr<protocol::TransferAsset> t;
+
   };
+
 }

@@ -17,10 +17,10 @@
 
 #pragma once
 
+namespace basic {
 
 
-class util {
 
-};
+}
 
 

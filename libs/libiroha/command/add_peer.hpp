@@ -21,7 +21,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
 
   using pubkey_t = iroha::pubkey_t;
 

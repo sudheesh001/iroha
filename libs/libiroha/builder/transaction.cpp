@@ -17,6 +17,22 @@
 
 #include "transaction.hpp"
 
-namespace builder {
-}
+namespace iroha {
+  namespace builder {
+    basic::Signable &Transaction::sign(iroha::keypair_t kp) {
+      if (!final) {
+        final = true;
+        payload_hash =
+            iroha::sha3_256(p.payload().SerializeAsString()).to_string();
+      }
 
+      const sig_t signature = iroha::sign(payload_hash, kp.pubkey, kp.privkey);
+
+      auto sig = p.add_signature();
+      sig->set_pubkey(kp.pubkey.to_string());
+      sig->set_signature(signature.to_string());
+
+      return *this;
+    }
+  }
+}

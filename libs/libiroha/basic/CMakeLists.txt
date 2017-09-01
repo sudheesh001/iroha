@@ -1,10 +1,11 @@
-add_library(basic_types
+add_library(irohalib_basic
     amount.cpp
-    account_id.cpp
-    asset_id.cpp
-    domain.cpp
     type.hpp
+    signable.hpp
+    types.hpp
+    util.cpp
+    util.hpp
     )
-target_link_libraries(basic_types
+target_link_libraries(irohalib_basic
     uint256
     )

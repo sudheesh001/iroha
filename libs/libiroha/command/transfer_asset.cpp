@@ -18,9 +18,16 @@
 
 #include "transfer_asset.hpp"
 
-namespace builder {
-  TransferAsset::TransferAsset(std::string from, std::string to,
-                               std::string asset_id, uint256_t amount) {
-    /// TODO
+namespace iroha {
+  TransferAsset::TransferAsset(const std::string &from, const std::string &to,
+                               const std::string &asset_id,
+                               const uint256_t &amount) {
+    t = std::make_unique<protocol::TransferAsset>();
+
+    // validate input and create proto object
+    t->set_src_account_id(from);
+    t->set_dest_account_id(to);
+    t->set_asset_id(asset_id);
+    // TODO:  amount
   }
 }

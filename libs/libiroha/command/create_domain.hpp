@@ -20,7 +20,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class CreateDomain : public Command<iroha::protocol::CreateDomain> {
    public:
     void register_cmd(iroha::protocol::Command* cmd) override {

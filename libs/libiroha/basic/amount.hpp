@@ -22,15 +22,18 @@
 
 namespace basic {
 
-  class Amount : public Type<uint256_t> {
+  class Amount {
    public:
     using OverflowException = std::overflow_error;
-
-    Amount() = default;
-    Amount(uint256_t amount) : t_{std::move(amount)} {};
 
     // TODO: (warchant) write operators +, -, ++, -- (prefix and postfix), +=,
     // -=. check for overflow for every operation!!! throw OverflowException if
     // overflow
+
+
+
+   private:
+    uint256_t amount_;
+    uint8_t precision_;
   };
 }

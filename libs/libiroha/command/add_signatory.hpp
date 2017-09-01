@@ -21,7 +21,7 @@
 #include <string>
 #include "command.hpp"
 
-namespace builder {
+namespace iroha {
   class AddSignatory : public Command<iroha::protocol::AddSignatory> {
    public:
     void register_cmd(iroha::protocol::Command* cmd) override {
