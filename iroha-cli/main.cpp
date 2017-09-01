@@ -71,6 +71,7 @@ int main(int argc, char* argv[]) {
     auto keysManager = iroha_cli::KeysManagerImpl(FLAGS_name);
     if (not keysManager.createKeys(FLAGS_pass_phrase)) {
       logger->error("Keys already exist");
+      return -1;
     } else {
       logger->info(
           "Public and private key has been generated in current directory");
@@ -82,6 +83,10 @@ int main(int argc, char* argv[]) {
       logger->info("Send transaction to {}:{} ", FLAGS_address,
                    FLAGS_torii_port);
       std::ifstream file(FLAGS_json_transaction);
+      if (not file.is_open()) {
+        logger->error("Json transaction file not found");
+        return -1;
+      }
       std::string str((std::istreambuf_iterator<char>(file)),
                       std::istreambuf_iterator<char>());
       response_handler.handle(client.sendTx(str));
@@ -89,6 +94,10 @@ int main(int argc, char* argv[]) {
     if (not FLAGS_json_query.empty()) {
       logger->info("Send query to {}:{}", FLAGS_address, FLAGS_torii_port);
       std::ifstream file(FLAGS_json_query);
+      if (not file.is_open()) {
+        logger->error("Json query file not found");
+        return -1;
+      }
       std::string str((std::istreambuf_iterator<char>(file)),
                       std::istreambuf_iterator<char>());
       response_handler.handle(client.sendQuery(str));
@@ -97,6 +106,10 @@ int main(int argc, char* argv[]) {
   } else if (FLAGS_genesis_block) {
     BlockGenerator generator;
     std::ifstream file(FLAGS_peers_address);
+    if (not file.is_open()) {
+      logger->error("Peer address file not found");
+      return -1;
+    }
     std::vector<std::string> peers_address;
     std::copy(std::istream_iterator<std::string>(file),
               std::istream_iterator<std::string>(),
@@ -111,6 +124,10 @@ int main(int argc, char* argv[]) {
     JsonBlockFactory json_factory;
     auto doc = json_factory.serialize(block);
     std::ofstream output_file("genesis.block");
+    if (not output_file.is_open()) {
+      logger->error("Cannot save genesis block file");
+      return -1;
+    }
     output_file << jsonToString(doc);
     logger->info("File saved to genesis.block");
   } else {
