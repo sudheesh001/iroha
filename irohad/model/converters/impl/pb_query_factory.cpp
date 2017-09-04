@@ -70,7 +70,7 @@ namespace iroha {
               // UNIMPLEMENTED
               // TODO(warchant): implement
               return nonstd::nullopt;
-              break;
+              // do not need break because of return
             }
             case Query_Payload::QueryCase::kGetAccountSignatories: {
               // Convert to get Signatories
@@ -161,7 +161,8 @@ namespace iroha {
           std::shared_ptr<const Query> query) {
         protocol::Query pb_query;
         serializeQueryMetaData(pb_query, query);
-        auto tmp = std::static_pointer_cast<const GetAccountTransactions>(query);
+        auto tmp =
+            std::static_pointer_cast<const GetAccountTransactions>(query);
         auto pb_query_mut =
             pb_query.mutable_payload()->mutable_get_account_transactions();
         pb_query_mut->set_account_id(tmp->account_id);

@@ -56,8 +56,9 @@ namespace iroha {
 
         // in proto we use uint32, but txs_number is uint16
         auto txn_max = std::numeric_limits<decltype(block.txs_number)>::max();
-        if (pl.tx_number() > txn_max)
+        if (pl.tx_number() > txn_max) {
           throw BadFormatException("too many transactions in block");
+        }
 
         block.txs_number = static_cast<uint16_t>(pl.tx_number());
         block.height = pl.height();

@@ -16,31 +16,38 @@
  */
 
 #include <crypto/crypto.hpp>
+#include <crypto/hash.hpp>
 #include <model/converters/pb_block_factory.hpp>
 #include <model/converters/pb_query_factory.hpp>
 #include <model/converters/pb_transaction_factory.hpp>
 #include <model/model_crypto_provider_impl.hpp>
-#include <crypto/hash.hpp>
 
 namespace iroha {
   namespace model {
 
     bool ModelCryptoProviderImpl::verify(const Transaction &tx) const {
-      if (tx.signatures.empty()) return false;
+      if (tx.signatures.empty()) {
+        return false;
+      }
 
       model::converters::PbTransactionFactory factory;
       const auto &&pbtx = factory.serialize(tx);
-      const auto hash = sha3_256(pbtx.payload().SerializeAsString()).to_string();
+      const auto hash =
+          sha3_256(pbtx.payload().SerializeAsString()).to_string();
 
       for (const auto &sign : tx.signatures)
-        if (!iroha::verify(hash, sign.pubkey, sign.signature)) return false;
+        if (not iroha::verify(hash, sign.pubkey, sign.signature)) {
+          return false;
+        }
       return true;
     }
 
-    bool ModelCryptoProviderImpl::verify(std::shared_ptr<const Query> query) const {
+    bool ModelCryptoProviderImpl::verify(
+        std::shared_ptr<const Query> query) const {
       model::converters::PbQueryFactory factory;
       const auto &&pbq = factory.serialize(query);
-      const auto hash = sha3_256(pbq->payload().SerializeAsString()).to_string();
+      const auto hash =
+          sha3_256(pbq->payload().SerializeAsString()).to_string();
       const auto sig = query->signature;
 
       return iroha::verify(hash, sig.pubkey, sig.signature);
@@ -52,7 +59,9 @@ namespace iroha {
       const auto hash = sha3_256(pbb.payload().SerializeAsString()).to_string();
 
       for (const auto &sig : block.sigs)
-        if (!iroha::verify(hash, sig.pubkey, sig.signature)) return false;
+        if (not iroha::verify(hash, sig.pubkey, sig.signature)) {
+          return false;
+        }
       return true;
     }
   }
