@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     auto keysManager = iroha_cli::KeysManagerImpl(FLAGS_name);
     if (not keysManager.createKeys(FLAGS_pass_phrase)) {
       logger->error("Keys already exist");
-      return -1;
+      return EXIT_FAILURE;
     } else {
       logger->info(
           "Public and private key has been generated in current directory");
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
       std::ifstream file(FLAGS_json_transaction);
       if (not file.is_open()) {
         logger->error("Json transaction file not found");
-        return -1;
+        return EXIT_FAILURE;
       }
       std::string str((std::istreambuf_iterator<char>(file)),
                       std::istreambuf_iterator<char>());
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
       std::ifstream file(FLAGS_json_query);
       if (not file.is_open()) {
         logger->error("Json query file not found");
-        return -1;
+        return EXIT_FAILURE;
       }
       std::string str((std::istreambuf_iterator<char>(file)),
                       std::istreambuf_iterator<char>());
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
     std::ifstream file(FLAGS_peers_address);
     if (not file.is_open()) {
       logger->error("Peer address file not found");
-      return -1;
+      return EXIT_FAILURE;
     }
     std::vector<std::string> peers_address;
     std::copy(std::istream_iterator<std::string>(file),
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     std::ofstream output_file("genesis.block");
     if (not output_file.is_open()) {
       logger->error("Cannot save genesis block file");
-      return -1;
+      return EXIT_FAILURE;
     }
     output_file << jsonToString(doc);
     logger->info("File saved to genesis.block");
