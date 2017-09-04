@@ -79,7 +79,7 @@ namespace torii {
           static_cast<network::UntypedCall<ToriiServiceHandler>::CallOwner*>(
               tag);
       if (ok && callbackTag) {
-        /*assert(callbackTag);*/
+        assert(callbackTag);
         callbackTag->onCompleted(this);
       } else {
         isShutdownCompletionQueue_ = true;

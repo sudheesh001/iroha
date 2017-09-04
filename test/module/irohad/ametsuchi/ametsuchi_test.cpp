@@ -16,6 +16,8 @@
  */
 
 #include <gtest/gtest.h>
+#include <model/converters/pb_block_factory.hpp>
+#include <crypto/hash.hpp>
 #include "ametsuchi/impl/storage_impl.hpp"
 #include "common/types.hpp"
 #include "framework/test_subscriber.hpp"
@@ -25,7 +27,6 @@
 #include "model/commands/create_asset.hpp"
 #include "model/commands/create_domain.hpp"
 #include "model/commands/transfer_asset.hpp"
-#include "model/model_hash_provider_impl.hpp"
 #include "module/irohad/ametsuchi/ametsuchi_fixture.hpp"
 
 using namespace iroha::ametsuchi;
@@ -52,8 +53,6 @@ TEST_F(AmetsuchiTest, GetBlocksCompletedWhenCalled) {
 }
 
 TEST_F(AmetsuchiTest, SampleTest) {
-  HashProviderImpl hashProvider;
-
   auto storage =
       StorageImpl::create(block_store_path, redishost_, redisport_, pgopt_);
   ASSERT_TRUE(storage);
@@ -72,8 +71,12 @@ TEST_F(AmetsuchiTest, SampleTest) {
   block.transactions.push_back(txn);
   block.height = 1;
   block.prev_hash.fill(0);
-  auto block1hash = hashProvider.get_hash(block);
-  block.hash = block1hash;
+
+  iroha::model::converters::PbBlockFactory blockFactory;
+  auto pBlock = blockFactory.serialize(block);
+  auto hash = iroha::sha3_256(pBlock.payload().SerializeAsString());
+
+  block.hash = hash;
   block.txs_number = block.transactions.size();
 
   {
@@ -126,9 +129,11 @@ TEST_F(AmetsuchiTest, SampleTest) {
   block = Block();
   block.transactions.push_back(txn);
   block.height = 2;
-  block.prev_hash = block1hash;
-  auto block2hash = hashProvider.get_hash(block);
-  block.hash = block2hash;
+  block.prev_hash = hash;
+
+  pBlock = blockFactory.serialize(block);
+  auto hash2 = iroha::sha3_256(pBlock.payload().SerializeAsString());
+  block.hash = hash2;
   block.txs_number = block.transactions.size();
 
   {
@@ -151,11 +156,11 @@ TEST_F(AmetsuchiTest, SampleTest) {
   }
 
   // Block store tests
-  storage->getBlocks(1, 2).subscribe([block1hash, block2hash](auto block) {
+  storage->getBlocks(1, 2).subscribe([hash, hash2](auto block) {
     if (block.height == 1) {
-      EXPECT_EQ(block.hash, block1hash);
+      EXPECT_EQ(block.hash, hash);
     } else if (block.height == 2) {
-      EXPECT_EQ(block.hash, block2hash);
+      EXPECT_EQ(block.hash, hash2);
     }
   });
 

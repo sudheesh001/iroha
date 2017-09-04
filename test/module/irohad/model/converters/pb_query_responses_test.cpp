@@ -142,7 +142,7 @@ TEST(QueryResponseTest, TransactionsResponseTest) {
     ASSERT_EQ(query_response.transactions_response()
                   .transactions()
                   .Get(i)
-                  .meta()
+                  .payload()
                   .tx_counter(),
               i);
   }

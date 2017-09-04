@@ -1,12 +1,13 @@
-#add_library(model_generators
-#    impl/signature_generator.cpp
-#    impl/block_generator.cpp
-#    impl/transaction_generator.cpp
-#    impl/command_generator.cpp
-#    impl/query_generator.cpp
-#    )
-#
-#target_link_libraries(model_generators
-#    optional
-#    generator
-#    )
+add_library(model_generators
+    impl/signature_generator.cpp
+    impl/block_generator.cpp
+    impl/transaction_generator.cpp
+    impl/command_generator.cpp
+    impl/query_generator.cpp
+    )
+
+target_link_libraries(model_generators
+    optional
+    generator
+    logger
+    )

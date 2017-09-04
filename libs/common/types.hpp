@@ -84,8 +84,9 @@ namespace iroha {
     }
 
     static blob_t<size_> from_string(const std::string &data) {
-      if(data.size() != size_)
+      if(data.size() != size_) {
         throw BadFormatException("blob_t: input string has incorrect length");
+      }
 
       blob_t<size_> b;
       std::copy(data.begin(), data.end(), b.begin());

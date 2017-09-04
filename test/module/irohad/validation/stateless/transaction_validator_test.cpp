@@ -18,17 +18,18 @@
 #include <gtest/gtest.h>
 #include <crypto/crypto.hpp>
 #include <model/model_crypto_provider_impl.hpp>
-#include <model/model_hash_provider_impl.hpp>
 #include "validation/impl/stateless_validator_impl.hpp"
 #include <chrono>
+#include <crypto/hash.hpp>
+#include <block.pb.h>
+#include <model/converters/pb_transaction_factory.hpp>
 
 using namespace iroha::model;
 
 Transaction sign(Transaction &tx, iroha::ed25519::privkey_t privkey, iroha::ed25519::pubkey_t pubkey) {
-  HashProviderImpl hash_provider;
-  auto tx_hash = hash_provider.get_hash(tx);
-
-  auto sign = iroha::sign(tx_hash.data(), tx_hash.size(), pubkey, privkey);
+  auto txp = converters::PbTransactionFactory::serialize(tx);
+  iroha::hash256_t hash = iroha::sha3_256(txp.payload().SerializeAsString());
+  auto sign = iroha::sign(hash.data(), hash.size(), pubkey, privkey);
 
   Signature signature{};
   signature.signature = sign;

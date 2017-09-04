@@ -37,7 +37,7 @@ namespace iroha {
       return true;
     }
 
-    bool ModelCryptoProviderImpl::verify(std::shared_ptr<Query> query) const {
+    bool ModelCryptoProviderImpl::verify(std::shared_ptr<const Query> query) const {
       model::converters::PbQueryFactory factory;
       const auto &&pbq = factory.serialize(query);
       const auto hash = sha3_256(pbq->payload().SerializeAsString()).to_string();

@@ -56,7 +56,7 @@ namespace iroha {
          * @return serialized Query in json format
          */
         nonstd::optional<std::string> serialize(
-            std::shared_ptr<Query> model_query);
+            std::shared_ptr<const Query> model_query);
 
        private:
         using Deserializer = std::shared_ptr<Query> (JsonQueryFactory::*)(
@@ -74,17 +74,17 @@ namespace iroha {
             GenericValue<UTF8<char>>::Object &obj_query);
         // Serializers:
         using Serializer = void (JsonQueryFactory::*)(Document &,
-                                                      std::shared_ptr<Query>);
+                                                      std::shared_ptr<const Query>);
         std::unordered_map<std::type_index, Serializer> serializers_;
         // Serialization handlers
         void serializeGetAccount(Document &json_doc,
-                                 std::shared_ptr<Query> query);
+                                 std::shared_ptr<const Query> query);
         void serializeGetAccountAssets(Document &json_doc,
-                                       std::shared_ptr<Query> query);
+                                       std::shared_ptr<const Query> query);
         void serializeGetAccountTransactions(Document &json_doc,
-                                             std::shared_ptr<Query> query);
+                                             std::shared_ptr<const Query> query);
         void serializeGetSignatories(Document &json_doc,
-                                     std::shared_ptr<Query> query);
+                                     std::shared_ptr<const Query> query);
 
         // Logger
         std::shared_ptr<spdlog::logger> log_;

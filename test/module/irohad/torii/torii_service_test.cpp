@@ -117,9 +117,9 @@ TEST_F(ToriiServiceTest, ToriiWhenBlocking) {
   for (size_t i = 0; i < TimesToriiBlocking; ++i) {
     iroha::protocol::ToriiResponse response;
     auto new_tx = iroha::protocol::Transaction();
-    auto meta = new_tx.mutable_meta();
-    meta->set_tx_counter(i);
-    meta->set_creator_account_id("accountA");
+    auto payload = new_tx.mutable_payload();
+    payload->set_tx_counter(i);
+    payload->set_creator_account_id("accountA");
     auto stat = torii::CommandSyncClient(Ip, Port).Torii(new_tx, response);
     ASSERT_TRUE(stat.ok());
     ASSERT_EQ(response.validation(),
@@ -136,9 +136,9 @@ TEST_F(ToriiServiceTest, ToriiWhenBlockingInvalid) {
   for (size_t i = 0; i < TimesToriiBlocking; ++i) {
     iroha::protocol::ToriiResponse response;
     auto new_tx = iroha::protocol::Transaction();
-    auto meta = new_tx.mutable_meta();
-    meta->set_tx_counter(i);
-    meta->set_creator_account_id("accountA");
+    auto payload = new_tx.mutable_payload();
+    payload->set_tx_counter(i);
+    payload->set_creator_account_id("accountA");
     auto stat = torii::CommandSyncClient(Ip, Port).Torii(new_tx, response);
     ASSERT_TRUE(stat.ok());
     ASSERT_EQ(response.validation(),
@@ -159,9 +159,9 @@ TEST_F(ToriiServiceTest, ToriiWhenNonBlocking) {
 
   for (size_t i = 0; i < TimesToriiNonBlocking; ++i) {
     auto new_tx = iroha::protocol::Transaction();
-    auto meta = new_tx.mutable_meta();
-    meta->set_tx_counter(i);
-    meta->set_creator_account_id("accountA");
+    auto payload = new_tx.mutable_payload();
+    payload->set_tx_counter(i);
+    payload->set_creator_account_id("accountA");
 
     auto stat =
         client.Torii(new_tx, [&count](iroha::protocol::ToriiResponse response) {

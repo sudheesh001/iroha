@@ -27,7 +27,7 @@ namespace iroha {
      public:
       bool verify(const Transaction &tx) const override;
 
-      bool verify(std::shared_ptr<Query> tx) const override;
+      bool verify(std::shared_ptr<const Query> tx) const override;
 
       bool verify(const Block& block) const override;
 
