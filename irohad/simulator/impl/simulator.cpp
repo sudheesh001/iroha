@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
+#include <crypto/hash.hpp>
 #include "simulator/impl/simulator.hpp"
+#include "model/converters/pb_block_factory.hpp"
 
 namespace iroha {
   namespace simulator {
@@ -67,7 +69,12 @@ namespace iroha {
       new_block.txs_number = proposal.transactions.size();
       new_block.created_ts = 0; // todo set timestamp from proposal
       new_block.merkle_root.fill(0); // todo make effective impl
-//      new_block.hash = hash_provider_->get_hash(new_block);
+
+      model::converters::PbBlockFactory blockFactory;
+      auto pBlock = blockFactory.serialize(new_block);
+      new_block.hash = sha3_256(pBlock.payload().SerializeAsString());
+
+      //TODO: do we need a real signature here?
       new_block.sigs.push_back({});
 
       block_notifier_.get_subscriber().on_next(new_block);

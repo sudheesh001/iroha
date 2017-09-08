@@ -70,13 +70,6 @@ class MockBlockLoader : public iroha::network::BlockLoader {
   MOCK_METHOD2(requestBlocks,
                rxcpp::observable<model::Block>(model::Peer, model::Block));
 };
-//
-//class MockCryptoProvider : public ModelCryptoProvider {
-// public:
-//  MOCK_CONST_METHOD1(verify, bool(const Transaction &));
-//  MOCK_CONST_METHOD1(verify, bool(std::shared_ptr<const Query>));
-//  MOCK_CONST_METHOD1(verify, bool(const Block &));
-//};
 
 void Irohad::run() {
   loop = uvw::Loop::create();
@@ -92,14 +85,6 @@ void Irohad::run() {
 
   // Crypto Provider:
   auto crypto_verifier = std::make_shared<ModelCryptoProviderImpl>();
-
-//  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Transaction &>()))
-//      .WillRepeatedly(::testing::Return(true));
-//  EXPECT_CALL(*crypto_verifier,
-//              verify(::testing::A<std::shared_ptr<const Query>>()))
-//      .WillRepeatedly(::testing::Return(true));
-//  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Block &>()))
-//      .WillRepeatedly(::testing::Return(true));
   log_->info("[Init] => crypto provider");
 
   // Validators:

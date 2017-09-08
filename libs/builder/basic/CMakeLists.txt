@@ -1,9 +1,0 @@
-add_library(type
-    amount.cpp
-    account_id.cpp
-    asset_id.cpp
-    type.hpp
-    )
-target_link_libraries(type
-    uint256
-    )

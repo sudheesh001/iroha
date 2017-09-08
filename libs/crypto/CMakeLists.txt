@@ -21,13 +21,3 @@ add_library(lookup3
     lookup3.h
     lookup3.c
     )
-
-
-#add_library(model_crypto
-#    model_crypto.cpp
-#    )
-#target_link_libraries(model_crypto
-#    crypto
-#    schema
-#    optional
-#    )
