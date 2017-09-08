@@ -5,16 +5,12 @@ add_library(json_model_converters
     impl/json_query_factory.cpp
     impl/json_transaction_factory.cpp
     )
-
 target_link_libraries(json_model_converters
-    schema
-    optional
-    rxcpp
-    hash
-    crypto
-    rapidjson
-    logger
     model
+    rapidjson
+    schema
+    crypto
+    logger
     )
 
 add_library(pb_model_converters
@@ -27,12 +23,9 @@ add_library(pb_model_converters
     generic_factory.hpp
     impl/pb_primitive_factory.cpp
     )
-
 target_link_libraries(pb_model_converters
+    model
     schema
-    optional
-    rxcpp
-    hash
     crypto
     logger
     )
