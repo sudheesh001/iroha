@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <fstream>
+
 class ConfigLoaderTest : public testing::Test {
  public:
   virtual void SetUp() {
