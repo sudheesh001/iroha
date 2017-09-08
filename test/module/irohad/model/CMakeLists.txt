@@ -21,22 +21,22 @@ target_link_libraries(model_crypto_provider_test
 
 addtest(command_converter_test converters/pb_commands_test.cpp)
 target_link_libraries(command_converter_test
-    pb_model_converters
+    model
     )
 
 addtest(transaction_converter_test converters/pb_transaction_test.cpp)
 target_link_libraries(transaction_converter_test
-    pb_model_converters
+    model
     )
 
 addtest(block_converter_test converters/pb_block_test.cpp)
 target_link_libraries(block_converter_test
-    pb_model_converters
+    model
     )
 
 addtest(query_responses_test converters/pb_query_responses_test.cpp)
 target_link_libraries(query_responses_test
-    pb_model_converters
+    model
     )
 
 addtest(model_operators_test operators/model_operators_test.cpp)
@@ -52,17 +52,17 @@ target_link_libraries(command_validate_execute_test
 
 addtest(json_command_converter_test converters/json_commands_test.cpp)
 target_link_libraries(json_command_converter_test
-    json_model_converters
+    model
     )
 
 addtest(json_transaction_converter_test converters/json_transaction_test.cpp)
 target_link_libraries(json_transaction_converter_test
-    json_model_converters
+    model
     )
 
 addtest(json_block_converter_test converters/json_block_test.cpp)
 target_link_libraries(json_block_converter_test
-    json_model_converters
+    model
     )
 
 addtest(json_query_factory_test converters/json_query_factory_test.cpp)

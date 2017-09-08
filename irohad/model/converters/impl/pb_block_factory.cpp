@@ -35,7 +35,7 @@ namespace iroha {
         pl->set_created_time(block.created_ts);
 
         for (const auto& sig_obj : block.sigs) {
-          auto sig = pb_block.add_signature();
+          auto sig = pb_block.add_signatures();
           sig->set_pubkey(sig_obj.pubkey.to_string());
           sig->set_signature(sig_obj.signature.to_string());
         }
@@ -66,7 +66,7 @@ namespace iroha {
         block.prev_hash = hash256_t::from_string(pl.prev_block_hash());
         block.created_ts = pl.created_time();
 
-        for (const auto& pb_sig : pb_block.signature()) {
+        for (const auto& pb_sig : pb_block.signatures()) {
           model::Signature sig;
           sig.signature = sig_t::from_string(pb_sig.signature());
           sig.pubkey = pubkey_t::from_string(pb_sig.pubkey());
