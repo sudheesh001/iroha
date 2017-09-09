@@ -169,6 +169,19 @@ namespace iroha {
         return pb_query;
       }
 
+      protocol::Query PbQueryFactory::serializeGetAccountAssetTransactions(
+          std::shared_ptr<const Query> query) {
+        protocol::Query pb_query;
+        serializeQueryMetaData(pb_query, query);
+        auto tmp = std::static_pointer_cast<const GetAccountAssetTransactions>(query);
+        auto account_id = tmp->account_id;
+        auto asset_id = tmp->asset_id;
+        auto pb_query_mut = pb_query.mutable_payload()->mutable_get_account_asset_transactions();
+        pb_query_mut->set_account_id(account_id);
+        pb_query_mut->set_asset_id(asset_id);
+        return pb_query;
+      }
+
       protocol::Query PbQueryFactory::serializeGetSignatories(
           std::shared_ptr<const Query> query) {
         protocol::Query pb_query;

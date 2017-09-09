@@ -46,6 +46,10 @@ namespace iroha {
         std::shared_ptr<GetAccountTransactions> generateGetAccountTransactions(
             ts64_t timestamp, std::string creator, uint64_t query_counter,
             std::string account_id);
+
+        std::shared_ptr<GetAccountAssetTransactions> generateGetAccountAssetTransactions(
+            ts64_t timestamp, std::string creator, uint64_t query_counter,
+            std::string account_id, std::string asset_id);
       };
     }  // namespace generators
   }    // namespace model

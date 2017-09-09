@@ -24,13 +24,14 @@ target_link_libraries(server_runner
 
 add_library(raw_block_insertion impl/raw_block_insertion.cpp)
 target_link_libraries(raw_block_insertion
-  model #json_model_converters
+  model json_model_converters
   )
 
 add_library(application
     application.cpp
     impl/ordering_init.cpp
     impl/consensus_init.cpp
+    impl/block_loader_init.cpp
     )
 target_link_libraries(application
     logger
@@ -49,6 +50,8 @@ target_link_libraries(application
     processors
     crypto
     simulator
+    block_loader
+    block_loader_service
     )
 
 add_executable(irohad irohad.cpp)

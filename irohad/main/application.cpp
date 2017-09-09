@@ -15,21 +15,14 @@ limitations under the License.
 */
 
 #include "main/application.hpp"
+
 #include <gmock/gmock.h>
-#include <synchronizer/impl/synchronizer_impl.hpp>
-#include <validation/impl/chain_validator_impl.hpp>
-#include "model/converters/pb_transaction_factory.hpp"
-#include "network/block_loader.hpp"
-#include "torii/processor/transaction_processor_impl.hpp"
-
-#include "network/impl/peer_communication_service_impl.hpp"
-#include "simulator/impl/simulator.hpp"
-
-#include "validation/impl/stateful_validator_impl.hpp"
 
 #include "ametsuchi/impl/peer_query_wsv.hpp"
-#include "main/impl/consensus_init.hpp"
-#include "main/impl/ordering_init.hpp"
+#include "network/impl/peer_communication_service_impl.hpp"
+#include "synchronizer/impl/synchronizer_impl.hpp"
+#include "validation/impl/chain_validator_impl.hpp"
+#include "validation/impl/stateful_validator_impl.hpp"
 
 using namespace iroha;
 using namespace iroha::ametsuchi;
@@ -65,10 +58,11 @@ Irohad::~Irohad() {
   server_thread.join();
 }
 
-class MockBlockLoader : public iroha::network::BlockLoader {
+class MockCryptoProvider : public ModelCryptoProvider {
  public:
-  MOCK_METHOD2(requestBlocks,
-               rxcpp::observable<model::Block>(model::Peer, model::Block));
+  MOCK_CONST_METHOD1(verify, bool(const Transaction &));
+  MOCK_CONST_METHOD1(verify, bool(std::shared_ptr<const Query>));
+  MOCK_CONST_METHOD1(verify, bool(const Block &));
 };
 
 void Irohad::run() {
@@ -84,13 +78,21 @@ void Irohad::run() {
   log_->info("[Init] => converters");
 
   // Crypto Provider:
-  auto crypto_verifier = std::make_shared<ModelCryptoProviderImpl>();
+  auto crypto_verifier = std::make_shared<MockCryptoProvider>();
+
+  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Transaction &>()))
+      .WillRepeatedly(::testing::Return(true));
+  EXPECT_CALL(*crypto_verifier,
+              verify(::testing::A<std::shared_ptr<const Query>>()))
+      .WillRepeatedly(::testing::Return(true));
+  EXPECT_CALL(*crypto_verifier, verify(::testing::A<const Block &>()))
+      .WillRepeatedly(::testing::Return(true));
   log_->info("[Init] => crypto provider");
 
   // Validators:
   auto stateless_validator = createStatelessValidator(crypto_verifier);
   auto stateful_validator = std::make_shared<StatefulValidatorImpl>();
-  auto chain_validator = std::make_shared<ChainValidatorImpl>(crypto_verifier);
+  auto chain_validator = std::make_shared<ChainValidatorImpl>();
   log_->info("[Init] => validators");
 
   auto wsv = std::make_shared<ametsuchi::PeerQueryWsv>(storage);
@@ -109,12 +111,13 @@ void Irohad::run() {
   auto simulator =
       createSimulator(ordering_gate, stateful_validator, storage, storage);
 
-  // Consensus gate
-  auto consensus_gate =
-      yac_init.initConsensusGate(peer_address, loop, orderer, simulator);
-
   // Block loader
-  auto block_loader = std::make_shared<MockBlockLoader>();
+  auto block_loader =
+      loader_init.initBlockLoader(wsv, storage, crypto_verifier);
+
+  // Consensus gate
+  auto consensus_gate = yac_init.initConsensusGate(peer_address, loop, orderer,
+                                                   simulator, block_loader);
 
   // Synchronizer
   auto synchronizer = createSynchronizer(consensus_gate, chain_validator,
@@ -152,6 +155,7 @@ void Irohad::run() {
   builder.RegisterService(ordering_init.ordering_gate.get());
   builder.RegisterService(ordering_init.ordering_service.get());
   builder.RegisterService(yac_init.consensus_network.get());
+  builder.RegisterService(loader_init.service.get());
   internal_server = builder.BuildAndStart();
   internal_thread = std::thread([this] { internal_server->Wait(); });
   server_thread = std::thread([this] {
