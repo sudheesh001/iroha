@@ -95,7 +95,7 @@ void Irohad::run() {
   auto chain_validator = std::make_shared<ChainValidatorImpl>();
   log_->info("[Init] => validators");
 
-  auto wsv = std::make_shared<ametsuchi::PeerQueryWsv>(storage);
+  auto wsv = std::make_shared<ametsuchi::PeerQueryWsv>(storage->getWsvQuery());
 
   auto orderer = std::make_shared<PeerOrdererImpl>(wsv);
   log_->info("[Init] => peer orderer");
@@ -109,11 +109,12 @@ void Irohad::run() {
 
   // Simulator
   auto simulator =
-      createSimulator(ordering_gate, stateful_validator, storage, storage);
+      createSimulator(ordering_gate, stateful_validator,
+                      storage->getBlockQuery(), storage);
 
   // Block loader
-  auto block_loader =
-      loader_init.initBlockLoader(wsv, storage, crypto_verifier);
+  auto block_loader = loader_init.initBlockLoader(wsv, storage->getBlockQuery(),
+                                                  crypto_verifier);
 
   // Consensus gate
   auto consensus_gate = yac_init.initConsensusGate(peer_address, loop, orderer,
@@ -139,8 +140,8 @@ void Irohad::run() {
   command_service = createCommandService(pb_tx_factory, tx_processor);
 
   // --- Queries
-  auto query_proccessing_factory =
-      createQueryProcessingFactory(storage, storage);
+  auto query_proccessing_factory = createQueryProcessingFactory(
+      storage->getWsvQuery(), storage->getBlockQuery());
 
   auto query_processor = createQueryProcessor(
       std::move(query_proccessing_factory), stateless_validator);

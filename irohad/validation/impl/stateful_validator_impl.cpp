@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
+#include "validation/impl/stateful_validator_impl.hpp"
 #include <algorithm>
 #include <numeric>
-#include "validation/impl/stateful_validator_impl.hpp"
 
 namespace iroha {
   namespace validation {
@@ -30,14 +30,14 @@ namespace iroha {
         const model::Proposal &proposal,
         ametsuchi::TemporaryWsv &temporaryWsv) {
       log_->info("transactions in proposal: {}", proposal.transactions.size());
-      auto checking_transaction = [&temporaryWsv](auto &tx, auto &query) {
-        auto account = temporaryWsv.getAccount(tx.creator_account_id);
+      auto checking_transaction = [](auto &tx, auto &queries) {
+        auto account = queries.getAccount(tx.creator_account_id);
         // Check if tx creator has account and has quorum to execute transaction
         if (!account || tx.signatures.size() < account.value().quorum)
           return false;
 
         // Check if signatures in transaction are account signatory
-        auto account_signs = temporaryWsv.getSignatories(tx.creator_account_id);
+        auto account_signs = queries.getSignatories(tx.creator_account_id);
         if (not account_signs)
           // No signatories found
           return false;
