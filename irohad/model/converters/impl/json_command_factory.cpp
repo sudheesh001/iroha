@@ -34,36 +34,14 @@ using namespace rapidjson;
 namespace iroha {
   namespace model {
     namespace converters {
-      template <typename T>
-      struct Transform<T, Amount> {
-        auto operator()(T x) {
+      template <>
+      struct Convert<Amount> {
+        template <typename T>
+        auto operator()(T &&x) {
           auto des = makeFieldDeserializer(x);
           return nonstd::make_optional<Amount>()
               | des.Uint64(&Amount::int_part, "int_part")
               | des.Uint64(&Amount::frac_part, "frac_part");
-        }
-      };
-
-      template <typename T>
-      struct Transform<T, Account::Permissions> {
-        auto operator()(T x) {
-          auto des = makeFieldDeserializer(x);
-          return nonstd::make_optional<Account::Permissions>()
-              | des.Bool(&Account::Permissions::add_signatory, "add_signatory")
-              | des.Bool(&Account::Permissions::can_transfer, "can_transfer")
-              | des.Bool(&Account::Permissions::create_accounts,
-                         "create_accounts")
-              | des.Bool(&Account::Permissions::create_assets, "create_assets")
-              | des.Bool(&Account::Permissions::create_domains,
-                         "create_domains")
-              | des.Bool(&Account::Permissions::issue_assets, "issue_assets")
-              | des.Bool(&Account::Permissions::read_all_accounts,
-                         "read_all_accounts")
-              | des.Bool(&Account::Permissions::remove_signatory,
-                         "remove_signatory")
-              | des.Bool(&Account::Permissions::set_permissions,
-                         "set_permissions")
-              | des.Bool(&Account::Permissions::set_quorum, "set_quorum");
         }
       };
 
@@ -139,7 +117,7 @@ namespace iroha {
             | des.String(&AddAssetQuantity::account_id, "account_id")
             | des.String(&AddAssetQuantity::asset_id, "asset_id")
             | des.Object(&AddAssetQuantity::amount, "amount")
-            | transform;
+            | toCommand;
       }
 
       // AddPeer
@@ -165,7 +143,7 @@ namespace iroha {
         return make_optional_ptr<AddPeer>()
             | des.String(&AddPeer::peer_key, "peer_key")
             | des.String(&AddPeer::address, "address")
-            | transform;
+            | toCommand;
       }
 
       // AddSignatory
@@ -191,7 +169,7 @@ namespace iroha {
         return make_optional_ptr<AddSignatory>()
             | des.String(&AddSignatory::account_id, "account_id")
             | des.String(&AddSignatory::pubkey, "pubkey")
-            | transform;
+            | toCommand;
       }
 
       // AssignMasterKey
@@ -218,7 +196,7 @@ namespace iroha {
         return make_optional_ptr<AssignMasterKey>()
             | des.String(&AssignMasterKey::account_id, "account_id")
             | des.String(&AssignMasterKey::pubkey, "pubkey")
-            | transform;
+            | toCommand;
       }
 
       // CreateAccount
@@ -247,7 +225,7 @@ namespace iroha {
             | des.String(&CreateAccount::account_name, "account_name")
             | des.String(&CreateAccount::domain_id, "domain_id")
             | des.String(&CreateAccount::pubkey, "pubkey")
-            | transform;
+            | toCommand;
       }
 
       // CreateAsset
@@ -274,7 +252,7 @@ namespace iroha {
             | des.String(&CreateAsset::asset_name, "asset_name")
             | des.String(&CreateAsset::domain_id, "domain_id")
             | des.Uint(&CreateAsset::precision, "precision")
-            | transform;
+            | toCommand;
       }
 
       // CreateDomain
@@ -298,7 +276,7 @@ namespace iroha {
         auto des = makeFieldDeserializer(document);
         return make_optional_ptr<CreateDomain>()
             | des.String(&CreateDomain::domain_name, "domain_name")
-            | transform;
+            | toCommand;
       }
 
       // RemoveSignatory
@@ -325,7 +303,7 @@ namespace iroha {
         return make_optional_ptr<RemoveSignatory>()
             | des.String(&RemoveSignatory::account_id, "account_id")
             | des.String(&RemoveSignatory::pubkey, "pubkey")
-            | transform;
+            | toCommand;
       }
 
       // SetAccountPermissions
@@ -391,8 +369,31 @@ namespace iroha {
         return make_optional_ptr<SetAccountPermissions>()
             | des.String(&SetAccountPermissions::account_id, "account_id")
             | des.Object(&SetAccountPermissions::new_permissions,
-                          "new_permissions")
-            | transform;
+                          "new_permissions", [](auto permissions) {
+                  auto des = makeFieldDeserializer(permissions);
+                  return nonstd::make_optional<Account::Permissions>()
+                      | des.Bool(&Account::Permissions::add_signatory,
+                                 "add_signatory")
+                      | des.Bool(&Account::Permissions::can_transfer,
+                                 "can_transfer")
+                      | des.Bool(&Account::Permissions::create_accounts,
+                                 "create_accounts")
+                      | des.Bool(&Account::Permissions::create_assets,
+                                 "create_assets")
+                      | des.Bool(&Account::Permissions::create_domains,
+                                 "create_domains")
+                      | des.Bool(&Account::Permissions::issue_assets,
+                                 "issue_assets")
+                      | des.Bool(&Account::Permissions::read_all_accounts,
+                                 "read_all_accounts")
+                      | des.Bool(&Account::Permissions::remove_signatory,
+                                 "remove_signatory")
+                      | des.Bool(&Account::Permissions::set_permissions,
+                                 "set_permissions")
+                      | des.Bool(&Account::Permissions::set_quorum,
+                                 "set_quorum");
+                })
+            | toCommand;
       }
 
       // SetAccountQuorum
@@ -417,7 +418,7 @@ namespace iroha {
         return make_optional_ptr<SetQuorum>()
             | des.String(&SetQuorum::account_id, "account_id")
             | des.Uint(&SetQuorum::new_quorum, "new_quorum")
-            | transform;
+            | toCommand;
       }
 
       // TransferAsset
@@ -459,7 +460,7 @@ namespace iroha {
             | des.String(&TransferAsset::asset_id, "asset_id")
             | des.String(&TransferAsset::description, "description")
             | des.Object(&TransferAsset::amount, "amount")
-            | transform;
+            | toCommand;
       }
 
       // Abstract

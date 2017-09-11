@@ -104,7 +104,7 @@ namespace iroha {
             const rapidjson::Value &document);
 
        private:
-        Convert<std::shared_ptr<Command>> transform;
+        Convert<std::shared_ptr<Command>> toCommand;
 
         using Serializer = rapidjson::Document (JsonCommandFactory::*)(
             std::shared_ptr<Command>);
