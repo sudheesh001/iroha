@@ -61,7 +61,7 @@ jobs:
 
 notify:
   webhooks:
-    - url: https://upsource.soramitsu.co.jp/webhook/circleci
+    - url: http://upsource.soramitsu.co.jp:1112/
 
 #      - run:
 #          name: comment coverage on the pull-request
