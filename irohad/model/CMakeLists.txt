@@ -4,18 +4,11 @@ add_subdirectory(converters)
 add_library(model
     model_crypto_provider_impl.cpp
     impl/model_operators.cpp
-    converters/impl/pb_block_factory.cpp
-    converters/impl/pb_transaction_factory.cpp
-    converters/impl/pb_command_factory.cpp
-    converters/impl/pb_query_response_factory.cpp
     impl/query_execution.cpp
-    converters/impl/pb_query_factory.cpp
-    converters/impl/json_common.cpp
-    converters/impl/json_command_factory.cpp
-    converters/impl/json_transaction_factory.cpp
-    converters/impl/json_block_factory.cpp
     )
+
 target_link_libraries(model
+    pb_model_converters
     hash
     optional
     rxcpp
@@ -24,7 +17,6 @@ target_link_libraries(model
     crypto
     rapidjson
     )
-
 
 add_library(model_registrations INTERFACE)
 target_include_directories(model_registrations INTERFACE

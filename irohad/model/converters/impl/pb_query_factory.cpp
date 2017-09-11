@@ -32,8 +32,6 @@ namespace iroha {
         serializers_[typeid(GetAccount)] = &PbQueryFactory::serializeGetAccount;
         serializers_[typeid(GetAccountAssets)] =
             &PbQueryFactory::serializeGetAccountAssets;
-        serializers_[typeid(GetAccountAssets)] =
-            &PbQueryFactory::serializeGetAccountAssets;
         serializers_[typeid(GetAccountTransactions)] =
             &PbQueryFactory::serializeGetAccountTransactions;
         serializers_[typeid(GetSignatories)] =

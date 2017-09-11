@@ -64,4 +64,6 @@ namespace iroha {
     return h;
   }
 
+  //TODO: add convenient functions like hash(Transaction), hash(Block), hash(Query) etc
+
 }  // namespace iroha
